@@ -1,0 +1,4 @@
+rootProject.name = 'tiantong'
+
+include ':online-payment-core'
+include ':online-payment-starter'

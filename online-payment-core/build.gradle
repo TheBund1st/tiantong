@@ -1,0 +1,69 @@
+buildscript {
+    ext {
+        byteBuddyVersion = '1.7.11'
+        jjwtVersion = '0.10.5'
+
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'io.spring.dependency-management'
+apply from: "${rootProject.projectDir}/gradle/maven-publish.gradle"
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Finchley.SR1'
+    }
+    dependencies {
+        dependency "org.springframework.data:spring-data-redis:2.1.2.RELEASE"
+    }
+}
+
+dependencies {
+    compileOnly("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+
+    // spock
+    testCompile('org.spockframework:spock-spring:1.2-groovy-2.4')
+    testCompile("net.bytebuddy:byte-buddy-agent:${byteBuddyVersion}")
+    testCompile("net.bytebuddy:byte-buddy:${byteBuddyVersion}")
+    testCompile 'org.awaitility:awaitility-groovy:3.1.2'
+
+    //aop
+    compileOnly("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
+
+    //jdbc
+    testCompile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
+    testCompile('com.h2database:h2:1.4.197')
+
+    // test mobile number generator
+    testCompile('com.github.binarywang:java-testdata-generator:1.1.2')
+
+    // redis
+    compileOnly("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-data-redis:${springBootVersion}") {
+        exclude group: 'org.springframework.data', module: 'spring-data-redis'
+    }
+    compileOnly "org.springframework.data:spring-data-redis"
+    testCompile "org.springframework.data:spring-data-redis"
+    testCompile 'redis.clients:jedis:2.9.0'
+    testCompile 'com.github.kstyrc:embedded-redis:0.6'
+
+    // jwt
+    compile "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
+    runtime "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
+    runtime "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
+
+    // json
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    // spring boot meta data
+    compileOnly("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+}
+

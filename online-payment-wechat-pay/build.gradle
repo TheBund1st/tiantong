@@ -1,0 +1,36 @@
+buildscript {
+//    FIXME extract versions
+    ext {
+        byteBuddyVersion = '1.7.11'
+    }
+
+}
+
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply from: "${rootProject.projectDir}/gradle/maven-publish.gradle"
+
+repositories {
+    mavenCentral()
+    maven { url 'https://raw.github.com/objcoding/maven/master/' }
+}
+
+dependencies {
+
+    compile project(':online-payment-core')
+
+    // FIXME: dependency isolation
+    compile('org.springframework:spring-web:5.0.9.RELEASE')
+
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
+
+    // spock
+    testCompile('org.spockframework:spock-core:1.2-groovy-2.4')
+    testCompile("net.bytebuddy:byte-buddy-agent:${byteBuddyVersion}")
+    testCompile("net.bytebuddy:byte-buddy:${byteBuddyVersion}")
+    testCompile 'org.awaitility:awaitility-groovy:3.1.2'
+
+}
+
+
+

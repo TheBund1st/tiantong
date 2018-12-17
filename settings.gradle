@@ -2,3 +2,5 @@ rootProject.name = 'tiantong'
 
 include ':online-payment-core'
 include ':online-payment-starter'
+include ':online-payment-wechat-pay'
+include ':examples/wechat-pay'

@@ -1,4 +1,4 @@
-def subProjectsUsingBintray = ['online-payment-core', 'online-payment-starter']
+def subProjectsUsingBintray = ['online-payment-core', 'online-payment-starter', 'online-payment-wechat-pay']
 // sub-projects using java
 configure(subprojects.findAll { it.name != 'gatling' }) {
     buildscript {

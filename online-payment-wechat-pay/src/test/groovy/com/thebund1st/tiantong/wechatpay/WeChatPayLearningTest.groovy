@@ -81,7 +81,7 @@ class WeChatPayLearningTest extends Specification {
         println(xml)
 
         when:
-        def res = restTemplate.postForObject("https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey", xml, String)
+        def res = restTemplate.postForEntity("https://api.mch.weixin.qq.com/sandboxnew/pay/getsignkey", xml, String)
 
         then:
         println(res)

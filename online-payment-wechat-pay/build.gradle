@@ -21,10 +21,7 @@ dependencies {
 
     // FIXME: dependency isolation
     compile('org.springframework:spring-web:5.0.9.RELEASE')
-    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0'
-    compile 'com.fasterxml.woodstox:woodstox-core:5.1.0'
-
-    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.11.1'
+    compile 'com.github.binarywang:weixin-java-pay:3.2.0'
 
     // spock
     testCompile('org.spockframework:spock-core:1.2-groovy-2.4')

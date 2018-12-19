@@ -1,12 +1,14 @@
 package com.thebund1st.tiantong.core;
 
+import java.util.UUID;
+
 public class OnlinePaymentRepository {
     public void save(OnlinePayment model) {
 
     }
 
     public OnlinePayment.Identifier nextIdentifier() {
-        return null;
+        return OnlinePayment.Identifier.of(UUID.randomUUID().toString().replace("-", ""));
     }
 
 

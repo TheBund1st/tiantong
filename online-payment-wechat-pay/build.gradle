@@ -18,6 +18,7 @@ repositories {
 dependencies {
 
     compile project(':online-payment-core')
+    testCompile project(':online-payment-core').sourceSets.test.output
 
     // FIXME: dependency isolation
     compile('org.springframework:spring-web:5.0.9.RELEASE')

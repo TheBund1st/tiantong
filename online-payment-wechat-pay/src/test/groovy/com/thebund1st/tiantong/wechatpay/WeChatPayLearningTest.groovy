@@ -2,11 +2,13 @@ package com.thebund1st.tiantong.wechatpay
 
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.web.client.RestTemplate
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.nio.charset.Charset
 import java.security.MessageDigest
 
+@Ignore
 class WeChatPayLearningTest extends Specification {
 
     RestTemplate restTemplate = new RestTemplate()

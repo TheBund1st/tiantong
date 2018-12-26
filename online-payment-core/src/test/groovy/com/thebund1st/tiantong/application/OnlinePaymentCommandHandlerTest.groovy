@@ -1,10 +1,12 @@
 package com.thebund1st.tiantong.application
 
 import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator
 import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.time.Clock
 import spock.lang.Specification
 
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 
 import static com.thebund1st.tiantong.commands.MakeOnlinePaymentCommandFixture.aMakeOnlinePaymentCommand
@@ -15,19 +17,21 @@ import static com.thebund1st.tiantong.events.OnlinePaymentNotificationEventFixtu
 
 class OnlinePaymentCommandHandlerTest extends Specification {
 
+    private OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private Clock clock = Mock()
-    private OnlinePaymentCommandHandler target = new OnlinePaymentCommandHandler(onlinePaymentRepository, clock)
+    private OnlinePaymentCommandHandler target = new OnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator,
+            onlinePaymentRepository, clock)
 
     def "it should create an online payment"() {
         given:
         def command = aMakeOnlinePaymentCommand().build()
-        def now = ZonedDateTime.now()
+        def now = LocalDateTime.now()
         def onlinePaymentId = OnlinePayment.Identifier.of("1")
 
         and:
         clock.now() >> now
-        onlinePaymentRepository.nextIdentifier() >> onlinePaymentId
+        onlinePaymentIdentifierGenerator.nextIdentifier() >> onlinePaymentId
 
         when:
         def actual = target.handle(command)
@@ -41,12 +45,14 @@ class OnlinePaymentCommandHandlerTest extends Specification {
         assert actual.createdAt == now
         assert actual.lastModifiedAt == now
         assert actual.status == PENDING
+        assert actual.method == OnlinePayment.Method.of(command.method)
+        assert actual.correlation == command.correlation
     }
 
     def "it should mark the online payment success and emit payment succeed event"() {
         given:
         def op = anOnlinePayment().build()
-        def now = ZonedDateTime.now()
+        def now = LocalDateTime.now()
         def event = anOnlinePaymentNotificationEvent().succeed().sendTo(op).build()
 
         and:

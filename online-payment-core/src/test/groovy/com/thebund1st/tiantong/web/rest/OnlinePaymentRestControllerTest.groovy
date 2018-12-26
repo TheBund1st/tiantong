@@ -21,7 +21,12 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                         .contentType(APPLICATION_JSON_UTF8)
                         .content("""
                             {
-                                "amount": "${command.getAmount()}"
+                                "amount": "${command.getAmount()}",
+                                "method": "${command.getMethod()}",
+                                "correlation": {
+                                    "key":"${command.getCorrelation().getKey()}",
+                                    "value": "${command.getCorrelation().getValue()}"
+                                }
                             }
                         """)
         )

@@ -4,6 +4,6 @@ import java.util.UUID;
 
 public class NonceGenerator {
     public String next() {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }

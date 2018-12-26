@@ -4,6 +4,8 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thebund1st.tiantong.application.OnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
@@ -13,6 +15,8 @@ import com.thebund1st.tiantong.wechatpay.WeChatPayProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.UUID;
 
 @Configuration
 public class WeChatPayConfiguration {
@@ -40,12 +44,28 @@ public class WeChatPayConfiguration {
 
     @Bean
     public OnlinePaymentCommandHandler onlinePaymentCommandHandler() {
-        return new OnlinePaymentCommandHandler(onlinePaymentRepository(), clock());
+        return new OnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator(), onlinePaymentRepository(), clock());
     }
 
     @Bean
     public OnlinePaymentRepository onlinePaymentRepository() {
-        return new OnlinePaymentRepository();
+        return new OnlinePaymentRepository() {
+
+            @Override
+            public void save(OnlinePayment model) {
+
+            }
+
+            @Override
+            public OnlinePayment mustFindBy(OnlinePayment.Identifier id) {
+                return null;
+            }
+        };
+    }
+
+    @Bean
+    public OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator() {
+        return () -> OnlinePayment.Identifier.of(UUID.randomUUID().toString().replace("-", ""));
     }
 
     @Bean
@@ -56,7 +76,7 @@ public class WeChatPayConfiguration {
     @Bean
     public WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway() {
         return new WeChatPayOnlinePaymentGateway(wxPayService(),
-                nonceGenerator(), ipAddressExtractor(), "https://fe175340.ap.ngrok.io/api/notifications");
+                nonceGenerator(), ipAddressExtractor(), "https://f3e3bf91.ap.ngrok.io/api/notifications");
     }
 
     @Bean

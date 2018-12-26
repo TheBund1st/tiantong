@@ -39,6 +39,7 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")
 
     //jdbc
+    compileOnly("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
     testCompile('com.h2database:h2:1.4.197')
 

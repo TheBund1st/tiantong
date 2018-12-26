@@ -23,16 +23,23 @@ public class WeChatPayOnlinePaymentGateway {
         req.setAppid(wxPayService.getConfig().getAppId());
         req.setMchId(wxPayService.getConfig().getMchId());
         req.setBody("欢迎订购");//FIXME should extract from OnlinePayment
-        req.setProductId(op.getId().getValue());
-        req.setOutTradeNo(op.getId().getValue());
+        if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))) {
+            req.setProductId(op.getProductId());
+        } else if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))) {
+            req.setOpenid(op.getOpenId());
+        }
+        req.setOutTradeNo(op.getId().getValue()); // TODO maybe exposing id to public is not a good idea
         req.setTotalFee(BigDecimal.valueOf(op.getAmount() * 100).intValue());
-        req.setTradeType("NATIVE");//TODO should extract from OnlinePayment or dedicated gateway method
+        req.setTradeType(op.getMethod().getValue().replace("WECHAT_PAY_", ""));//TODO should extract from OnlinePayment or dedicated gateway method
         req.setSpbillCreateIp(ipAddressExtractor.getLocalhostAddress());
         req.setNotifyUrl(webhookEndpoint);
         req.setNonceStr(nonceGenerator.next());
-        WxPayNativeOrderResult result = this.wxPayService.createOrder(req);
+        Object result = this.wxPayService.createOrder(req);
         WeChatPayOrderResponse res = new WeChatPayOrderResponse();
-        res.setQrCodeUri(result.getCodeUrl());
+        if (result instanceof WxPayNativeOrderResult) {
+            WxPayNativeOrderResult nativeOrder = (WxPayNativeOrderResult) result;
+            res.setQrCodeUri(nativeOrder.getCodeUrl());
+        }
         return res;
     }
 

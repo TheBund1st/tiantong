@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.events;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 @Getter
@@ -11,6 +12,8 @@ public class OnlinePaymentSuccessNotificationReceivedEvent {
     private OnlinePayment.Identifier onlinePaymentId;
     //FIXME introduce monetary amount
     private double amount;
+    @Setter
+    private String raw;
 
     public OnlinePaymentSuccessNotificationReceivedEvent(EventIdentifier eventId,
                                                          OnlinePayment.Identifier onlinePaymentId, double amount) {

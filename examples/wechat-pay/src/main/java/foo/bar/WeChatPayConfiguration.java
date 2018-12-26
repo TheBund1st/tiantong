@@ -4,20 +4,26 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thebund1st.tiantong.application.OnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.core.EventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentRepository;
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
 import com.thebund1st.tiantong.wechatpay.WeChatPayProperties;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.UUID;
 
+@Slf4j
 @Configuration
 public class WeChatPayConfiguration {
 
@@ -26,6 +32,9 @@ public class WeChatPayConfiguration {
     public WeChatPayProperties weChatPayProperties() {
         return new WeChatPayProperties();
     }
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Bean
     public WxPayService wxPayService() {
@@ -44,28 +53,23 @@ public class WeChatPayConfiguration {
 
     @Bean
     public OnlinePaymentCommandHandler onlinePaymentCommandHandler() {
-        return new OnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator(), onlinePaymentRepository(), clock());
+        return new OnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator(), onlinePaymentRepository(),
+                eventPublisher(), clock());
     }
 
     @Bean
     public OnlinePaymentRepository onlinePaymentRepository() {
-        return new OnlinePaymentRepository() {
-
-            @Override
-            public void save(OnlinePayment model) {
-
-            }
-
-            @Override
-            public OnlinePayment mustFindBy(OnlinePayment.Identifier id) {
-                return null;
-            }
-        };
+        return new JdbcOnlinePaymentRepository(jdbcTemplate);
     }
 
     @Bean
     public OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator() {
         return () -> OnlinePayment.Identifier.of(UUID.randomUUID().toString().replace("-", ""));
+    }
+
+    @Bean
+    public EventPublisher eventPublisher() {
+        return event -> log.info(event.toString());
     }
 
     @Bean
@@ -76,7 +80,7 @@ public class WeChatPayConfiguration {
     @Bean
     public WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway() {
         return new WeChatPayOnlinePaymentGateway(wxPayService(),
-                nonceGenerator(), ipAddressExtractor(), "https://f3e3bf91.ap.ngrok.io/api/notifications");
+                nonceGenerator(), ipAddressExtractor(), "https://b9abf77f.ap.ngrok.io/api/notifications");
     }
 
     @Bean

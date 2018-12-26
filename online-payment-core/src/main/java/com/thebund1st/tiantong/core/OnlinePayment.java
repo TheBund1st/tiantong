@@ -40,6 +40,7 @@ public class OnlinePayment {
     // WeChat Pay specific
     private String openId;
     private String productId;
+    private String rawNotification;
 
     public OnlinePayment() {
 
@@ -60,6 +61,7 @@ public class OnlinePayment {
             throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
         }
         this.status = SUCCESS;
+        this.rawNotification = event.getRaw();
         this.notifiedBy = event.getEventId();
         this.lastModifiedAt = now;
     }
@@ -80,6 +82,7 @@ public class OnlinePayment {
             throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
         }
         this.status = FAILURE;
+        this.rawNotification = event.getRaw();
         this.notifiedBy = event.getEventId();
         this.lastModifiedAt = now;
     }

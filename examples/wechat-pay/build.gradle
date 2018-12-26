@@ -28,6 +28,9 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.spockframework:spock-spring:1.2-groovy-2.4')
 
+    compile("org.springframework.boot:spring-boot-starter-jdbc")
+    compile "mysql:mysql-connector-java:6.0.6"
+
     //devtools
     compile("org.springframework.boot:spring-boot-devtools")
 

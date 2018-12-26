@@ -22,7 +22,7 @@ public class WeChatPayOnlinePaymentGateway {
         WxPayUnifiedOrderRequest req = new WxPayUnifiedOrderRequest();
         req.setAppid(wxPayService.getConfig().getAppId());
         req.setMchId(wxPayService.getConfig().getMchId());
-        req.setBody("欢迎订购");//FIXME should extract from OnlinePayment
+        req.setBody(op.getSubject());
         if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))) {
             req.setProductId(op.getProductId());
         } else if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))) {

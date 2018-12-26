@@ -54,6 +54,11 @@ class OnlinePaymentFixture {
         this
     }
 
+    def subjectIs(String value) {
+        target.setSubject(value)
+        this
+    }
+
     def build() {
         target
     }
@@ -64,5 +69,6 @@ class OnlinePaymentFixture {
                 .amountIs(100.00)
                 .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
+                .subjectIs("This is a test product")
     }
 }

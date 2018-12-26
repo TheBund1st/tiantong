@@ -27,6 +27,7 @@ public class OnlinePaymentCommandHandler {
         op.setCorrelation(command.getCorrelation());
         op.setOpenId(command.getOpenId());
         op.setProductId(command.getProductId());
+        op.setSubject(command.getSubject());
         onlinePaymentRepository.save(op);
         return op;
     }

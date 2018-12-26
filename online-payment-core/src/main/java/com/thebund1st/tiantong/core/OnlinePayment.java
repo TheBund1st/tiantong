@@ -35,6 +35,8 @@ public class OnlinePayment {
     private LocalDateTime lastModifiedAt;
     private EventIdentifier notifiedBy;
 
+    private String subject;
+
     // WeChat Pay specific
     private String openId;
     private String productId;

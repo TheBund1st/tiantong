@@ -29,6 +29,7 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert actual.status == op.status
         assert actual.createdAt == op.createdAt
         assert actual.lastModifiedAt == op.lastModifiedAt
+        assert actual.subject == op.subject
     }
 
 }

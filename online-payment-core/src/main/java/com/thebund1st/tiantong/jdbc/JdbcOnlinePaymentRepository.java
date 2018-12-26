@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
 
     private static final String OP_COLUMNS = "ID, VERSION, AMOUNT, CORRELATION_KEY, CORRELATION_VALUE, STATUS, " +
-            "METHOD, CREATED_AT, LAST_MODIFIED_AT";
+            "METHOD, SUBJECT, CREATED_AT, LAST_MODIFIED_AT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -28,13 +28,14 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                 model.getCorrelation().getValue(),
                 model.getStatus().getValue(),
                 model.getMethod().getValue(),
+                model.getSubject(),
                 model.getCreatedAt(),
                 model.getLastModifiedAt()
         );
     }
 
     protected String insertOnlinePaymentSql() {
-        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
+        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
     }
 
     @Override
@@ -50,6 +51,7 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                             rs.getString("CORRELATION_VALUE")));
                     op.setStatus(OnlinePayment.Status.of(rs.getInt("STATUS")));
                     op.setMethod(OnlinePayment.Method.of(rs.getString("METHOD")));
+                    op.setSubject(rs.getString("SUBJECT"));
                     op.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     op.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
                     return op;

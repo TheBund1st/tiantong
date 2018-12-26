@@ -33,7 +33,7 @@ class WeChatPayOnlinePaymentGatewayTest extends Specification {
         def request = new WxPayUnifiedOrderRequest()
         request.setAppid("this_is_app_id")
         request.setMchId("this_is_merchant_id")
-        request.setBody("欢迎订购")
+        request.setBody(op.subject)
         request.setOutTradeNo(op.id.value)
         request.setTotalFee(10000)
         request.setTradeType("NATIVE")

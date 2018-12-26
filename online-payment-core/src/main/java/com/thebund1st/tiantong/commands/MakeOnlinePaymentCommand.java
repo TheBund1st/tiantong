@@ -18,6 +18,8 @@ public class MakeOnlinePaymentCommand {
 
     private Correlation correlation;
 
+    private String subject;
+
     //WeChat Pay Specific
     //TODO how to deal with these provider specific fields
     private String openId;

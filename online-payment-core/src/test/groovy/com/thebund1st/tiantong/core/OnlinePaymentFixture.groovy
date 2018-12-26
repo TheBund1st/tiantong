@@ -1,5 +1,8 @@
 package com.thebund1st.tiantong.core
 
+import com.thebund1st.tiantong.events.EventIdentifier
+import com.thebund1st.tiantong.events.OnlinePaymentFailureNotificationReceivedEvent
+import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent
 import com.thebund1st.tiantong.utils.Randoms
 
 import static java.time.LocalDateTime.now
@@ -8,7 +11,18 @@ class OnlinePaymentFixture {
     private OnlinePayment target
 
     OnlinePaymentFixture() {
-        this.target = new OnlinePayment(OnlinePayment.Identifier.of(Randoms.randomStr()), now())
+        this.target = new OnlinePayment()
+        target.setCreatedAt(now())
+        target.setLastModifiedAt(now())
+    }
+
+    def idIs(String value) {
+        idIs(OnlinePayment.Identifier.of(value))
+    }
+
+    def idIs(OnlinePayment.Identifier id) {
+        target.setId(id)
+        this
     }
 
     def amountIs(double amount) {
@@ -26,15 +40,29 @@ class OnlinePaymentFixture {
         this
     }
 
+    def succeeded() {
+        def event = new OnlinePaymentSuccessNotificationReceivedEvent(EventIdentifier.of(Randoms.randomStr()),
+                target.getId(), target.getAmount())
+        target.on(event, now())
+        this
+    }
+
+    def failed() {
+        def event = new OnlinePaymentFailureNotificationReceivedEvent(EventIdentifier.of(Randoms.randomStr()),
+                target.getId(), target.getAmount())
+        target.on(event, now())
+        this
+    }
+
     def build() {
         target
     }
 
     static def anOnlinePayment() {
         new OnlinePaymentFixture()
+                .idIs(OnlinePayment.Identifier.of(Randoms.randomStr()))
                 .amountIs(100.00)
                 .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
     }
-
 }

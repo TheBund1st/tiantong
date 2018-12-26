@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.commands.MakeOnlinePaymentCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.events.OnlinePaymentFailureNotificationReceivedEvent;
 import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,11 @@ public class OnlinePaymentCommandHandler {
 
     public void on(OnlinePaymentSuccessNotificationReceivedEvent event) {
         OnlinePayment op = onlinePaymentRepository.mustFindBy(event.getOnlinePaymentId());
-        op.succeed(event.getAmount(), event.getEventId(), clock.now());
+        op.on(event, clock.now());
+    }
+
+    public void on(OnlinePaymentFailureNotificationReceivedEvent event) {
+        OnlinePayment op = onlinePaymentRepository.mustFindBy(event.getOnlinePaymentId());
+        op.on(event, clock.now());
     }
 }

@@ -1,7 +1,10 @@
 package com.thebund1st.tiantong.core;
 
+import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
+import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
 import com.thebund1st.tiantong.events.EventIdentifier;
-import lombok.AccessLevel;
+import com.thebund1st.tiantong.events.OnlinePaymentFailureNotificationReceivedEvent;
+import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +12,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
 import static lombok.AccessLevel.PRIVATE;
@@ -47,16 +50,39 @@ public class OnlinePayment {
         this.lastModifiedAt = time;
     }
 
-    public void succeed(double amount, EventIdentifier eventId, LocalDateTime now) {
-        //TODO amount check
-        //TODO status check
+    public void on(OnlinePaymentSuccessNotificationReceivedEvent event, LocalDateTime now) {
+        if (isClosed()) {
+            throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
+        }
+        if (amountMismatches(event.getAmount())) {
+            throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
+        }
         this.status = SUCCESS;
-        this.notifiedBy = eventId;
+        this.notifiedBy = event.getEventId();
+        this.lastModifiedAt = now;
+    }
+
+    private boolean amountMismatches(double amount) {
+        return getAmount() != amount;
+    }
+
+    private boolean isClosed() {
+        return getStatus() != PENDING;
+    }
+
+    public void on(OnlinePaymentFailureNotificationReceivedEvent event, LocalDateTime now) {
+        if (isClosed()) {
+            throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
+        }
+        if (amountMismatches(event.getAmount())) {
+            throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
+        }
+        this.status = FAILURE;
+        this.notifiedBy = event.getEventId();
         this.lastModifiedAt = now;
     }
 
     @Getter
-    @ToString
     @EqualsAndHashCode
     public static class Identifier {
         private String value;
@@ -68,10 +94,15 @@ public class OnlinePayment {
         public static Identifier of(String value) {
             return new Identifier(value);
         }
+
+        @Override
+        public String toString() {
+            return value;
+        }
     }
 
     public enum Status {
-        UNKNOWN(-1), PENDING(0), SUCCESS(1);
+        UNKNOWN(-1), PENDING(0), SUCCESS(1), FAILURE(2);
 
         @Getter
         private int value;

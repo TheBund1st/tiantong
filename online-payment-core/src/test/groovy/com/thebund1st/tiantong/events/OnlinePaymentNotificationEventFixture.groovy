@@ -31,10 +31,15 @@ class OnlinePaymentNotificationEventFixture {
         this
     }
 
+    def failed() {
+        this.success = false
+        this
+    }
+
     def build() {
         success ?
                 new OnlinePaymentSuccessNotificationReceivedEvent(eventIdentifier, onlinePayment.id, amount) :
-                new OnlinePaymentFailureNotificationReceivedEvent()
+                new OnlinePaymentFailureNotificationReceivedEvent(eventIdentifier, onlinePayment.id, amount)
     }
 
     static def anOnlinePaymentNotificationEvent() {

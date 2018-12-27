@@ -1,0 +1,41 @@
+buildscript {
+//    FIXME extract versions
+    ext {
+        byteBuddyVersion = '1.7.11'
+    }
+
+}
+
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply from: "${rootProject.projectDir}/gradle/maven-publish.gradle"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    compile project(':online-payment-core')
+    testCompile project(':online-payment-core').sourceSets.test.output
+
+    // FIXME: dependency isolation
+    compile('org.springframework:spring-web:5.0.9.RELEASE')
+    compile 'com.alipay.sdk:alipay-sdk-java:3.4.49.ALL'
+
+    // spock
+    testCompile('org.spockframework:spock-core:1.2-groovy-2.4')
+    testCompile("net.bytebuddy:byte-buddy-agent:${byteBuddyVersion}")
+    testCompile("net.bytebuddy:byte-buddy:${byteBuddyVersion}")
+    testCompile 'org.awaitility:awaitility-groovy:3.1.2'
+
+    // mock server
+    testCompile group: 'com.github.tomakehurst', name: 'wiremock-standalone', version: '2.12.0'
+
+
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+}
+
+
+

@@ -4,6 +4,7 @@ build/
 
 ## local
 application-local.properties
+keys/
 
 ## redis
 dump.rdb

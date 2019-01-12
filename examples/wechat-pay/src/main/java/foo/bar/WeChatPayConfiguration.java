@@ -5,7 +5,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
-import com.thebund1st.tiantong.core.EventPublisher;
+import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -92,7 +92,7 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
-    public EventPublisher eventPublisher() {
+    public DomainEventPublisher eventPublisher() {
         return event -> log.info(event.toString());
     }
 

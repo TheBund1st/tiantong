@@ -16,7 +16,7 @@ import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnline
 
 class OnlinePaymentNotificationSubscriberTest extends Specification {
 
-    private EventPublisher eventPublisher = Mock()
+    private DomainEventPublisher eventPublisher = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private OnlinePaymentResponseRepository onlinePaymentResponseRepository = Mock()
     private OnlinePaymentResponseIdentifierGenerator onlinePaymentResponseIdentifierGenerator = Mock()

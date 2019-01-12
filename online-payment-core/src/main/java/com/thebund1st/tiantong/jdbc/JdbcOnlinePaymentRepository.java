@@ -75,13 +75,11 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
         int onlinePaymentVersion = event.getOnlinePaymentVersion();
         int rowUpdated = jdbcTemplate.update("UPDATE ONLINE_PAYMENT SET VERSION = VERSION + 1, " +
                         "STATUS = ?, " +
-                        "LAST_MODIFIED_AT = ?, " +
-                        "RAW_NOTIFICATION = ? " +
+                        "LAST_MODIFIED_AT = ? " +
                         "WHERE ID = ? " +
                         "AND VERSION = ?",
                 SUCCESS.getValue(),
                 event.getWhen(),
-                event.getNotificationBody(),
                 onlinePaymentId,
                 onlinePaymentVersion
         );

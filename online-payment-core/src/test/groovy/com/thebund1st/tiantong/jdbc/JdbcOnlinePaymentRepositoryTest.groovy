@@ -51,7 +51,6 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         event.setOnlinePaymentVersion(op.version)
         event.setCorrelation(op.correlation)
         event.setWhen(LocalDateTime.now())
-        event.setNotificationBody("<xml>This is a xml notification</xml>")
 
         and:
         subject.on(event)

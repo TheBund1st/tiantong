@@ -2,7 +2,7 @@ package com.thebund1st.tiantong.application;
 
 import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
-import com.thebund1st.tiantong.core.EventPublisher;
+import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResponse;
@@ -24,7 +24,7 @@ public class OnlinePaymentNotificationSubscriber {
     private final OnlinePaymentRepository onlinePaymentRepository;
     private final OnlinePaymentResponseRepository onlinePaymentResponseRepository;
     private final OnlinePaymentResponseIdentifierGenerator onlinePaymentResponseIdentifierGenerator;
-    private final EventPublisher eventPublisher;
+    private final DomainEventPublisher domainEventPublisher;
     private final Clock clock;
 
     public void handle(OnlinePaymentSuccessNotification command) {
@@ -33,7 +33,7 @@ public class OnlinePaymentNotificationSubscriber {
         OnlinePaymentResponse response = toResponse(command, now);
         op.on(command, now);
         onlinePaymentResponseRepository.save(response);
-        eventPublisher.publish(toOnlinePaymentSuccessEvent(op, now));
+        domainEventPublisher.publish(toOnlinePaymentSuccessEvent(op, now));
     }
 
     private OnlinePaymentResponse toResponse(OnlinePaymentSuccessNotification command, LocalDateTime now) {
@@ -51,7 +51,7 @@ public class OnlinePaymentNotificationSubscriber {
         LocalDateTime now = clock.now();
         OnlinePayment op = onlinePaymentRepository.mustFindBy(command.getOnlinePaymentId());
         op.on(command, now);
-        eventPublisher.publish(toOnlinePaymentSuccessEvent(op, now));
+        domainEventPublisher.publish(toOnlinePaymentSuccessEvent(op, now));
     }
 
     private OnlinePaymentSuccessEvent toOnlinePaymentSuccessEvent(OnlinePayment op, LocalDateTime now) {

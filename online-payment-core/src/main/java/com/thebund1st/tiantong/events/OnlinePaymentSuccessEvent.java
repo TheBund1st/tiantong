@@ -13,5 +13,4 @@ public class OnlinePaymentSuccessEvent {
     private OnlinePayment.Correlation correlation;
     private double amount;
     private LocalDateTime when;
-    private String notificationBody;
 }

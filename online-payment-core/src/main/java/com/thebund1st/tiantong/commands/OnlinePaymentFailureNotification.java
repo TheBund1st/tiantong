@@ -1,13 +1,14 @@
-package com.thebund1st.tiantong.events;
+package com.thebund1st.tiantong.commands;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.events.EventIdentifier;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @ToString
-public class OnlinePaymentFailureNotificationReceivedEvent {
+public class OnlinePaymentFailureNotification {
     private EventIdentifier eventId;
     private OnlinePayment.Identifier onlinePaymentId;
     //FIXME introduce monetary amount
@@ -15,8 +16,8 @@ public class OnlinePaymentFailureNotificationReceivedEvent {
     @Setter
     private String raw;
 
-    public OnlinePaymentFailureNotificationReceivedEvent(EventIdentifier eventId,
-                                                         OnlinePayment.Identifier onlinePaymentId, double amount) {
+    public OnlinePaymentFailureNotification(EventIdentifier eventId,
+                                            OnlinePayment.Identifier onlinePaymentId, double amount) {
         this.eventId = eventId;
         this.onlinePaymentId = onlinePaymentId;
         this.amount = amount;

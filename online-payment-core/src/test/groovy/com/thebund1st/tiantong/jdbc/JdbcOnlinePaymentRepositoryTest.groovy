@@ -1,12 +1,12 @@
 package com.thebund1st.tiantong.jdbc
 
-import com.thebund1st.tiantong.events.EventIdentifier
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent
-import com.thebund1st.tiantong.utils.Randoms
+
+import com.thebund1st.tiantong.events.OnlinePaymentSuccessEvent
 import org.springframework.beans.factory.annotation.Autowired
 
 import java.time.LocalDateTime
 
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 
 class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
@@ -34,8 +34,8 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert actual.createdAt == op.createdAt
         assert actual.lastModifiedAt == op.lastModifiedAt
         assert actual.subject == op.subject
-        assert actual.openId == op.openId
-        assert actual.productId == op.productId
+        assert actual.body == op.body
+        assert actual.providerSpecificInfo == op.providerSpecificInfo
     }
 
     def "it should update op"() {
@@ -46,24 +46,25 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         subject.save(op)
 
         and:
-        def event = new OnlinePaymentSuccessNotificationReceivedEvent(EventIdentifier.of(Randoms.randomStr()), op.getId(), op.amount)
-        event.setRaw("<xml>this is a raw xml<xml>")
-
-        when:
-        op.on(event, LocalDateTime.now())
+        def event = new OnlinePaymentSuccessEvent()
+        event.setOnlinePaymentId(op.id)
+        event.setOnlinePaymentVersion(op.version)
+        event.setCorrelation(op.correlation)
+        event.setWhen(LocalDateTime.now())
+        event.setNotificationBody("<xml>This is a xml notification</xml>")
 
         and:
-        subject.update(op)
+        subject.on(event)
 
-        then:
+        when:
         def after = subject.mustFindBy(op.id)
 
+        then:
         assert after != null
         assert after.id == op.id
         assert after.version == op.version + 1
-        assert after.status == op.status
-        assert after.lastModifiedAt == op.lastModifiedAt
-        assert after.rawNotification == event.raw
+        assert after.status == SUCCESS
+        assert after.lastModifiedAt == event.when
     }
 
 }

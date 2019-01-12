@@ -3,7 +3,7 @@ package com.thebund1st.tiantong.web.rest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 
-import static com.thebund1st.tiantong.commands.MakeOnlinePaymentCommandFixture.aMakeOnlinePaymentCommand
+import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -13,7 +13,8 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
 
     def "it should accept make online payment request"() {
         given:
-        def command = aMakeOnlinePaymentCommand().build()
+        def command = aRequestOnlinePaymentCommand().withOpenId("abc").build()
+
 
         when:
         def resultActions = mockMvc.perform(
@@ -26,7 +27,12 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                                 "correlation": {
                                     "key":"${command.getCorrelation().getKey()}",
                                     "value": "${command.getCorrelation().getValue()}"
-                                }
+                                },
+                                "providerSpecificInfo": {
+                                    "openId": "abc"
+                                },
+                                "subject": "${command.getSubject()}",
+                                "body": "${command.getBody()}"
                             }
                         """)
         )
@@ -37,7 +43,15 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
 //                .andExpect(jsonPath('$._links.wechat_pay_native.href', equalTo("")))
 
         and:
-        1 * onlinePaymentCommandHandler.handle(command)
+        //noinspection GroovyAssignabilityCheck
+        1 * requestOnlinePaymentCommandHandler.handle({
+            it.amount == command.amount
+            it.method == command.method
+            it.correlation == command.correlation
+            it.providerSpecificInfo == command.providerSpecificInfo
+            it.subject == command.subject
+            it.body == command.body
+        })
 
     }
 }

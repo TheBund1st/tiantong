@@ -9,6 +9,9 @@ import java.time.LocalDateTime;
 @Data
 public class OnlinePaymentSuccessEvent {
     private OnlinePayment.Identifier onlinePaymentId;
+    private int onlinePaymentVersion;
     private OnlinePayment.Correlation correlation;
+    private double amount;
     private LocalDateTime when;
+    private String notificationBody;
 }

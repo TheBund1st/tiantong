@@ -1,7 +1,6 @@
 package com.thebund1st.tiantong.application
 
-import com.thebund1st.tiantong.core.OnlinePayment
-import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator
+import com.thebund1st.tiantong.core.EventPublisher
 import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException
@@ -10,50 +9,25 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-import static com.thebund1st.tiantong.commands.MakeOnlinePaymentCommandFixture.aMakeOnlinePaymentCommand
-import static com.thebund1st.tiantong.core.OnlinePayment.Status.*
+import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
-import static com.thebund1st.tiantong.events.OnlinePaymentNotificationEventFixture.anOnlinePaymentNotificationEvent
 
-class OnlinePaymentCommandHandlerTest extends Specification {
+class OnlinePaymentNotificationSubscriberTest extends Specification {
 
-    private OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator = Mock()
+    private EventPublisher eventPublisher = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private Clock clock = Mock()
-    private OnlinePaymentCommandHandler target = new OnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator,
-            onlinePaymentRepository, clock)
+    private OnlinePaymentNotificationSubscriber target = new OnlinePaymentNotificationSubscriber(onlinePaymentRepository,
+            eventPublisher, clock)
 
-    def "it should create an online payment"() {
-        given:
-        def command = aMakeOnlinePaymentCommand().build()
-        def now = LocalDateTime.now()
-        def onlinePaymentId = OnlinePayment.Identifier.of("1")
-
-        and:
-        clock.now() >> now
-        onlinePaymentIdentifierGenerator.nextIdentifier() >> onlinePaymentId
-
-        when:
-        def actual = target.handle(command)
-
-        then:
-        1 * onlinePaymentRepository.save(_ as OnlinePayment)
-
-        and:
-        assert actual.id == onlinePaymentId
-        assert actual.amount == command.amount
-        assert actual.createdAt == now
-        assert actual.lastModifiedAt == now
-        assert actual.status == PENDING
-        assert actual.method == OnlinePayment.Method.of(command.method)
-        assert actual.correlation == command.correlation
-    }
 
     def "it should mark the online payment success and emit payment succeed event"() {
         given:
         def op = anOnlinePayment().build()
         def now = LocalDateTime.now()
-        def event = anOnlinePaymentNotificationEvent().succeed().sendTo(op).build()
+        def notification = anOnlinePaymentNotification().succeed().sendTo(op).build()
 
         and:
         onlinePaymentRepository.mustFindBy(op.id) >> op
@@ -61,19 +35,28 @@ class OnlinePaymentCommandHandlerTest extends Specification {
 
         when:
         //noinspection GroovyAssignabilityCheck
-        target.on(event)
+        target.handle(notification)
 
         then:
         assert op.lastModifiedAt == now
         assert op.status == SUCCESS
-        assert op.notifiedBy == event.eventId
+        assert op.notifiedBy == notification.eventId
+
+        and:
+        1 * eventPublisher.publish({
+            it.onlinePaymentId == op.id
+            it.onlinePaymentVersion == op.version
+            it.correlation == op.correlation
+            it.amount == op.amount
+            it.when == now
+        })
     }
 
     def "it should throw when handling duplicate events"() {
         given:
         def op = anOnlinePayment().idIs("154").succeeded().build()
         def now = LocalDateTime.now()
-        def event = anOnlinePaymentNotificationEvent().succeed().sendTo(op).build()
+        def event = anOnlinePaymentNotification().succeed().sendTo(op).build()
 
         and:
         onlinePaymentRepository.mustFindBy(op.id) >> op
@@ -81,7 +64,7 @@ class OnlinePaymentCommandHandlerTest extends Specification {
 
         when:
         //noinspection GroovyAssignabilityCheck
-        target.on(event)
+        target.handle(event)
 
         then:
         def thrown = thrown(OnlinePaymentAlreadyClosedException)
@@ -92,7 +75,7 @@ class OnlinePaymentCommandHandlerTest extends Specification {
         given:
         def op = anOnlinePayment().idIs("154").amountIs(100).build()
         def now = LocalDateTime.now()
-        def event = anOnlinePaymentNotificationEvent().amountIs(150).succeed().sendTo(op).build()
+        def event = anOnlinePaymentNotification().amountIs(150).succeed().sendTo(op).build()
 
         and:
         onlinePaymentRepository.mustFindBy(op.id) >> op
@@ -100,7 +83,7 @@ class OnlinePaymentCommandHandlerTest extends Specification {
 
         when:
         //noinspection GroovyAssignabilityCheck
-        target.on(event)
+        target.handle(event)
 
         then:
         def thrown = thrown(FakeOnlinePaymentNotificationException)
@@ -111,7 +94,7 @@ class OnlinePaymentCommandHandlerTest extends Specification {
         given:
         def op = anOnlinePayment().build()
         def now = LocalDateTime.now()
-        def event = anOnlinePaymentNotificationEvent().failed().sendTo(op).build()
+        def event = anOnlinePaymentNotification().failed().sendTo(op).build()
 
         and:
         onlinePaymentRepository.mustFindBy(op.id) >> op
@@ -119,19 +102,28 @@ class OnlinePaymentCommandHandlerTest extends Specification {
 
         when:
         //noinspection GroovyAssignabilityCheck
-        target.on(event)
+        target.handle(event)
 
         then:
         assert op.lastModifiedAt == now
         assert op.status == FAILURE
         assert op.notifiedBy == event.eventId
+
+        and:
+        1 * eventPublisher.publish({
+            it.onlinePaymentId == op.id
+            it.onlinePaymentVersion == op.version
+            it.correlation == op.correlation
+            it.amount == op.amount
+            it.when == now
+        })
     }
 
     def "it should mark the online payment failure given duplicate events"() {
         given:
         def op = anOnlinePayment().idIs("154").failed().build()
         def now = LocalDateTime.now()
-        def event = anOnlinePaymentNotificationEvent().failed().sendTo(op).build()
+        def event = anOnlinePaymentNotification().failed().sendTo(op).build()
 
         and:
         onlinePaymentRepository.mustFindBy(op.id) >> op
@@ -139,7 +131,7 @@ class OnlinePaymentCommandHandlerTest extends Specification {
 
         when:
         //noinspection GroovyAssignabilityCheck
-        target.on(event)
+        target.handle(event)
 
         then:
         def thrown = thrown(OnlinePaymentAlreadyClosedException)

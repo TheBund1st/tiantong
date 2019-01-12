@@ -3,6 +3,7 @@ package com.thebund1st.tiantong.wechatpay;
 import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.service.WxPayService;
+import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,9 +25,9 @@ public class WeChatPayOnlinePaymentGateway {
         req.setMchId(wxPayService.getConfig().getMchId());
         req.setBody(op.getSubject());
         if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))) {
-            req.setProductId(op.getProductId());
+            req.setProductId(extractProductId(op.getProviderSpecificInfo()));
         } else if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))) {
-            req.setOpenid(op.getOpenId());
+            req.setOpenid(extractOpenId(op.getProviderSpecificInfo()));
         }
         req.setOutTradeNo(op.getId().getValue()); // TODO maybe exposing id to public is not a good idea
         req.setTotalFee(BigDecimal.valueOf(op.getAmount() * 100).intValue());
@@ -41,6 +42,14 @@ public class WeChatPayOnlinePaymentGateway {
             res.setQrCodeUri(nativeOrder.getCodeUrl());
         }
         return res;
+    }
+
+    private String extractProductId(String providerSpecificInfo) {
+        return JsonPath.read(providerSpecificInfo, "$.productId");
+    }
+
+    private String extractOpenId(String providerSpecificInfo) {
+        return JsonPath.read(providerSpecificInfo, "$.openId");
     }
 
 

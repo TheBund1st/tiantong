@@ -3,7 +3,8 @@ package foo.bar;
 import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
-import com.thebund1st.tiantong.application.OnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
+import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.core.EventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
@@ -52,8 +53,14 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
-    public OnlinePaymentCommandHandler onlinePaymentCommandHandler() {
-        return new OnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator(), onlinePaymentRepository(),
+    public RequestOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler() {
+        return new RequestOnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator(),
+                onlinePaymentRepository(), clock());
+    }
+
+    @Bean
+    public OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber() {
+        return new OnlinePaymentNotificationSubscriber(onlinePaymentRepository(),
                 eventPublisher(), clock());
     }
 

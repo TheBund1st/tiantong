@@ -43,6 +43,12 @@ dependencies {
     testCompile("org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}")
     testCompile('com.h2database:h2:1.4.197')
 
+    //messaging
+    compileOnly 'org.springframework.cloud:spring-cloud-stream'
+    compileOnly 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+    testCompile 'org.springframework.cloud:spring-cloud-stream'
+    testCompile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+
     // test mobile number generator
     testCompile('com.github.binarywang:java-testdata-generator:1.1.2')
 

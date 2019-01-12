@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.web.rest;
 
-import com.thebund1st.tiantong.application.OnlinePaymentCommandHandler;
-import com.thebund1st.tiantong.commands.MakeOnlinePaymentCommand;
+import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 //TODO make the url path configurable
 public class OnlinePaymentRestController {
 
-    private final OnlinePaymentCommandHandler onlinePaymentCommandHandler;
+    private final RequestOnlinePaymentCommandHandler onlinePaymentCommandHandler;
 
     @PostMapping("/api/online/payments")
-    public void handle(@RequestBody MakeOnlinePaymentCommand command) {
+    public void handle(@RequestBody RequestOnlinePaymentCommand command) {
         onlinePaymentCommandHandler.handle(command);
     }
 }

@@ -23,6 +23,7 @@ dependencies {
     // FIXME: dependency isolation
     compile('org.springframework:spring-web:5.0.9.RELEASE')
     compile 'com.github.binarywang:weixin-java-pay:3.2.0'
+    compile 'com.jayway.jsonpath:json-path:2.2.0'
 
     // spock
     testCompile('org.spockframework:spock-core:1.2-groovy-2.4')

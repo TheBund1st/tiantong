@@ -1,11 +1,12 @@
-package com.thebund1st.tiantong.events
+package com.thebund1st.tiantong.commands
 
 
 import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.events.EventIdentifier
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 
-class OnlinePaymentNotificationEventFixture {
+class OnlinePaymentNotificationFixture {
     private EventIdentifier eventIdentifier
     private double amount
     private OnlinePayment onlinePayment
@@ -38,12 +39,12 @@ class OnlinePaymentNotificationEventFixture {
 
     def build() {
         success ?
-                new OnlinePaymentSuccessNotificationReceivedEvent(eventIdentifier, onlinePayment.id, amount) :
-                new OnlinePaymentFailureNotificationReceivedEvent(eventIdentifier, onlinePayment.id, amount)
+                new OnlinePaymentSuccessNotification(eventIdentifier, onlinePayment.id, amount) :
+                new OnlinePaymentFailureNotification(eventIdentifier, onlinePayment.id, amount)
     }
 
-    static def anOnlinePaymentNotificationEvent() {
-        new OnlinePaymentNotificationEventFixture()
+    static def anOnlinePaymentNotification() {
+        new OnlinePaymentNotificationFixture()
                 .identifiedBy(UUID.randomUUID().toString())
                 .amountIs(100.00)
                 .sendTo(anOnlinePayment().amountIs(100.00).build())

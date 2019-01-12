@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.jdbc;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.events.OnlinePaymentSuccessEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,12 +10,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
+
 
 @RequiredArgsConstructor
 public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
 
     private static final String OP_COLUMNS = "ID, VERSION, AMOUNT, CORRELATION_KEY, CORRELATION_VALUE, STATUS, " +
-            "METHOD, SUBJECT, OPEN_ID, PRODUCT_ID, CREATED_AT, LAST_MODIFIED_AT";
+            "METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, CREATED_AT, LAST_MODIFIED_AT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -30,8 +33,8 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                 model.getStatus().getValue(),
                 model.getMethod().getValue(),
                 model.getSubject(),
-                model.getOpenId(),
-                model.getProductId(),
+                model.getBody(),
+                model.getProviderSpecificInfo(),
                 model.getCreatedAt(),
                 model.getLastModifiedAt()
         );
@@ -55,8 +58,8 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                     op.setStatus(OnlinePayment.Status.of(rs.getInt("STATUS")));
                     op.setMethod(OnlinePayment.Method.of(rs.getString("METHOD")));
                     op.setSubject(rs.getString("SUBJECT"));
-                    op.setOpenId(rs.getString("OPEN_ID"));
-                    op.setProductId(rs.getString("PRODUCT_ID"));
+                    op.setBody(rs.getString("BODY"));
+                    op.setProviderSpecificInfo(rs.getString("PROVIDER_SPECIFIC_INFO"));
                     op.setRawNotification(rs.getString("RAW_NOTIFICATION"));
                     op.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     op.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
@@ -68,22 +71,24 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
         return rs.getObject(columnLabel, LocalDateTime.class);
     }
 
-    public void update(OnlinePayment op) {
+    public void on(OnlinePaymentSuccessEvent event) {
+        String onlinePaymentId = event.getOnlinePaymentId().getValue();
+        int onlinePaymentVersion = event.getOnlinePaymentVersion();
         int rowUpdated = jdbcTemplate.update("UPDATE ONLINE_PAYMENT SET VERSION = VERSION + 1, " +
                         "STATUS = ?, " +
                         "LAST_MODIFIED_AT = ?, " +
                         "RAW_NOTIFICATION = ? " +
                         "WHERE ID = ? " +
                         "AND VERSION = ?",
-                op.getStatus().getValue(),
-                op.getLastModifiedAt(),
-                op.getRawNotification(),
-                op.getId().getValue(),
-                op.getVersion()
+                SUCCESS.getValue(),
+                event.getWhen(),
+                event.getNotificationBody(),
+                onlinePaymentId,
+                onlinePaymentVersion
         );
         if (rowUpdated != 1) {
             throw new OptimisticLockingFailureException(String.format("Conflict when updating Online Payment [%s][%d]",
-                    op.getId().getValue(), op.getVersion()));
+                    onlinePaymentId, onlinePaymentVersion));
         }
     }
 }

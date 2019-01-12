@@ -5,11 +5,12 @@ import com.github.binarywang.wxpay.bean.notify.WxPayNotifyResponse;
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
-import com.thebund1st.tiantong.application.OnlinePaymentCommandHandler;
-import com.thebund1st.tiantong.commands.MakeOnlinePaymentCommand;
+import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
+import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
+import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.events.EventIdentifier;
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,27 +30,28 @@ public class Application {
     @Autowired
     private WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway;
     @Autowired
-    private OnlinePaymentCommandHandler onlinePaymentCommandHandler;
+    private RequestOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler;
+    @Autowired
+    private OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber;
     @Autowired
     private WxPayService wxPayService;
 
     @PostMapping("/api/notifications")
     public String handle(@RequestBody String command) throws WxPayException {
         final WxPayOrderNotifyResult notifyResult = this.wxPayService.parseOrderNotifyResult(command);
-        OnlinePaymentSuccessNotificationReceivedEvent event =
-                new OnlinePaymentSuccessNotificationReceivedEvent(EventIdentifier.of(notifyResult.getTransactionId()),
+        OnlinePaymentSuccessNotification event =
+                new OnlinePaymentSuccessNotification(EventIdentifier.of(notifyResult.getTransactionId()),
                         OnlinePayment.Identifier.of(notifyResult.getOutTradeNo()),
                         BigDecimal.valueOf(notifyResult.getTotalFee()).divide(BigDecimal.valueOf(100)).doubleValue());
-        event.setRaw(notifyResult.getXmlString());
-        onlinePaymentCommandHandler.on(event);
+        onlinePaymentNotificationSubscriber.handle(event);
         // TODO 根据自己业务场景需要构造返回对象
         log.info(notifyResult.toString());
         return WxPayNotifyResponse.success("成功");
     }
 
     @PostMapping("/api/online/payments")
-    public String handle(@RequestBody MakeOnlinePaymentCommand command) {
-        OnlinePayment op = onlinePaymentCommandHandler.handle(command);
+    public String handle(@RequestBody RequestOnlinePaymentCommand command) {
+        OnlinePayment op = requestOnlinePaymentCommandHandler.handle(command);
         return weChatPayOnlinePaymentGateway.requestPayment(op).getQrCodeUri();
     }
 

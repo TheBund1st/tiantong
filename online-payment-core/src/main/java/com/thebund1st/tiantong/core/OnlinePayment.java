@@ -1,10 +1,10 @@
 package com.thebund1st.tiantong.core;
 
+import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
 import com.thebund1st.tiantong.events.EventIdentifier;
-import com.thebund1st.tiantong.events.OnlinePaymentFailureNotificationReceivedEvent;
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent;
+import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,10 +36,10 @@ public class OnlinePayment {
     private EventIdentifier notifiedBy;
 
     private String subject;
+    private String body;
+    private String providerSpecificInfo;
 
     // WeChat Pay specific
-    private String openId;
-    private String productId;
     private String rawNotification;
 
     public OnlinePayment() {
@@ -53,7 +53,7 @@ public class OnlinePayment {
         this.lastModifiedAt = time;
     }
 
-    public void on(OnlinePaymentSuccessNotificationReceivedEvent event, LocalDateTime now) {
+    public void on(OnlinePaymentSuccessNotification event, LocalDateTime now) {
         if (isClosed()) {
             throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
         }
@@ -61,7 +61,6 @@ public class OnlinePayment {
             throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
         }
         this.status = SUCCESS;
-        this.rawNotification = event.getRaw();
         this.notifiedBy = event.getEventId();
         this.lastModifiedAt = now;
     }
@@ -74,7 +73,7 @@ public class OnlinePayment {
         return getStatus() != PENDING;
     }
 
-    public void on(OnlinePaymentFailureNotificationReceivedEvent event, LocalDateTime now) {
+    public void on(OnlinePaymentFailureNotification event, LocalDateTime now) {
         if (isClosed()) {
             throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
         }

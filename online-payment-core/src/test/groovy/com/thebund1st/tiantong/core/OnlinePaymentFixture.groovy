@@ -1,14 +1,16 @@
 package com.thebund1st.tiantong.core
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.events.EventIdentifier
-import com.thebund1st.tiantong.events.OnlinePaymentFailureNotificationReceivedEvent
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessNotificationReceivedEvent
+import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification
+import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification
 import com.thebund1st.tiantong.utils.Randoms
 
 import static java.time.LocalDateTime.now
 
 class OnlinePaymentFixture {
     private OnlinePayment target
+    private Map providerSpecificInfo = [:]
 
     OnlinePaymentFixture() {
         this.target = new OnlinePayment()
@@ -41,14 +43,14 @@ class OnlinePaymentFixture {
     }
 
     def succeeded() {
-        def event = new OnlinePaymentSuccessNotificationReceivedEvent(EventIdentifier.of(Randoms.randomStr()),
+        def event = new OnlinePaymentSuccessNotification(EventIdentifier.of(Randoms.randomStr()),
                 target.getId(), target.getAmount())
         target.on(event, now())
         this
     }
 
     def failed() {
-        def event = new OnlinePaymentFailureNotificationReceivedEvent(EventIdentifier.of(Randoms.randomStr()),
+        def event = new OnlinePaymentFailureNotification(EventIdentifier.of(Randoms.randomStr()),
                 target.getId(), target.getAmount())
         target.on(event, now())
         this
@@ -59,7 +61,23 @@ class OnlinePaymentFixture {
         this
     }
 
+    def bodyIs(String value) {
+        target.setBody(value)
+        this
+    }
+
+    def withOpenId(String openId) {
+        this.providerSpecificInfo['openId'] = openId
+        this
+    }
+
+    def withProductId(String value) {
+        this.providerSpecificInfo['productId'] = value
+        this
+    }
+
     def build() {
+        target.setProviderSpecificInfo(new ObjectMapper().writeValueAsString(providerSpecificInfo))
         target
     }
 
@@ -67,8 +85,10 @@ class OnlinePaymentFixture {
         new OnlinePaymentFixture()
                 .idIs(OnlinePayment.Identifier.of(Randoms.randomStr()))
                 .amountIs(100.00)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+                .by(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
                 .subjectIs("This is a test product")
+                .bodyIs("This is a test product details")
+                .withOpenId(Randoms.randomStr())
     }
 }

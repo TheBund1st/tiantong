@@ -1,10 +1,9 @@
 package com.thebund1st.tiantong.core;
 
+import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
-import com.thebund1st.tiantong.events.EventIdentifier;
-import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,14 +32,11 @@ public class OnlinePayment {
     private Method method;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
-    private EventIdentifier notifiedBy;
 
     private String subject;
     private String body;
     private String providerSpecificInfo;
 
-    // WeChat Pay specific
-    private String rawNotification;
 
     public OnlinePayment() {
 
@@ -61,7 +57,6 @@ public class OnlinePayment {
             throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
         }
         this.status = SUCCESS;
-        this.notifiedBy = event.getEventId();
         this.lastModifiedAt = now;
     }
 
@@ -81,8 +76,6 @@ public class OnlinePayment {
             throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
         }
         this.status = FAILURE;
-        this.rawNotification = event.getRaw();
-        this.notifiedBy = event.getEventId();
         this.lastModifiedAt = now;
     }
 

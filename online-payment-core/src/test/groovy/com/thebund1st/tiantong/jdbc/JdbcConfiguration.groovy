@@ -15,4 +15,9 @@ class JdbcConfiguration {
     JdbcOnlinePaymentRepository jdbcOnlinePaymentRepository() {
         return new JdbcOnlinePaymentRepository(jdbcTemplate)
     }
+
+    @Bean
+    JdbcOnlinePaymentResponseRepository jdbcOnlinePaymentResponseRepository() {
+        return new JdbcOnlinePaymentResponseRepository(jdbcTemplate)
+    }
 }

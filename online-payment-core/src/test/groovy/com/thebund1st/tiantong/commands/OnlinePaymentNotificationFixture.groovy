@@ -1,21 +1,16 @@
 package com.thebund1st.tiantong.commands
 
-
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.events.EventIdentifier
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 
 class OnlinePaymentNotificationFixture {
-    private EventIdentifier eventIdentifier
     private double amount
     private OnlinePayment onlinePayment
     private boolean success
+    String text
 
-    def identifiedBy(String value) {
-        this.eventIdentifier = EventIdentifier.of(value)
-        this
-    }
 
     def amountIs(double amount) {
         this.amount = amount
@@ -37,18 +32,23 @@ class OnlinePaymentNotificationFixture {
         this
     }
 
+    def text(String value) {
+        this.text = value
+        this
+    }
+
     def build() {
         success ?
-                new OnlinePaymentSuccessNotification(eventIdentifier, onlinePayment.id, amount) :
-                new OnlinePaymentFailureNotification(eventIdentifier, onlinePayment.id, amount)
+                new OnlinePaymentSuccessNotification(onlinePayment.id, amount, text) :
+                new OnlinePaymentFailureNotification(EventIdentifier.of(""), onlinePayment.id, amount)
     }
 
     static def anOnlinePaymentNotification() {
         new OnlinePaymentNotificationFixture()
-                .identifiedBy(UUID.randomUUID().toString())
                 .amountIs(100.00)
                 .sendTo(anOnlinePayment().amountIs(100.00).build())
                 .succeed()
+                .text("This is raw text from provider")
     }
 
 }

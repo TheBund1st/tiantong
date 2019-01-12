@@ -9,7 +9,11 @@ import com.thebund1st.tiantong.core.EventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.core.OnlinePaymentResponse;
+import com.thebund1st.tiantong.core.OnlinePaymentResponseIdentifierGenerator;
+import com.thebund1st.tiantong.core.OnlinePaymentResponseRepository;
 import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentRepository;
+import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentResponseRepository;
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
@@ -61,7 +65,10 @@ public class WeChatPayConfiguration {
     @Bean
     public OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber() {
         return new OnlinePaymentNotificationSubscriber(onlinePaymentRepository(),
-                eventPublisher(), clock());
+                null,
+                onlinePaymentResponseIdentifierGenerator(),
+                eventPublisher(),
+                clock());
     }
 
     @Bean
@@ -70,8 +77,18 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
+    public OnlinePaymentResponseRepository onlinePaymentResponseRepository() {
+        return new JdbcOnlinePaymentResponseRepository(jdbcTemplate);
+    }
+
+    @Bean
     public OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator() {
         return () -> OnlinePayment.Identifier.of(UUID.randomUUID().toString().replace("-", ""));
+    }
+
+    @Bean
+    public OnlinePaymentResponseIdentifierGenerator onlinePaymentResponseIdentifierGenerator() {
+        return () -> OnlinePaymentResponse.Identifier.of(UUID.randomUUID().toString().replace("-", ""));
     }
 
     @Bean

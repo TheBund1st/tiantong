@@ -10,7 +10,6 @@ import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
 import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
-import com.thebund1st.tiantong.events.EventIdentifier;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,10 @@ public class Application {
     public String handle(@RequestBody String command) throws WxPayException {
         final WxPayOrderNotifyResult notifyResult = this.wxPayService.parseOrderNotifyResult(command);
         OnlinePaymentSuccessNotification event =
-                new OnlinePaymentSuccessNotification(EventIdentifier.of(notifyResult.getTransactionId()),
+                new OnlinePaymentSuccessNotification(
                         OnlinePayment.Identifier.of(notifyResult.getOutTradeNo()),
-                        BigDecimal.valueOf(notifyResult.getTotalFee()).divide(BigDecimal.valueOf(100)).doubleValue());
+                        BigDecimal.valueOf(notifyResult.getTotalFee()).divide(BigDecimal.valueOf(100)).doubleValue(),
+                        command);
         onlinePaymentNotificationSubscriber.handle(event);
         // TODO 根据自己业务场景需要构造返回对象
         log.info(notifyResult.toString());

@@ -60,7 +60,6 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                     op.setSubject(rs.getString("SUBJECT"));
                     op.setBody(rs.getString("BODY"));
                     op.setProviderSpecificInfo(rs.getString("PROVIDER_SPECIFIC_INFO"));
-                    op.setRawNotification(rs.getString("RAW_NOTIFICATION"));
                     op.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     op.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
                     return op;

@@ -1,7 +1,6 @@
 package com.thebund1st.tiantong.application
 
-import com.thebund1st.tiantong.core.EventPublisher
-import com.thebund1st.tiantong.core.OnlinePaymentRepository
+import com.thebund1st.tiantong.core.*
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException
 import com.thebund1st.tiantong.time.Clock
@@ -11,15 +10,21 @@ import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE
-import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
+import static com.thebund1st.tiantong.core.OnlinePaymentResponse.Code.SUCCESS
+import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 
 class OnlinePaymentNotificationSubscriberTest extends Specification {
 
     private EventPublisher eventPublisher = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
+    private OnlinePaymentResponseRepository onlinePaymentResponseRepository = Mock()
+    private OnlinePaymentResponseIdentifierGenerator onlinePaymentResponseIdentifierGenerator = Mock()
     private Clock clock = Mock()
-    private OnlinePaymentNotificationSubscriber target = new OnlinePaymentNotificationSubscriber(onlinePaymentRepository,
+    private OnlinePaymentNotificationSubscriber target = new OnlinePaymentNotificationSubscriber(
+            onlinePaymentRepository,
+            onlinePaymentResponseRepository,
+            onlinePaymentResponseIdentifierGenerator,
             eventPublisher, clock)
 
 
@@ -27,11 +32,13 @@ class OnlinePaymentNotificationSubscriberTest extends Specification {
         given:
         def op = anOnlinePayment().build()
         def now = LocalDateTime.now()
-        def notification = anOnlinePaymentNotification().succeed().sendTo(op).build()
+        def notification = anOnlinePaymentNotification().amountIs(op.amount).succeed().sendTo(op).build()
+        def responseId = anOnlinePaymentResponse().amountIs(op.amount).to(op.id).build().id
 
         and:
         onlinePaymentRepository.mustFindBy(op.id) >> op
         clock.now() >> now
+        onlinePaymentResponseIdentifierGenerator.nextIdentifier() >> responseId
 
         when:
         //noinspection GroovyAssignabilityCheck
@@ -39,8 +46,18 @@ class OnlinePaymentNotificationSubscriberTest extends Specification {
 
         then:
         assert op.lastModifiedAt == now
-        assert op.status == SUCCESS
-        assert op.notifiedBy == notification.eventId
+        assert op.status == OnlinePayment.Status.SUCCESS
+
+        and:
+        //noinspection GroovyAssignabilityCheck
+        1 * onlinePaymentResponseRepository.save({
+            it.id == responseId
+            it.amount == op.amount
+            it.text == notification.text
+            it.onlinePaymentId == op.id
+            it.code == SUCCESS
+            it.createdAt == now
+        })
 
         and:
         1 * eventPublisher.publish({
@@ -107,7 +124,6 @@ class OnlinePaymentNotificationSubscriberTest extends Specification {
         then:
         assert op.lastModifiedAt == now
         assert op.status == FAILURE
-        assert op.notifiedBy == event.eventId
 
         and:
         1 * eventPublisher.publish({

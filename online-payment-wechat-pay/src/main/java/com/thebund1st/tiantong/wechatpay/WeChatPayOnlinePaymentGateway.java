@@ -2,24 +2,34 @@ package com.thebund1st.tiantong.wechatpay;
 
 import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.core.ProviderSpecificRequest;
+import com.thebund1st.tiantong.web.rest.resources.OnlinePaymentResource;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-public class WeChatPayOnlinePaymentGateway {
+public class WeChatPayOnlinePaymentGateway implements OnlinePaymentProviderGateway {
 
     private final WxPayService wxPayService;
     private final NonceGenerator nonceGenerator;
     private final IpAddressExtractor ipAddressExtractor;
     private final String webhookEndpoint;
 
+    @Override
+    public ProviderSpecificRequest request(OnlinePayment onlinePayment) {
+        WxPayUnifiedOrderResult response = requestPayment(onlinePayment);
+        return new WeChatPaySpecificRequest(response);
+    }
+
     @SneakyThrows
-    public WeChatPayOrderResponse requestPayment(OnlinePayment op) {
+    public WxPayUnifiedOrderResult requestPayment(OnlinePayment op) {
         WxPayUnifiedOrderRequest req = new WxPayUnifiedOrderRequest();
         req.setAppid(wxPayService.getConfig().getAppId());
         req.setMchId(wxPayService.getConfig().getMchId());
@@ -35,13 +45,7 @@ public class WeChatPayOnlinePaymentGateway {
         req.setSpbillCreateIp(ipAddressExtractor.getLocalhostAddress());
         req.setNotifyUrl(webhookEndpoint);
         req.setNonceStr(nonceGenerator.next());
-        Object result = this.wxPayService.createOrder(req);
-        WeChatPayOrderResponse res = new WeChatPayOrderResponse();
-        if (result instanceof WxPayNativeOrderResult) {
-            WxPayNativeOrderResult nativeOrder = (WxPayNativeOrderResult) result;
-            res.setQrCodeUri(nativeOrder.getCodeUrl());
-        }
-        return res;
+        return this.wxPayService.unifiedOrder(req);
     }
 
     private String extractProductId(String providerSpecificInfo) {
@@ -51,6 +55,5 @@ public class WeChatPayOnlinePaymentGateway {
     private String extractOpenId(String providerSpecificInfo) {
         return JsonPath.read(providerSpecificInfo, "$.openId");
     }
-
 
 }

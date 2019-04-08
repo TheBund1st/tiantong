@@ -37,6 +37,10 @@ class OnlinePaymentFixture {
         this
     }
 
+    def byMethod(String method) {
+        by(OnlinePayment.Method.of(method))
+    }
+
     def correlatedWith(OnlinePayment.Correlation correlation) {
         target.setCorrelation(correlation)
         this
@@ -73,6 +77,11 @@ class OnlinePaymentFixture {
 
     def withProductId(String value) {
         this.providerSpecificInfo['productId'] = value
+        this
+    }
+
+    def withProviderSpecificInfo(Map providerSpecificInfo) {
+        this.providerSpecificInfo = providerSpecificInfo
         this
     }
 

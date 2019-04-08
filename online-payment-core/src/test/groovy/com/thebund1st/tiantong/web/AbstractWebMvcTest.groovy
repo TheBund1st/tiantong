@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.web
 
 
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
+import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -16,5 +17,8 @@ class AbstractWebMvcTest extends Specification {
 
     @SpringBean
     protected RequestOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler = Mock()
+
+    @SpringBean
+    protected OnlinePaymentProviderGateway onlinePaymentProviderGateway = Mock()
 
 }

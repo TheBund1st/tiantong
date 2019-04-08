@@ -17,7 +17,7 @@ import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
 import static lombok.AccessLevel.PRIVATE;
 
-@EqualsAndHashCode()
+@EqualsAndHashCode(of = "id")
 @ToString()
 @Getter
 @Setter

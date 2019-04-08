@@ -52,7 +52,7 @@ public class Application {
     @PostMapping("/api/online/payments")
     public String handle(@RequestBody RequestOnlinePaymentCommand command) {
         OnlinePayment op = requestOnlinePaymentCommandHandler.handle(command);
-        return weChatPayOnlinePaymentGateway.requestPayment(op).getQrCodeUri();
+        return weChatPayOnlinePaymentGateway.requestPayment(op).getCodeURL();
     }
 
     public static void main(String[] args) {

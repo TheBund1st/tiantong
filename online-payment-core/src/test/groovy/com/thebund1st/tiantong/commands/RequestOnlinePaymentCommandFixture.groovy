@@ -18,6 +18,18 @@ class RequestOnlinePaymentCommandFixture {
         this
     }
 
+    def byWeChatPayJsApi() {
+        by(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))
+    }
+
+    def byWeChatPayNative() {
+        by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+    }
+
+    def byDummy() {
+        by(OnlinePayment.Method.of("DUMMY"))
+    }
+
     def correlatedWith(OnlinePayment.Correlation correlation) {
         target.setCorrelation(correlation)
         this
@@ -38,6 +50,11 @@ class RequestOnlinePaymentCommandFixture {
         this
     }
 
+    def withDummySpecificInfo() {
+        this.providerSpecificInfo['dummy'] = "dummy"
+        this
+    }
+
     def build() {
         target.setProviderSpecificInfo(new ObjectMapper().writeValueAsString(providerSpecificInfo))
         target
@@ -46,11 +63,9 @@ class RequestOnlinePaymentCommandFixture {
     static def aRequestOnlinePaymentCommand() {
         new RequestOnlinePaymentCommandFixture()
                 .amountIs(100.00)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+                .byWeChatPayNative()
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
                 .withSubject("Subject")
                 .withBody("Body")
-                .withOpenId(Randoms.randomStr())
     }
-
 }

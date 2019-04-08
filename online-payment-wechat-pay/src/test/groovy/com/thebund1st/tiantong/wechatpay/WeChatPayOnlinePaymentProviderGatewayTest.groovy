@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.wechatpay
 
 import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest
+import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult
 import com.github.binarywang.wxpay.config.WxPayConfig
 import com.github.binarywang.wxpay.service.WxPayService
 import com.thebund1st.tiantong.core.OnlinePayment
@@ -10,7 +11,7 @@ import spock.lang.Specification
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 
-class WeChatPayOnlinePaymentGatewayTest extends Specification {
+class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
 
     WeChatPayOnlinePaymentGateway subject
     WxPayService wxPayService = Mock()
@@ -46,18 +47,20 @@ class WeChatPayOnlinePaymentGatewayTest extends Specification {
         request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay");
         request.setNonceStr(nonce)
         request.setOpenid("This is openId")
-        def response = new WxPayNativeOrderResult()
-        response.setCodeUrl("weixin://wxpay/bizpayurl?pr=lVQV8uF")
+        def response = new WxPayUnifiedOrderResult()
+        response.setCodeURL("weixin://wxpay/bizpayurl?pr=lVQV8uF")
         and:
         nonceGenerator.next() >> nonce
         ipAddressExtractor.getLocalhostAddress() >> ipAddress
-        wxPayService.createOrder(request) >> response
+        wxPayService.unifiedOrder(request) >> response
 
         when:
-        WeChatPayOrderResponse actual = subject.requestPayment(op)
+        def actual = subject.request(op)
 
         then:
-        assert actual.qrCodeUri == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
+        def payResult = (WeChatPaySpecificRequest) actual
+
+        assert payResult.codeURL == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
     }
 
     def "it should create unified order for native"() {
@@ -79,18 +82,19 @@ class WeChatPayOnlinePaymentGatewayTest extends Specification {
         request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay");
         request.setNonceStr(nonce)
         request.setProductId("This is productId")
-        def response = new WxPayNativeOrderResult()
-        response.setCodeUrl("weixin://wxpay/bizpayurl?pr=lVQV8uF")
+        def response = new WxPayUnifiedOrderResult()
+        response.setCodeURL("weixin://wxpay/bizpayurl?pr=lVQV8uF")
         and:
         nonceGenerator.next() >> nonce
         ipAddressExtractor.getLocalhostAddress() >> ipAddress
-        wxPayService.createOrder(request) >> response
+        wxPayService.unifiedOrder(request) >> response
 
         when:
-        WeChatPayOrderResponse actual = subject.requestPayment(op)
+        def actual = subject.request(op)
 
         then:
-        assert actual.qrCodeUri == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
+        def payResult = (WeChatPaySpecificRequest) actual
+        assert payResult.codeURL == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
     }
 
 }

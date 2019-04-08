@@ -1,26 +1,42 @@
 package com.thebund1st.tiantong.web.rest
 
+import com.thebund1st.tiantong.core.DummyProviderSpecificRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
+import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
+import static org.hamcrest.Matchers.is
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest
 class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
 
     def "it should accept make online payment request"() {
         given:
-        def command = aRequestOnlinePaymentCommand().withOpenId("abc").build()
+        def command = aRequestOnlinePaymentCommand()
+                .byDummy()
+                .withDummySpecificInfo().build()
 
+
+        and:
+        def onlinePayment = anOnlinePayment()
+                .correlatedWith(command.getCorrelation())
+                .amountIs(command.getAmount())
+                .byMethod(command.getMethod())
+                .build()
+        //noinspection GroovyAssignabilityCheck
+        requestOnlinePaymentCommandHandler.handle(command) >> onlinePayment
+
+        and:
+        def dummyProviderSpecificRequest = new DummyProviderSpecificRequest(dummyId: "dummyId")
+        onlinePaymentProviderGateway.request(onlinePayment) >> dummyProviderSpecificRequest
 
         when:
-        def resultActions = mockMvc.perform(
-                post("/api/online/payments")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content("""
+        def resultActions = mockMvc.perform(post("/api/online/payments")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content("""
                             {
                                 "amount": "${command.getAmount()}",
                                 "method": "${command.getMethod()}",
@@ -29,7 +45,7 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                                     "value": "${command.getCorrelation().getValue()}"
                                 },
                                 "providerSpecificInfo": {
-                                    "openId": "abc"
+                                    "dummy": "dummy"
                                 },
                                 "subject": "${command.getSubject()}",
                                 "body": "${command.getBody()}"
@@ -40,18 +56,6 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         then:
         resultActions
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath('$._links.wechat_pay_native.href', equalTo("")))
-
-        and:
-        //noinspection GroovyAssignabilityCheck
-        1 * requestOnlinePaymentCommandHandler.handle({
-            it.amount == command.amount
-            it.method == command.method
-            it.correlation == command.correlation
-            it.providerSpecificInfo == command.providerSpecificInfo
-            it.subject == command.subject
-            it.body == command.body
-        })
-
+                .andExpect(jsonPath("providerSpecificRequest.dummyId", is("dummyId")))
     }
 }

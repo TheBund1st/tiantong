@@ -1,12 +1,11 @@
 package com.thebund1st.tiantong.wechatpay
 
-import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult
+
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult
 import com.github.binarywang.wxpay.config.WxPayConfig
 import com.github.binarywang.wxpay.service.WxPayService
 import com.thebund1st.tiantong.core.OnlinePayment
-import net.bytebuddy.jar.asm.commons.Method
 import spock.lang.Specification
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment

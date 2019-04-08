@@ -34,8 +34,9 @@ dependencies {
     //devtools
     compile("org.springframework.boot:spring-boot-devtools")
 
-    //FIXME replace these with starter
-    compile project(':online-payment-core')
-    compile project(':online-payment-wechat-pay')
+    compile project(':online-payment-starter')
+    compile 'com.github.binarywang:weixin-java-pay:3.2.0'
+    compile 'com.jayway.jsonpath:json-path:2.2.0'
 
+    testCompile 'com.h2database:h2:1.4.192'
 }

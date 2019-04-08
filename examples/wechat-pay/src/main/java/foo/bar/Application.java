@@ -8,7 +8,6 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
-import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
 import lombok.extern.slf4j.Slf4j;
@@ -47,12 +46,6 @@ public class Application {
         // TODO 根据自己业务场景需要构造返回对象
         log.info(notifyResult.toString());
         return WxPayNotifyResponse.success("成功");
-    }
-
-    @PostMapping("/api/online/payments")
-    public String handle(@RequestBody RequestOnlinePaymentCommand command) {
-        OnlinePayment op = requestOnlinePaymentCommandHandler.handle(command);
-        return weChatPayOnlinePaymentGateway.requestPayment(op).getCodeURL();
     }
 
     public static void main(String[] args) {

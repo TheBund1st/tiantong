@@ -72,5 +72,11 @@ dependencies {
 
     // spring boot meta data
     compileOnly("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
+
+    // wechat pay
+    compileOnly 'com.github.binarywang:weixin-java-pay:3.2.0'
+    testCompile 'com.github.binarywang:weixin-java-pay:3.2.0'
+    compileOnly 'com.jayway.jsonpath:json-path:2.2.0'
+    testCompile 'com.jayway.jsonpath:json-path:2.2.0'
 }
 

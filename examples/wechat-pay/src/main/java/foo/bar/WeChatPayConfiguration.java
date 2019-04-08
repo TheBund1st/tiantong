@@ -104,7 +104,9 @@ public class WeChatPayConfiguration {
     @Bean
     public WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway() {
         return new WeChatPayOnlinePaymentGateway(wxPayService(),
-                nonceGenerator(), ipAddressExtractor(), "https://b9abf77f.ap.ngrok.io/api/notifications");
+                nonceGenerator(),
+                ipAddressExtractor(),
+                "https://b9abf77f.ap.ngrok.io/api/notifications");
     }
 
     @Bean

@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.jdbc
 
-
+import com.thebund1st.tiantong.boot.jdbc.JdbcConfiguration
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.transaction.annotation.Transactional

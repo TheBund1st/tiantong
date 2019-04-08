@@ -1,6 +1,5 @@
 package com.thebund1st.tiantong.wechatpay;
 
-import com.github.binarywang.wxpay.bean.order.WxPayNativeOrderResult;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.service.WxPayService;
@@ -8,7 +7,6 @@ import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificRequest;
-import com.thebund1st.tiantong.web.rest.resources.OnlinePaymentResource;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 

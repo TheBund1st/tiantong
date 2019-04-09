@@ -8,6 +8,7 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
@@ -35,8 +36,8 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                 model.getSubject(),
                 model.getBody(),
                 model.getProviderSpecificInfo(),
-                model.getCreatedAt(),
-                model.getLastModifiedAt()
+                Timestamp.valueOf(model.getCreatedAt()),
+                Timestamp.valueOf(model.getLastModifiedAt())
         );
     }
 

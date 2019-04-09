@@ -11,4 +11,6 @@ public class WeChatPayProperties {
     private String merchantKey;
 
     private boolean sandbox;
+
+    private String webhookEndpoint;
 }

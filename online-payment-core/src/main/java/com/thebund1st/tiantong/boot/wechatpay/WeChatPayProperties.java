@@ -1,4 +1,4 @@
-package com.thebund1st.tiantong.wechatpay;
+package com.thebund1st.tiantong.boot.wechatpay;
 
 import lombok.Data;
 

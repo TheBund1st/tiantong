@@ -6,10 +6,8 @@ import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
 import com.github.binarywang.wxpay.exception.WxPayException;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
-import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
 import com.thebund1st.tiantong.core.OnlinePayment;
-import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -25,10 +23,6 @@ import java.math.BigDecimal;
 @Slf4j
 public class Application {
 
-    @Autowired
-    private WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway;
-    @Autowired
-    private RequestOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler;
     @Autowired
     private OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber;
     @Autowired

@@ -3,7 +3,7 @@ package com.thebund1st.tiantong
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
 
-//@SpringBootTest FIXME later
+@SpringBootTest
 class ApplicationContextSmokeTest extends Specification {
 
     def "it should load application context"() {

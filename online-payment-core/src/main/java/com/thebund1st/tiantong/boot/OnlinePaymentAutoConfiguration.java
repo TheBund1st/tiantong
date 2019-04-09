@@ -5,6 +5,7 @@ import com.thebund1st.tiantong.boot.core.CoreConfiguration;
 import com.thebund1st.tiantong.boot.jdbc.JdbcConfiguration;
 import com.thebund1st.tiantong.boot.provider.ProviderConfiguration;
 import com.thebund1st.tiantong.boot.time.TimeConfiguration;
+import com.thebund1st.tiantong.boot.wechatpay.WeChatPayConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Import;
         "com.thebund1st.tiantong.web",
 })
 @Import({
+        WeChatPayConfiguration.class,
         JdbcConfiguration.class,
         ProviderConfiguration.class,
         TimeConfiguration.class,

@@ -5,15 +5,18 @@ import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.core.OnlinePayment;
-import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificRequest;
+import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.math.BigDecimal;
+import java.util.List;
+
+import static java.util.Arrays.asList;
 
 @RequiredArgsConstructor
-public class WeChatPayOnlinePaymentGateway implements OnlinePaymentProviderGateway {
+public class WeChatPayOnlinePaymentGateway implements MethodBasedOnlinePaymentProviderGateway {
 
     private final WxPayService wxPayService;
     private final NonceGenerator nonceGenerator;
@@ -54,4 +57,11 @@ public class WeChatPayOnlinePaymentGateway implements OnlinePaymentProviderGatew
         return JsonPath.read(providerSpecificInfo, "$.openId");
     }
 
+    @Override
+    public List<OnlinePayment.Method> matchedMethods() {
+        return asList(
+                OnlinePayment.Method.of("WECHAT_PAY_NATIVE"),
+                OnlinePayment.Method.of("WECHAT_PAY_JSAPI")
+        );
+    }
 }

@@ -14,12 +14,9 @@ import java.sql.SQLFeatureNotSupportedException
 import java.util.logging.Logger
 
 class AbstractAutoConfigurationTest extends Specification {
-    protected ApplicationContextRunner contextRunner = new ApplicationContextRunner()
+    protected final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(OnlinePaymentAutoConfiguration.class))
-
-    def setup() {
-        this.contextRunner = contextRunner.withUserConfiguration(JdbcTemplateConfiguration)
-    }
+            .withUserConfiguration(JdbcTemplateConfiguration)
 
     @Configuration
     static class JdbcTemplateConfiguration {

@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.boot.application;
 
-import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
+import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -24,8 +24,8 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber() {
-        return new OnlinePaymentNotificationSubscriber(onlinePaymentRepository,
+    public NotifyPaymentResultCommandHandler onlinePaymentNotificationSubscriber() {
+        return new NotifyPaymentResultCommandHandler(onlinePaymentRepository,
                 null, null, null,
                 clock);
     }

@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.web
 
-import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber
+import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration
@@ -30,6 +30,6 @@ class AbstractWebMvcTest extends Specification {
     protected WeChatPayNotifyPaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler = Mock()
 
     @SpringBean
-    protected OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber = Mock()
+    protected NotifyPaymentResultCommandHandler onlinePaymentNotificationSubscriber = Mock()
 
 }

@@ -16,14 +16,14 @@ import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResponse.Code.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 
-class OnlinePaymentNotificationSubscriberTest extends Specification {
+class NotifyPaymentResultCommandHandlerTest extends Specification {
 
     private DomainEventPublisher eventPublisher = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private OnlinePaymentResponseRepository onlinePaymentResponseRepository = Mock()
     private OnlinePaymentResponseIdentifierGenerator onlinePaymentResponseIdentifierGenerator = Mock()
     private Clock clock = Mock()
-    private OnlinePaymentNotificationSubscriber target = new OnlinePaymentNotificationSubscriber(
+    private NotifyPaymentResultCommandHandler target = new NotifyPaymentResultCommandHandler(
             onlinePaymentRepository,
             onlinePaymentResponseRepository,
             onlinePaymentResponseIdentifierGenerator,

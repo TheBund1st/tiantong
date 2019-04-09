@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.wechatpay.webhooks;
 
-import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
-import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
+import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
+import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
 import com.thebund1st.tiantong.web.webhooks.NotifyPaymentResultCommandAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class WeChatPayPaymentResultNotificationWebhookEndpoint extends OncePerRe
             "</xml>";
 
     private final NotifyPaymentResultCommandAssembler notifyPaymentResultCommandAssembler;
-    private final OnlinePaymentNotificationSubscriber handler;
+    private final NotifyPaymentResultCommandHandler handler;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -33,7 +33,7 @@ public class WeChatPayPaymentResultNotificationWebhookEndpoint extends OncePerRe
         String xmlData = IOUtils.toString(request.getInputStream(), Charset.forName("UTF-8"));
         log.info(xmlData);
         try {
-            OnlinePaymentSuccessNotification command = notifyPaymentResultCommandAssembler.from(xmlData);
+            NotifyPaymentResultCommand command = notifyPaymentResultCommandAssembler.from(xmlData);
             handler.handle(command);
             response.getWriter().write(RESPONSE);
         } catch (Exception err) {

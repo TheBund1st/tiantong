@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.boot.wechatpay.webhooks;
 
-import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
+import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayProperties;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayPaymentResultNotificationWebhookEndpoint;
@@ -18,7 +18,7 @@ public class WeChatPayWebhookConfiguration {
     @Autowired
     private WeChatPayNotifyPaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler;
     @Autowired
-    private OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber;
+    private NotifyPaymentResultCommandHandler notifyPaymentResultCommandHandler;
 
     @Bean
     public FilterRegistrationBean<WeChatPayPaymentResultNotificationWebhookEndpoint>
@@ -33,7 +33,7 @@ public class WeChatPayWebhookConfiguration {
     private WeChatPayPaymentResultNotificationWebhookEndpoint weChatPayPaymentResultNotificationWebhookEndpoint() {
         return new WeChatPayPaymentResultNotificationWebhookEndpoint(
                 weChatPayNotifyPaymentResultCommandAssembler,
-                onlinePaymentNotificationSubscriber
+                notifyPaymentResultCommandHandler
         );
     }
 

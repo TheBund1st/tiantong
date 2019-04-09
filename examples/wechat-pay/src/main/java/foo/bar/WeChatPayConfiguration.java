@@ -1,6 +1,6 @@
 package foo.bar;
 
-import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber;
+import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResponse;
@@ -24,8 +24,8 @@ public class WeChatPayConfiguration {
     private JdbcTemplate jdbcTemplate;
 
     @Bean
-    public OnlinePaymentNotificationSubscriber onlinePaymentNotificationSubscriber(OnlinePaymentRepository onlinePaymentRepository) {
-        return new OnlinePaymentNotificationSubscriber(onlinePaymentRepository,
+    public NotifyPaymentResultCommandHandler onlinePaymentNotificationSubscriber(OnlinePaymentRepository onlinePaymentRepository) {
+        return new NotifyPaymentResultCommandHandler(onlinePaymentRepository,
                 onlinePaymentResponseRepository(),
                 onlinePaymentResponseIdentifierGenerator(),
                 eventPublisher(),

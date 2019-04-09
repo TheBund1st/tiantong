@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.core;
 
-import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
+import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
 import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent;
@@ -50,7 +50,7 @@ public class OnlinePayment {
         this.lastModifiedAt = time;
     }
 
-    public List<Object> on(OnlinePaymentSuccessNotification event, LocalDateTime now) {
+    public List<Object> on(NotifyPaymentResultCommand event, LocalDateTime now) {
         if (isClosed()) {
             throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
         }

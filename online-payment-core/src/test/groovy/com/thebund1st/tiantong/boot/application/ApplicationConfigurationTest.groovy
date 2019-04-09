@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.boot.application
 
-import com.thebund1st.tiantong.application.OnlinePaymentNotificationSubscriber
+import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
 import com.thebund1st.tiantong.boot.AbstractAutoConfigurationTest
 
@@ -25,7 +25,7 @@ class ApplicationConfigurationTest extends AbstractAutoConfigurationTest {
 
         then:
         then.run { it ->
-            OnlinePaymentNotificationSubscriber actual = it.getBean(OnlinePaymentNotificationSubscriber)
+            NotifyPaymentResultCommandHandler actual = it.getBean(NotifyPaymentResultCommandHandler)
             assert actual != null
         }
     }

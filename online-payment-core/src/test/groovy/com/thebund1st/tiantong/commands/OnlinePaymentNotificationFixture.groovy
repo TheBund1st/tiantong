@@ -37,7 +37,7 @@ class OnlinePaymentNotificationFixture {
     }
 
     def build() {
-        new OnlinePaymentSuccessNotification(onlinePayment.id, amount, success, text)
+        new NotifyPaymentResultCommand(onlinePayment.id, amount, success, text)
     }
 
     static def anOnlinePaymentNotification() {

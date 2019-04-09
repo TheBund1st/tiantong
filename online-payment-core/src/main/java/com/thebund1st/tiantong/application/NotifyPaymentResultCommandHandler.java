@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.application;
 
-import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
+import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class OnlinePaymentNotificationSubscriber {
+public class NotifyPaymentResultCommandHandler {
 
     private final OnlinePaymentRepository onlinePaymentRepository;
     private final OnlinePaymentResponseRepository onlinePaymentResponseRepository;
@@ -26,7 +26,7 @@ public class OnlinePaymentNotificationSubscriber {
     private final DomainEventPublisher domainEventPublisher;
     private final Clock clock;
 
-    public void handle(OnlinePaymentSuccessNotification command) {
+    public void handle(NotifyPaymentResultCommand command) {
         LocalDateTime now = clock.now();
         OnlinePayment op = onlinePaymentRepository.mustFindBy(command.getOnlinePaymentId());
         OnlinePaymentResponse response = toResponse(command, now);
@@ -35,7 +35,7 @@ public class OnlinePaymentNotificationSubscriber {
         events.forEach(domainEventPublisher::publish);
     }
 
-    private OnlinePaymentResponse toResponse(OnlinePaymentSuccessNotification command, LocalDateTime now) {
+    private OnlinePaymentResponse toResponse(NotifyPaymentResultCommand command, LocalDateTime now) {
         OnlinePaymentResponse response = new OnlinePaymentResponse();
         response.setId(onlinePaymentResponseIdentifierGenerator.nextIdentifier());
         response.setOnlinePaymentId(command.getOnlinePaymentId());

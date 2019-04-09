@@ -8,7 +8,6 @@ import spock.lang.Specification
 import java.nio.charset.Charset
 import java.security.MessageDigest
 
-@Ignore
 class WeChatPayLearningTest extends Specification {
 
     RestTemplate restTemplate = new RestTemplate()

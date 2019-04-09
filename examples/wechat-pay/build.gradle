@@ -38,5 +38,5 @@ dependencies {
     compile 'com.github.binarywang:weixin-java-pay:3.2.0'
     compile 'com.jayway.jsonpath:json-path:2.2.0'
 
-    testCompile 'com.h2database:h2:1.4.192'
+    compile 'com.h2database:h2:1.4.192'
 }

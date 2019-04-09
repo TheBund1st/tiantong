@@ -59,7 +59,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         then:
         def payResult = (WeChatPaySpecificRequest) actual
 
-        assert payResult.codeURL == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
+        assert payResult.getCodeUrl() == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
     }
 
     def "it should create unified order for native"() {
@@ -93,7 +93,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
 
         then:
         def payResult = (WeChatPaySpecificRequest) actual
-        assert payResult.codeURL == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
+        assert payResult.getCodeUrl() == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
     }
 
 }

@@ -5,6 +5,7 @@ import com.thebund1st.tiantong.boot.AbstractAutoConfigurationTest
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor
 import com.thebund1st.tiantong.wechatpay.NonceGenerator
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway
+import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
 import spock.lang.Ignore
 
 class WeChatPayConfigurationTest extends AbstractAutoConfigurationTest {
@@ -88,4 +89,17 @@ class WeChatPayConfigurationTest extends AbstractAutoConfigurationTest {
             assert actual != null
         }
     }
+
+    def "it should provide a WeChatPayNotifyPaymentResultCommandAssembler instance"() {
+
+        when:
+        def then = this.contextRunner
+
+        then:
+        then.run {
+            WeChatPayNotifyPaymentResultCommandAssembler actual = it.getBean(WeChatPayNotifyPaymentResultCommandAssembler)
+            assert actual != null
+        }
+    }
+
 }

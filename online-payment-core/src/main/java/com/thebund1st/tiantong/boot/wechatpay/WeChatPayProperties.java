@@ -12,5 +12,11 @@ public class WeChatPayProperties {
 
     private boolean sandbox;
 
-    private String webhookEndpoint;
+    private String webhookEndpointBaseUri;
+
+    private String paymentResultNotificationWebhookEndpointPath = "/webhook/wechatpay/payment";
+
+    public String paymentResultNotificationWebhookEndpointUri() {
+        return String.format("%s%s", webhookEndpointBaseUri, paymentResultNotificationWebhookEndpointPath);
+    }
 }

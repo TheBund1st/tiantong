@@ -2,7 +2,7 @@ package com.thebund1st.tiantong.jdbc;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessEvent;
+import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -71,7 +71,7 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
         return rs.getObject(columnLabel, LocalDateTime.class);
     }
 
-    public void on(OnlinePaymentSuccessEvent event) {
+    public void on(OnlinePaymentSucceededEvent event) {
         String onlinePaymentId = event.getOnlinePaymentId().getValue();
         int onlinePaymentVersion = event.getOnlinePaymentVersion();
         int rowUpdated = jdbcTemplate.update("UPDATE ONLINE_PAYMENT SET VERSION = VERSION + 1, " +

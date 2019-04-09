@@ -1,11 +1,9 @@
 package com.thebund1st.tiantong.core
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification
-import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification
-import com.thebund1st.tiantong.events.EventIdentifier
 import com.thebund1st.tiantong.utils.Randoms
 
+import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static java.time.LocalDateTime.now
 
 class OnlinePaymentFixture {
@@ -47,16 +45,16 @@ class OnlinePaymentFixture {
     }
 
     def succeeded() {
-        def event = new OnlinePaymentSuccessNotification(
-                target.getId(), target.getAmount(), "")
+        def event = anOnlinePaymentNotification()
+                .sendTo(target)
+                .amountIs(target.getAmount())
+                .succeed()
+                .build()
         target.on(event, now())
         this
     }
 
     def failed() {
-        def event = new OnlinePaymentFailureNotification(EventIdentifier.of(Randoms.randomStr()),
-                target.getId(), target.getAmount())
-        target.on(event, now())
         this
     }
 

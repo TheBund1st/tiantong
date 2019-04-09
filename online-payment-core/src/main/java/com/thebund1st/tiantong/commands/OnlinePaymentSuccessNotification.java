@@ -11,10 +11,13 @@ public class OnlinePaymentSuccessNotification {
     //FIXME introduce monetary amount
     private double amount;
     private String text;
+    private boolean success;
 
-    public OnlinePaymentSuccessNotification(OnlinePayment.Identifier onlinePaymentId, double amount, String text) {
+    public OnlinePaymentSuccessNotification(OnlinePayment.Identifier onlinePaymentId,
+                                            double amount, boolean success, String text) {
         this.onlinePaymentId = onlinePaymentId;
         this.amount = amount;
         this.text = text;
+        this.success = success;
     }
 }

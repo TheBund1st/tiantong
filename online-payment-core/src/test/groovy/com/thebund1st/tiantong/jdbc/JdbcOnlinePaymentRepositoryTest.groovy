@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.jdbc
 
 
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessEvent
+import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent
 import org.springframework.beans.factory.annotation.Autowired
 
 import java.time.LocalDateTime
@@ -46,7 +46,7 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         subject.save(op)
 
         and:
-        def event = new OnlinePaymentSuccessEvent()
+        def event = new OnlinePaymentSucceededEvent()
         event.setOnlinePaymentId(op.id)
         event.setOnlinePaymentVersion(op.version)
         event.setCorrelation(op.correlation)

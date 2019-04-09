@@ -11,7 +11,7 @@ public class SpringCloudStreamDomainEventPublisher implements DomainEventPublish
     private final MessageChannel output;
 
     @Override
-    public void publish(OnlinePaymentSuccessEvent event) {
+    public void publish(Object event) {
         output.send(MessageBuilder.withPayload(event).build());
     }
 }

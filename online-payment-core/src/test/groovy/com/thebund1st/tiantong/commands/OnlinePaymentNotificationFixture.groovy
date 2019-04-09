@@ -1,7 +1,6 @@
 package com.thebund1st.tiantong.commands
 
 import com.thebund1st.tiantong.core.OnlinePayment
-import com.thebund1st.tiantong.events.EventIdentifier
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 
@@ -38,9 +37,7 @@ class OnlinePaymentNotificationFixture {
     }
 
     def build() {
-        success ?
-                new OnlinePaymentSuccessNotification(onlinePayment.id, amount, text) :
-                new OnlinePaymentFailureNotification(EventIdentifier.of(""), onlinePayment.id, amount)
+        new OnlinePaymentSuccessNotification(onlinePayment.id, amount, success, text)
     }
 
     static def anOnlinePaymentNotification() {

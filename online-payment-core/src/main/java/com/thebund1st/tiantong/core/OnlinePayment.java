@@ -1,9 +1,9 @@
 package com.thebund1st.tiantong.core;
 
-import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
+import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +11,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
-import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
 import static lombok.AccessLevel.PRIVATE;
@@ -49,7 +50,7 @@ public class OnlinePayment {
         this.lastModifiedAt = time;
     }
 
-    public void on(OnlinePaymentSuccessNotification event, LocalDateTime now) {
+    public List<Object> on(OnlinePaymentSuccessNotification event, LocalDateTime now) {
         if (isClosed()) {
             throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
         }
@@ -58,6 +59,17 @@ public class OnlinePayment {
         }
         this.status = SUCCESS;
         this.lastModifiedAt = now;
+        return Collections.singletonList(toOnlinePaymentSuccessEvent(now));
+    }
+
+    private OnlinePaymentSucceededEvent toOnlinePaymentSuccessEvent(LocalDateTime now) {
+        OnlinePaymentSucceededEvent event = new OnlinePaymentSucceededEvent();
+        event.setWhen(now);
+        event.setOnlinePaymentId(getId());
+        event.setOnlinePaymentVersion(getVersion());
+        event.setCorrelation(getCorrelation());
+        event.setAmount(getAmount());
+        return event;
     }
 
     private boolean amountMismatches(double amount) {
@@ -66,17 +78,6 @@ public class OnlinePayment {
 
     private boolean isClosed() {
         return getStatus() != PENDING;
-    }
-
-    public void on(OnlinePaymentFailureNotification event, LocalDateTime now) {
-        if (isClosed()) {
-            throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
-        }
-        if (amountMismatches(event.getAmount())) {
-            throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
-        }
-        this.status = FAILURE;
-        this.lastModifiedAt = now;
     }
 
     @Getter

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 
 @Data
-public class OnlinePaymentSuccessEvent {
+public class OnlinePaymentSucceededEvent {
     private OnlinePayment.Identifier onlinePaymentId;
     private int onlinePaymentVersion;
     private OnlinePayment.Correlation correlation;

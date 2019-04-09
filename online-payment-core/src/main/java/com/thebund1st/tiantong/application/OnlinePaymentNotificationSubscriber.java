@@ -1,6 +1,5 @@
 package com.thebund1st.tiantong.application;
 
-import com.thebund1st.tiantong.commands.OnlinePaymentFailureNotification;
 import com.thebund1st.tiantong.commands.OnlinePaymentSuccessNotification;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
@@ -8,13 +7,13 @@ import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResponse;
 import com.thebund1st.tiantong.core.OnlinePaymentResponseIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentResponseRepository;
-import com.thebund1st.tiantong.events.OnlinePaymentSuccessEvent;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,9 +30,9 @@ public class OnlinePaymentNotificationSubscriber {
         LocalDateTime now = clock.now();
         OnlinePayment op = onlinePaymentRepository.mustFindBy(command.getOnlinePaymentId());
         OnlinePaymentResponse response = toResponse(command, now);
-        op.on(command, now);
+        List<Object> events = op.on(command, now);
         onlinePaymentResponseRepository.save(response);
-        domainEventPublisher.publish(toOnlinePaymentSuccessEvent(op, now));
+        events.forEach(domainEventPublisher::publish);
     }
 
     private OnlinePaymentResponse toResponse(OnlinePaymentSuccessNotification command, LocalDateTime now) {
@@ -47,20 +46,4 @@ public class OnlinePaymentNotificationSubscriber {
         return response;
     }
 
-    public void handle(OnlinePaymentFailureNotification command) {
-        LocalDateTime now = clock.now();
-        OnlinePayment op = onlinePaymentRepository.mustFindBy(command.getOnlinePaymentId());
-        op.on(command, now);
-        domainEventPublisher.publish(toOnlinePaymentSuccessEvent(op, now));
-    }
-
-    private OnlinePaymentSuccessEvent toOnlinePaymentSuccessEvent(OnlinePayment op, LocalDateTime now) {
-        OnlinePaymentSuccessEvent event = new OnlinePaymentSuccessEvent();
-        event.setWhen(now);
-        event.setOnlinePaymentId(op.getId());
-        event.setOnlinePaymentVersion(op.getVersion());
-        event.setCorrelation(op.getCorrelation());
-        event.setAmount(op.getAmount());
-        return event;
-    }
 }

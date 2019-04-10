@@ -13,15 +13,15 @@ import java.time.LocalDateTime
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
-import static com.thebund1st.tiantong.core.OnlinePaymentResponse.Code.SUCCESS
+import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 
 class NotifyPaymentResultCommandHandlerTest extends Specification {
 
     private DomainEventPublisher eventPublisher = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
-    private OnlinePaymentResponseRepository onlinePaymentResponseRepository = Mock()
-    private OnlinePaymentResponseIdentifierGenerator onlinePaymentResponseIdentifierGenerator = Mock()
+    private OnlinePaymentResultNotificationRepository onlinePaymentResponseRepository = Mock()
+    private OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResponseIdentifierGenerator = Mock()
     private Clock clock = Mock()
     private NotifyPaymentResultCommandHandler target = new NotifyPaymentResultCommandHandler(
             onlinePaymentRepository,

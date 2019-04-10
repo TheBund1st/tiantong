@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.boot.jdbc;
 
 import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentRepository;
-import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentResponseRepository;
+import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentResultNotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,7 @@ public class JdbcConfiguration {
     }
 
     @Bean
-    public JdbcOnlinePaymentResponseRepository jdbcOnlinePaymentResponseRepository() {
-        return new JdbcOnlinePaymentResponseRepository(jdbcTemplate);
+    public JdbcOnlinePaymentResultNotificationRepository jdbcOnlinePaymentResponseRepository() {
+        return new JdbcOnlinePaymentResultNotificationRepository(jdbcTemplate);
     }
 }

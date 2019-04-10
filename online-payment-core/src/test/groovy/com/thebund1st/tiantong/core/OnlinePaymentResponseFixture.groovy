@@ -9,13 +9,13 @@ import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static java.time.LocalDateTime.now
 
 class OnlinePaymentResponseFixture {
-    private OnlinePaymentResponse target = new OnlinePaymentResponse()
+    private OnlinePaymentResultNotification target = new OnlinePaymentResultNotification()
 
     def idIs(String value) {
-        idIs(OnlinePaymentResponse.Identifier.of(value))
+        idIs(OnlinePaymentResultNotification.Identifier.of(value))
     }
 
-    def idIs(OnlinePaymentResponse.Identifier id) {
+    def idIs(OnlinePaymentResultNotification.Identifier id) {
         target.setId(id)
         this
     }
@@ -31,7 +31,7 @@ class OnlinePaymentResponseFixture {
     }
 
     def succeeded() {
-        target.setCode(OnlinePaymentResponse.Code.SUCCESS)
+        target.setCode(OnlinePaymentResultNotification.Code.SUCCESS)
         this
     }
 
@@ -46,7 +46,7 @@ class OnlinePaymentResponseFixture {
 
     static def anOnlinePaymentResponse() {
         new OnlinePaymentResponseFixture()
-                .idIs(OnlinePaymentResponse.Identifier.of(Randoms.randomStr()))
+                .idIs(OnlinePaymentResultNotification.Identifier.of(Randoms.randomStr()))
                 .amountIs(100.00)
                 .to(anOnlinePayment().build().id)
                 .succeeded()

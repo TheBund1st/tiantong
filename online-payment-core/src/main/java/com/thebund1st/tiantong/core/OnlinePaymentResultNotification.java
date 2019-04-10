@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @ToString()
 @Getter
 @Setter
-public class OnlinePaymentResponse {
+public class OnlinePaymentResultNotification {
 
     private Identifier id;
     private OnlinePayment.Identifier onlinePaymentId;

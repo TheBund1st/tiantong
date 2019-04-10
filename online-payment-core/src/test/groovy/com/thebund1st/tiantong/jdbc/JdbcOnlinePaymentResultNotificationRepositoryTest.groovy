@@ -5,10 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired
 
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 
-class JdbcOnlinePaymentResponseRepositoryTest extends AbstractJdbcTest {
+class JdbcOnlinePaymentResultNotificationRepositoryTest extends AbstractJdbcTest {
 
     @Autowired
-    private JdbcOnlinePaymentResponseRepository subject
+    private JdbcOnlinePaymentResultNotificationRepository subject
 
 
     def "it should save online payment response"() {

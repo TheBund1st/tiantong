@@ -4,6 +4,8 @@ import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationRepository;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfiguration {
     private final OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator;
     private final OnlinePaymentRepository onlinePaymentRepository;
+    private final OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResultNotificationIdentifierGenerator;
+    private final OnlinePaymentResultNotificationRepository onlinePaymentResultNotificationRepository;
     private final Clock clock;
 
 
@@ -26,7 +30,9 @@ public class ApplicationConfiguration {
     @Bean
     public NotifyPaymentResultCommandHandler onlinePaymentNotificationSubscriber() {
         return new NotifyPaymentResultCommandHandler(onlinePaymentRepository,
-                null, null, null,
+                onlinePaymentResultNotificationRepository,
+                onlinePaymentResultNotificationIdentifierGenerator,
+                null,
                 clock);
     }
 }

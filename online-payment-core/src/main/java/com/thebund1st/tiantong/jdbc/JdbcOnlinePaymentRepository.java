@@ -2,7 +2,6 @@ package com.thebund1st.tiantong.jdbc;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
-import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -67,20 +66,17 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                 });
     }
 
-    private LocalDateTime toDateTime(ResultSet rs, String columnLabel) throws java.sql.SQLException {
-        return rs.getObject(columnLabel, LocalDateTime.class);
-    }
-
-    public void on(OnlinePaymentSucceededEvent event) {
-        String onlinePaymentId = event.getOnlinePaymentId().getValue();
-        int onlinePaymentVersion = event.getOnlinePaymentVersion();
+    @Override
+    public void update(OnlinePayment onlinePayment) {
+        String onlinePaymentId = onlinePayment.getId().getValue();
+        int onlinePaymentVersion = onlinePayment.getVersion();
         int rowUpdated = jdbcTemplate.update("UPDATE ONLINE_PAYMENT SET VERSION = VERSION + 1, " +
                         "STATUS = ?, " +
                         "LAST_MODIFIED_AT = ? " +
                         "WHERE ID = ? " +
                         "AND VERSION = ?",
                 SUCCESS.getValue(),
-                event.getWhen(),
+                Timestamp.valueOf(onlinePayment.getLastModifiedAt()),
                 onlinePaymentId,
                 onlinePaymentVersion
         );
@@ -89,4 +85,9 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                     onlinePaymentId, onlinePaymentVersion));
         }
     }
+
+    private LocalDateTime toDateTime(ResultSet rs, String columnLabel) throws java.sql.SQLException {
+        return rs.getObject(columnLabel, LocalDateTime.class);
+    }
+
 }

@@ -1,9 +1,7 @@
 package com.thebund1st.tiantong.core;
 
-import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
-import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
@@ -50,26 +46,15 @@ public class OnlinePayment {
         this.lastModifiedAt = time;
     }
 
-    public List<Object> on(NotifyPaymentResultCommand event, LocalDateTime now) {
+    public void on(OnlinePaymentResultNotification notification) {
         if (isClosed()) {
-            throw new OnlinePaymentAlreadyClosedException(getId(), getStatus(), event);
+            throw new OnlinePaymentAlreadyClosedException(this, notification);
         }
-        if (amountMismatches(event.getAmount())) {
-            throw new FakeOnlinePaymentNotificationException(getId(), getAmount(), event);
+        if (amountMismatches(notification.getAmount())) {
+            throw new FakeOnlinePaymentNotificationException(this, notification);
         }
         this.status = SUCCESS;
-        this.lastModifiedAt = now;
-        return Collections.singletonList(toOnlinePaymentSuccessEvent(now));
-    }
-
-    private OnlinePaymentSucceededEvent toOnlinePaymentSuccessEvent(LocalDateTime now) {
-        OnlinePaymentSucceededEvent event = new OnlinePaymentSucceededEvent();
-        event.setWhen(now);
-        event.setOnlinePaymentId(getId());
-        event.setOnlinePaymentVersion(getVersion());
-        event.setCorrelation(getCorrelation());
-        event.setAmount(getAmount());
-        return event;
+        this.lastModifiedAt = notification.getCreatedAt();
     }
 
     private boolean amountMismatches(double amount) {

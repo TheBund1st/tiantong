@@ -1,14 +1,13 @@
 package com.thebund1st.tiantong.core.exceptions;
 
-import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 
 public class OnlinePaymentAlreadyClosedException extends RuntimeException {
 
-    public OnlinePaymentAlreadyClosedException(OnlinePayment.Identifier id, OnlinePayment.Status status,
-                                               NotifyPaymentResultCommand event) {
-        super(String.format("Online Payment [%s] failed to handle [%s] as it has been marked as %s",
-                id.getValue(), event, status));
+    public OnlinePaymentAlreadyClosedException(OnlinePayment onlinePayment,
+                                               OnlinePaymentResultNotification notification) {
+        super(String.format("Online Payment [%s] has been marked as %s, it failed to handle [%s]",
+                onlinePayment.getId().getValue(), onlinePayment.getStatus(), notification));
     }
-
 }

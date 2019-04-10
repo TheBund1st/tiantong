@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.jdbc
 
-
+import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotification
 import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
+import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
 
 class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
 
@@ -46,14 +48,16 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         subject.save(op)
 
         and:
-        def event = new OnlinePaymentSucceededEvent()
-        event.setOnlinePaymentId(op.id)
-        event.setOnlinePaymentVersion(op.version)
-        event.setCorrelation(op.correlation)
-        event.setWhen(LocalDateTime.now())
+        def notification = new OnlinePaymentResultNotification()
+        notification.setOnlinePaymentId(op.id)
+        notification.setAmount(op.amount)
+        notification.setCode(SUCCESS)
+        notification.setCreatedAt(LocalDateTime.now())
+
+        op.on(notification)
 
         and:
-        subject.on(event)
+        subject.update(op)
 
         when:
         def after = subject.mustFindBy(op.id)
@@ -62,8 +66,8 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert after != null
         assert after.id == op.id
         assert after.version == op.version + 1
-        assert after.status == SUCCESS
-        assert after.lastModifiedAt == event.when
+        assert after.status == OnlinePayment.Status.SUCCESS
+        assert after.lastModifiedAt == notification.createdAt
     }
 
 }

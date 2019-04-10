@@ -5,4 +5,6 @@ public interface OnlinePaymentRepository {
     void save(OnlinePayment model);
 
     OnlinePayment mustFindBy(OnlinePayment.Identifier id);
+
+    void update(OnlinePayment onlinePayment);
 }

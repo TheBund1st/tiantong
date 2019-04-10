@@ -13,8 +13,8 @@ import java.time.LocalDateTime
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
-import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
+import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
 
 class NotifyPaymentResultCommandHandlerTest extends Specification {
 
@@ -87,7 +87,7 @@ class NotifyPaymentResultCommandHandlerTest extends Specification {
 
         then:
         def thrown = thrown(OnlinePaymentAlreadyClosedException)
-        assert thrown.getMessage().contains("Online Payment [154] failed to handle [${event}] as it has been marked as SUCCESS")
+        assert thrown.getMessage().contains("Online Payment [154] has been marked as SUCCESS, it failed to handle")
     }
 
     def "it should throw when handling fake events"() {
@@ -106,7 +106,7 @@ class NotifyPaymentResultCommandHandlerTest extends Specification {
 
         then:
         def thrown = thrown(FakeOnlinePaymentNotificationException)
-        assert thrown.getMessage().contains("Online Payment [154][100.0] failed to handle [${event}] due to mismatch amount")
+        assert thrown.getMessage().contains("Online Payment [154][100.0] failed to handle mismatch amount")
     }
 
     @Ignore

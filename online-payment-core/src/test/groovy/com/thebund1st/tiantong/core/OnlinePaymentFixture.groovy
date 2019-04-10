@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.utils.Randoms
 
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
+import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 import static java.time.LocalDateTime.now
 
 class OnlinePaymentFixture {
@@ -45,12 +46,12 @@ class OnlinePaymentFixture {
     }
 
     def succeeded() {
-        def event = anOnlinePaymentNotification()
-                .sendTo(target)
+        def event = anOnlinePaymentResponse()
+                .to(target.getId())
                 .amountIs(target.getAmount())
-                .succeed()
+                .succeeded()
                 .build()
-        target.on(event, now())
+        target.on(event)
         this
     }
 

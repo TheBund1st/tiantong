@@ -1,4 +1,4 @@
-package com.thebund1st.tiantong.events;
+package com.thebund1st.tiantong.messaging;
 
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import lombok.RequiredArgsConstructor;

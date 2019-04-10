@@ -2,12 +2,10 @@ package com.thebund1st.tiantong.jdbc
 
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification
-import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent
 import org.springframework.beans.factory.annotation.Autowired
 
 import java.time.LocalDateTime
 
-import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
 

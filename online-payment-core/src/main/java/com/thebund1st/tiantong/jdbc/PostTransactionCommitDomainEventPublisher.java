@@ -9,16 +9,14 @@ import static org.springframework.transaction.support.TransactionSynchronization
 @RequiredArgsConstructor
 public class PostTransactionCommitDomainEventPublisher implements DomainEventPublisher {
 
-    private final DomainEventPublisher domainEventPublisher;
-    private final JdbcOnlinePaymentRepository jdbcOnlinePaymentRepository;
+    private final DomainEventPublisher delegate;
 
     @Override
     public void publish(Object event) {
-//        jdbcOnlinePaymentRepository.on(event);
         registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
-                domainEventPublisher.publish(event);
+                delegate.publish(event);
             }
         });
     }

@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.web.rest
 
-import com.thebund1st.tiantong.core.DummyProviderSpecificRequest
+import com.thebund1st.tiantong.dummypay.DummySpecificRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
@@ -30,7 +30,7 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         requestOnlinePaymentCommandHandler.handle(command) >> onlinePayment
 
         and:
-        def dummyProviderSpecificRequest = new DummyProviderSpecificRequest(dummyId: "dummyId")
+        def dummyProviderSpecificRequest = new DummySpecificRequest(dummyId: "dummyId")
         onlinePaymentProviderGateway.request(onlinePayment) >> dummyProviderSpecificRequest
 
         when:

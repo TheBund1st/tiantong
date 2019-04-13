@@ -1,8 +1,9 @@
 package com.thebund1st.tiantong.provider
 
-import com.thebund1st.tiantong.core.DummyProviderSpecificRequest
+
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.exceptions.NoSuchOnlinePaymentProviderGatewayException
+import com.thebund1st.tiantong.dummypay.DummySpecificRequest
 import spock.lang.Specification
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
@@ -28,7 +29,7 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
         def onlinePayment = anOnlinePayment().byMethod("DUMMY").build()
 
         and:
-        def request = new DummyProviderSpecificRequest(dummyId: "dummyId")
+        def request = new DummySpecificRequest(dummyId: "dummyId")
         dummyGateway.request(onlinePayment) >> request
 
         when:
@@ -44,7 +45,7 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
         def onlinePayment = anOnlinePayment().byMethod("ANOTHER_DUMMY").build()
 
         and:
-        def request = new DummyProviderSpecificRequest(dummyId: "anotherDummyId")
+        def request = new DummySpecificRequest(dummyId: "anotherDummyId")
         anotherDummyGateway.request(onlinePayment) >> request
 
         when:

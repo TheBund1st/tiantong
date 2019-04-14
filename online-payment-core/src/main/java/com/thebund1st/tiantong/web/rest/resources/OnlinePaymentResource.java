@@ -6,6 +6,9 @@ import lombok.Data;
 @Data
 public class OnlinePaymentResource {
 
+    private String identifier;
+    private double amount;
+    private String method;
     private ProviderSpecificRequest providerSpecificRequest;
 
 

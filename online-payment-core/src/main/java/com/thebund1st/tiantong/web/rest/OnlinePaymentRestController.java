@@ -30,6 +30,9 @@ public class OnlinePaymentRestController {
     private OnlinePaymentResource assemble(OnlinePayment onlinePayment,
                                            ProviderSpecificRequest providerSpecificRequest) {
         OnlinePaymentResource resource = new OnlinePaymentResource();
+        resource.setIdentifier(onlinePayment.getId().getValue());
+        resource.setAmount(onlinePayment.getAmount());
+        resource.setMethod(onlinePayment.getMethod().getValue());
         resource.setProviderSpecificRequest(providerSpecificRequest);
         return resource;
     }

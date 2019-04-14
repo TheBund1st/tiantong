@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static java.util.Collections.singletonList;
 
-public class DummyOnlinePaymentProviderGateway implements MethodBasedOnlinePaymentProviderGateway {
+public class DummyPayOnlinePaymentProviderGateway implements MethodBasedOnlinePaymentProviderGateway {
     @Override
     public List<OnlinePayment.Method> matchedMethods() {
         return singletonList(OnlinePayment.Method.of("DUMMY"));
@@ -17,8 +17,8 @@ public class DummyOnlinePaymentProviderGateway implements MethodBasedOnlinePayme
 
     @Override
     public ProviderSpecificRequest request(OnlinePayment onlinePayment) {
-        DummySpecificRequest dummySpecificRequest = new DummySpecificRequest();
-        dummySpecificRequest.setDummyId(UUID.randomUUID().toString());
-        return dummySpecificRequest;
+        DummyPaySpecificRequest dummyPaySpecificRequest = new DummyPaySpecificRequest();
+        dummyPaySpecificRequest.setDummyId(UUID.randomUUID().toString());
+        return dummyPaySpecificRequest;
     }
 }

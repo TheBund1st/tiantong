@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.web.rest
 
-import com.thebund1st.tiantong.dummypay.DummySpecificRequest
+import com.thebund1st.tiantong.dummypay.DummyPaySpecificRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
@@ -30,7 +30,7 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         requestOnlinePaymentCommandHandler.handle(command) >> onlinePayment
 
         and:
-        def dummyProviderSpecificRequest = new DummySpecificRequest(dummyId: "dummyId")
+        def dummyProviderSpecificRequest = new DummyPaySpecificRequest(dummyId: "dummyId")
         onlinePaymentProviderGateway.request(onlinePayment) >> dummyProviderSpecificRequest
 
         when:
@@ -56,6 +56,9 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         then:
         resultActions
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("identifier", is(onlinePayment.getId().value)))
+                .andExpect(jsonPath("amount", is(onlinePayment.getAmount())))
+                .andExpect(jsonPath("method", is(onlinePayment.getMethod().getValue())))
                 .andExpect(jsonPath("providerSpecificRequest.dummyId", is("dummyId")))
     }
 }

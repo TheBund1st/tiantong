@@ -50,8 +50,6 @@ class WeChatPayWebhookEndpointTest extends AbstractWebMvcTest {
                 .build()
         weChatPayNotifyPaymentResultCommandAssembler.from(xml) >> command
 
-        and:
-        this.onlinePaymentNotificationSubscriber.handle(command)
 
         when:
         def resultActions = mockMvc.perform(post("/webhook/wechatpay/payment")
@@ -62,5 +60,7 @@ class WeChatPayWebhookEndpointTest extends AbstractWebMvcTest {
                 .andExpect(status().isOk())
                 .andExpect(xpath("/xml/return_code").string("SUCCESS"))
                 .andExpect(xpath("/xml/return_msg").string("OK"))
+        and:
+        this.onlinePaymentNotificationSubscriber.handle(command)
     }
 }

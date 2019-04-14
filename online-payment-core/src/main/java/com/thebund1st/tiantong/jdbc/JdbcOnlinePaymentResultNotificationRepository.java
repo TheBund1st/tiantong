@@ -6,6 +6,7 @@ import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 
@@ -25,7 +26,7 @@ public class JdbcOnlinePaymentResultNotificationRepository implements OnlinePaym
                 model.getAmount(),
                 model.getCode().getValue(),
                 model.getText(),
-                model.getCreatedAt()
+                Timestamp.valueOf(model.getCreatedAt())
         );
     }
 

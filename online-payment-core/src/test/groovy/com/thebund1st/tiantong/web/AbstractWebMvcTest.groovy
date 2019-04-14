@@ -2,9 +2,12 @@ package com.thebund1st.tiantong.web
 
 import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
+import com.thebund1st.tiantong.boot.dummypay.DummyPayPropertiesConfiguration
+import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +17,10 @@ import org.springframework.test.web.servlet.MockMvc
 import spock.lang.Specification
 
 @WebMvcTest
-@Import([WeChatPayWebhookConfiguration, WeChatPayPropertiesConfiguration])
+@Import([
+        WeChatPayWebhookConfiguration, WeChatPayPropertiesConfiguration,
+        DummyPayWebhookConfiguration, DummyPayPropertiesConfiguration
+])
 class AbstractWebMvcTest extends Specification {
 
     @Autowired
@@ -28,6 +34,9 @@ class AbstractWebMvcTest extends Specification {
 
     @SpringBean
     protected WeChatPayNotifyPaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler = Mock()
+
+    @SpringBean
+    protected DummyPayNotifyPaymentResultCommandAssembler dummyNotifyPaymentResultCommandAssembler = Mock()
 
     @SpringBean
     protected NotifyPaymentResultCommandHandler onlinePaymentNotificationSubscriber = Mock()

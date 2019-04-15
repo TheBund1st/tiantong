@@ -4,7 +4,9 @@ import com.thebund1st.tiantong.dummypay.DummyPaySpecificRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
+import static com.thebund1st.tiantong.commands.RequestOnlineRefundCommandFixture.aRequestOnlineRefundCommand
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
+import static com.thebund1st.tiantong.core.refund.OnlineRefundFixture.anOnlineRefund
 import static org.hamcrest.Matchers.is
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -60,5 +62,26 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                 .andExpect(jsonPath("amount", is(onlinePayment.getAmount())))
                 .andExpect(jsonPath("method", is(onlinePayment.getMethod().getValue())))
                 .andExpect(jsonPath("providerSpecificRequest.dummyId", is("dummyId")))
+    }
+
+    def "it should accept refund request"() {
+        given:
+        def onlinePayment = anOnlinePayment().idIs("a-unique-string").succeeded().build()
+        def command = aRequestOnlineRefundCommand().with(onlinePayment).build()
+        def onlineRefund = anOnlineRefund().with(onlinePayment).build()
+
+        and:
+        //noinspection GroovyAssignabilityCheck
+        requestOnlineRefundCommandHandler.handle(command) >> onlineRefund
+
+        when:
+        def resultActions = mockMvc.perform(post("/api/online/payments/a-unique-string/refunds")
+                .contentType(APPLICATION_JSON_UTF8)
+        )
+
+        then:
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("identifier", is(onlineRefund.getId().value)))
     }
 }

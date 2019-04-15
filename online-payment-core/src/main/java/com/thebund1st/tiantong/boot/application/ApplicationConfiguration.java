@@ -8,6 +8,8 @@ import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationRepository;
+import com.thebund1st.tiantong.core.refund.OnlineRefundIdentifierGenerator;
+import com.thebund1st.tiantong.core.refund.OnlineRefundRepository;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +24,8 @@ public class ApplicationConfiguration {
     private final OnlinePaymentResultNotificationRepository onlinePaymentResultNotificationRepository;
     private final DomainEventPublisher domainEventPublisher;
     private final Clock clock;
+    private final OnlineRefundIdentifierGenerator onlineRefundIdentifierGenerator;
+    private final OnlineRefundRepository onlineRefundRepository;
 
 
     @Bean
@@ -41,6 +45,7 @@ public class ApplicationConfiguration {
 
     @Bean
     public RequestOnlineRefundCommandHandler requestOnlineRefundCommandHandler() {
-        return new RequestOnlineRefundCommandHandler();
+        return new RequestOnlineRefundCommandHandler(onlinePaymentRepository,
+                onlineRefundIdentifierGenerator, onlineRefundRepository, clock);
     }
 }

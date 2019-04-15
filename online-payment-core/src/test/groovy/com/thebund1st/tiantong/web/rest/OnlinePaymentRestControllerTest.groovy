@@ -67,8 +67,8 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
     def "it should accept refund request"() {
         given:
         def onlinePayment = anOnlinePayment().idIs("a-unique-string").succeeded().build()
-        def command = aRequestOnlineRefundCommand().with(onlinePayment).build()
         def onlineRefund = anOnlineRefund().with(onlinePayment).build()
+        def command = aRequestOnlineRefundCommand().with(onlineRefund).build()
 
         and:
         //noinspection GroovyAssignabilityCheck

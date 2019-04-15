@@ -18,6 +18,7 @@ public class OnlineRefund {
     private int version = 1;
     //FIXME: introduce monetary amount
     private OnlinePayment.Identifier onlinePaymentId;
+    private double onlinePaymentAmount;
     private double amount;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;

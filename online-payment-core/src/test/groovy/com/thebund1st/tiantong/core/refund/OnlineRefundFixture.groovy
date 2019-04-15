@@ -20,6 +20,8 @@ class OnlineRefundFixture {
 
     def with(OnlinePayment op) {
         this.target.setOnlinePaymentId(op.getId())
+        this.target.setAmount(op.amount)
+        this.target.setOnlinePaymentAmount(op.amount)
         this
     }
 

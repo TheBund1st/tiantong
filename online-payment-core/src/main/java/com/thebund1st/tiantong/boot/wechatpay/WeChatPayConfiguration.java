@@ -45,7 +45,8 @@ public class WeChatPayConfiguration {
         return new WeChatPayOnlinePaymentGateway(wxPayService(weChatPayProperties),
                 nonceGenerator(),
                 ipAddressExtractor(),
-                weChatPayProperties.paymentResultNotificationWebhookEndpointUri());
+                weChatPayProperties.paymentResultNotificationWebhookEndpointUri(),
+                weChatPayProperties.refundResultNotificationWebhookEndpointUri());
     }
 
     @Bean

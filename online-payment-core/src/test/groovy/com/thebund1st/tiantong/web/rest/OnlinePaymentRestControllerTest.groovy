@@ -83,5 +83,8 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("identifier", is(onlineRefund.getId().value)))
+
+        and:
+        1 * onlineRefundProviderGateway.request(onlineRefund)
     }
 }

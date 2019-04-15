@@ -6,6 +6,7 @@ import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import com.thebund1st.tiantong.commands.RequestOnlineRefundCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.web.rest.resources.OnlinePaymentResource;
@@ -23,6 +24,7 @@ public class OnlinePaymentRestController {
     private final RequestOnlinePaymentCommandHandler onlinePaymentCommandHandler;
     private final OnlinePaymentProviderGateway onlinePaymentProviderGateway;
     private final RequestOnlineRefundCommandHandler onlineRefundCommandHandler;
+    private final OnlineRefundProviderGateway onlineRefundProviderGateway;
 
 
     //TODO make the url path configurable
@@ -38,6 +40,7 @@ public class OnlinePaymentRestController {
         RequestOnlineRefundCommand command = new RequestOnlineRefundCommand();
         command.setOnlinePaymentId(onlinePaymentId);
         OnlineRefund refund = onlineRefundCommandHandler.handle(command);
+        onlineRefundProviderGateway.request(refund);
         return assemble(refund);
     }
 

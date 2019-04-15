@@ -8,6 +8,7 @@ import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfigurati
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
+import com.thebund1st.tiantong.core.OnlineRefundProviderGateway
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
 import org.spockframework.spring.SpringBean
@@ -44,5 +45,8 @@ class AbstractWebMvcTest extends Specification {
 
     @SpringBean
     protected RequestOnlineRefundCommandHandler requestOnlineRefundCommandHandler = Mock()
+
+    @SpringBean
+    protected OnlineRefundProviderGateway onlineRefundProviderGateway = Mock()
 
 }

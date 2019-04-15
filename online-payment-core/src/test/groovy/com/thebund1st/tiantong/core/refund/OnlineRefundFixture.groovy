@@ -4,7 +4,10 @@ import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.OnlinePaymentFixture
 import com.thebund1st.tiantong.utils.Randoms
 
+import java.time.LocalDateTime
+
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
+import static java.time.LocalDateTime.now
 
 class OnlineRefundFixture {
     private OnlineRefund target = new OnlineRefund()
@@ -25,6 +28,16 @@ class OnlineRefundFixture {
         this
     }
 
+    def createdAt(LocalDateTime var) {
+        target.setCreatedAt(var)
+        this
+    }
+
+    def lastModifiedAt(LocalDateTime var) {
+        target.setLastModifiedAt(var)
+        this
+    }
+
     def build() {
         target
     }
@@ -33,5 +46,7 @@ class OnlineRefundFixture {
         new OnlineRefundFixture()
                 .idIs(OnlineRefund.Identifier.of(Randoms.randomStr()))
                 .with(anOnlinePayment())
+                .createdAt(now())
+                .lastModifiedAt(now())
     }
 }

@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.commands.RequestOnlineRefundCommandFixture.aRequestOnlineRefundCommand
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
+import static com.thebund1st.tiantong.core.refund.OnlineRefund.Status.PENDING
 import static com.thebund1st.tiantong.core.refund.OnlineRefundFixture.anOnlineRefund
 
 class RequestOnlineRefundCommandHandlerTest extends Specification {
@@ -52,6 +53,9 @@ class RequestOnlineRefundCommandHandlerTest extends Specification {
         assert refund.amount == op.amount
         assert refund.onlinePaymentId == op.id
         assert refund.onlinePaymentAmount == op.amount
+        assert refund.correlation == op.correlation
+        assert refund.method == op.method
+        assert refund.status == PENDING
         assert refund.createdAt == now
         assert refund.lastModifiedAt == now
 

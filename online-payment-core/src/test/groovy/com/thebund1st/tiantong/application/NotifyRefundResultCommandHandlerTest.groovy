@@ -48,6 +48,7 @@ class NotifyRefundResultCommandHandlerTest extends Specification {
             it.refundAmount == or.amount
             it.onlinePaymentId == or.onlinePaymentId
             it.paymentAmount == or.onlinePaymentAmount
+            it.correlation == or.correlation
             it.when == now
         } as OnlineRefundSucceededEvent)
     }

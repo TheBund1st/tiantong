@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class JdbcOnlineRefundRepository implements OnlineRefundRepository {
 
-    private static final String OR_COLUMNS = "ID, VERSION, AMOUNT, OP_ID, OP_AMOUNT, CREATED_AT, LAST_MODIFIED_AT";
+    private static final String OR_COLUMNS = "ID, VERSION, AMOUNT, OP_ID, OP_AMOUNT, CORRELATION_KEY, CORRELATION_VALUE, " +
+            "STATUS, METHOD, CREATED_AT, LAST_MODIFIED_AT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -27,13 +28,17 @@ public class JdbcOnlineRefundRepository implements OnlineRefundRepository {
                 model.getAmount(),
                 model.getOnlinePaymentId().getValue(),
                 model.getOnlinePaymentAmount(),
+                model.getCorrelation().getKey(),
+                model.getCorrelation().getValue(),
+                model.getStatus().getValue(),
+                model.getMethod().getValue(),
                 Timestamp.valueOf(model.getCreatedAt()),
                 Timestamp.valueOf(model.getLastModifiedAt())
         );
     }
 
     protected String insertSql() {
-        return String.format("INSERT INTO ONLINE_REFUND(%s) VALUES (?, ?, ?, ?, ?, ?, ?)", OR_COLUMNS);
+        return String.format("INSERT INTO ONLINE_REFUND(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OR_COLUMNS);
     }
 
     @Override
@@ -47,6 +52,10 @@ public class JdbcOnlineRefundRepository implements OnlineRefundRepository {
                     or.setAmount(rs.getDouble("AMOUNT"));
                     or.setOnlinePaymentId(OnlinePayment.Identifier.of(rs.getString("OP_ID")));
                     or.setOnlinePaymentAmount(rs.getDouble("OP_AMOUNT"));
+                    or.setCorrelation(OnlinePayment.Correlation.of(rs.getString("CORRELATION_KEY"),
+                            rs.getString("CORRELATION_VALUE")));
+                    or.setStatus(OnlineRefund.Status.of(rs.getInt("STATUS")));
+                    or.setMethod(OnlinePayment.Method.of(rs.getString("METHOD")));
                     or.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     or.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
                     return or;

@@ -38,6 +38,8 @@ public class RequestOnlineRefundCommandHandler {
         onlineRefund.setAmount(onlinePayment.getAmount());
         onlineRefund.setOnlinePaymentId(onlinePayment.getId());
         onlineRefund.setOnlinePaymentAmount(onlinePayment.getAmount());
+        onlineRefund.setMethod(onlinePayment.getMethod());
+        onlineRefund.setCorrelation(onlinePayment.getCorrelation());
         onlineRefund.setCreatedAt(now);
         onlineRefund.setLastModifiedAt(now);
         return onlineRefund;

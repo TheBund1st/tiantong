@@ -20,9 +20,11 @@ public class OnlineRefund {
     private Identifier id;
     private int version = 1;
     //FIXME: introduce monetary amount
+    private double amount;
     private OnlinePayment.Identifier onlinePaymentId;
     private double onlinePaymentAmount;
-    private double amount;
+    private OnlinePayment.Correlation correlation;
+    private OnlinePayment.Method method;
     private Status status = PENDING;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;

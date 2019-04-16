@@ -25,10 +25,10 @@ public class NotifyRefundResultCommandHandler {
         LocalDateTime now = clock.now();
         OnlineRefund onlineRefund = onlineRefundRepository.mustFindBy(command.getOnlineRefundId());
         onlineRefund.markSuccess(now);
-        domainEventPublisher.publish(toOnlinePefundSuccessEvent(onlineRefund));
+        domainEventPublisher.publish(toOnlineRefundSuccessEvent(onlineRefund));
     }
 
-    private OnlineRefundSucceededEvent toOnlinePefundSuccessEvent(OnlineRefund onlineRefund) {
+    private OnlineRefundSucceededEvent toOnlineRefundSuccessEvent(OnlineRefund onlineRefund) {
         OnlineRefundSucceededEvent event = new OnlineRefundSucceededEvent();
         event.setWhen(onlineRefund.getLastModifiedAt());
         event.setOnlineRefundId(onlineRefund.getId());
@@ -36,6 +36,7 @@ public class NotifyRefundResultCommandHandler {
         event.setRefundAmount(onlineRefund.getAmount());
         event.setOnlinePaymentId(onlineRefund.getOnlinePaymentId());
         event.setPaymentAmount(onlineRefund.getOnlinePaymentAmount());
+        event.setCorrelation(onlineRefund.getCorrelation());
         return event;
     }
 

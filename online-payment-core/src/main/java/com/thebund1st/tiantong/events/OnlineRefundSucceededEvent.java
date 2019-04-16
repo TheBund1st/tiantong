@@ -13,7 +13,6 @@ public class OnlineRefundSucceededEvent {
     private int onlineRefundVersion;
     private double refundAmount;
     private OnlinePayment.Identifier onlinePaymentId;
-    private int onlinePaymentVersion;
     private double paymentAmount;
     private OnlinePayment.Correlation correlation;
     private LocalDateTime when;

@@ -28,6 +28,9 @@ class JdbcOnlineRefundRepositoryTest extends AbstractJdbcTest {
         assert actual.lastModifiedAt == or.lastModifiedAt
         assert actual.onlinePaymentId == or.onlinePaymentId
         assert actual.onlinePaymentAmount == or.onlinePaymentAmount
+        assert actual.correlation == or.correlation
+        assert actual.status == or.status
+        assert actual.method == or.method
     }
 
 }

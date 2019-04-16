@@ -25,6 +25,8 @@ class OnlineRefundFixture {
         this.target.setOnlinePaymentId(op.getId())
         this.target.setAmount(op.amount)
         this.target.setOnlinePaymentAmount(op.amount)
+        this.target.setCorrelation(op.correlation)
+        this.target.setMethod(op.method)
         this
     }
 

@@ -8,6 +8,9 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+import static com.thebund1st.tiantong.core.refund.OnlineRefund.Status.PENDING;
+import static com.thebund1st.tiantong.core.refund.OnlineRefund.Status.SUCCESS;
+
 @EqualsAndHashCode(of = "id")
 @ToString()
 @Getter
@@ -20,12 +23,18 @@ public class OnlineRefund {
     private OnlinePayment.Identifier onlinePaymentId;
     private double onlinePaymentAmount;
     private double amount;
+    private Status status = PENDING;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
 
 
     public OnlineRefund() {
 
+    }
+
+    public void markSuccess(LocalDateTime now) {
+        setLastModifiedAt(now);
+        setStatus(SUCCESS);
     }
 
     @Getter

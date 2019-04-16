@@ -1,10 +1,13 @@
 package com.thebund1st.tiantong.wechatpay.webhooks;
 
 import com.github.binarywang.wxpay.bean.notify.WxPayOrderNotifyResult;
+import com.github.binarywang.wxpay.bean.notify.WxPayRefundNotifyResult;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
+import com.thebund1st.tiantong.commands.NotifyRefundResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
+import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.web.webhooks.NotifyPaymentResultCommandAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,5 +32,12 @@ public class WeChatPayNotifyPaymentResultCommandAssembler implements NotifyPayme
         } else {
             throw new FakeOnlinePaymentNotificationException(rawNotification);
         }
+    }
+
+    @SneakyThrows
+    public NotifyRefundResultCommand toNotifyRefundResultCommand(String rawNotification) {
+        WxPayRefundNotifyResult result = wxPayService.parseRefundNotifyResult(rawNotification);
+        return new NotifyRefundResultCommand(OnlineRefund.Identifier.of(result.getReqInfo().getOutRefundNo()),
+                result.getReqInfoString());
     }
 }

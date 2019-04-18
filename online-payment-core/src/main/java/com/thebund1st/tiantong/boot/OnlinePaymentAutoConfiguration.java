@@ -1,5 +1,6 @@
 package com.thebund1st.tiantong.boot;
 
+import com.thebund1st.tiantong.boot.amqp.AmqpConfiguration;
 import com.thebund1st.tiantong.boot.application.ApplicationConfiguration;
 import com.thebund1st.tiantong.boot.core.CoreConfiguration;
 import com.thebund1st.tiantong.boot.dummypay.DummyPayConfiguration;
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Import;
         "com.thebund1st.tiantong.web",
 })
 @Import({
+        AmqpConfiguration.class,
         DummyPayConfiguration.class,
         WeChatPayConfiguration.class,
         LoggingConfiguration.class,

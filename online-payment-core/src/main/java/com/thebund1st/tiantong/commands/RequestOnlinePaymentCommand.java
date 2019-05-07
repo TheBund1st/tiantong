@@ -1,12 +1,14 @@
 package com.thebund1st.tiantong.commands;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.thebund1st.tiantong.json.ProviderSpecificInfoDeserializer;
 import com.thebund1st.tiantong.core.OnlinePayment.Correlation;
+import com.thebund1st.tiantong.json.ProviderSpecificInfoDeserializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import javax.validation.constraints.DecimalMin;
 
 @Getter
 @Setter
@@ -14,6 +16,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class RequestOnlinePaymentCommand {
     //FIXME introduce MonetaryAmount
+    @DecimalMin(value = "0", inclusive = false)
     private double amount;
     //FIXME introduce Method
     private String method;

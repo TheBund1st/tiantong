@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -18,7 +20,7 @@ public class RequestOnlinePaymentCommandHandler {
     private final OnlinePaymentRepository onlinePaymentRepository;
     private final Clock clock;
 
-    public OnlinePayment handle(RequestOnlinePaymentCommand command) {
+    public OnlinePayment handle(@Valid RequestOnlinePaymentCommand command) {
         OnlinePayment op = new OnlinePayment(onlinePaymentIdentifierGenerator.nextIdentifier(), clock.now());
         op.setAmount(command.getAmount());
         op.setMethod(OnlinePayment.Method.of(command.getMethod()));

@@ -49,6 +49,9 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                                 "providerSpecificInfo": {
                                     "dummy": "dummy"
                                 },
+                                "providerSpecificRequest": {
+                                    "dummy": "dummy"
+                                },
                                 "subject": "${command.getSubject()}",
                                 "body": "${command.getBody()}"
                             }

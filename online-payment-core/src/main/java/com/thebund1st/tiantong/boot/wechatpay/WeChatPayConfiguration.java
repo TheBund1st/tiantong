@@ -4,14 +4,19 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration;
+import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
+import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher;
+import com.thebund1st.tiantong.wechatpay.WxPayNativeUnifiedOrderRequestTypeNativePopulator;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import static java.util.Arrays.asList;
 
 @Slf4j
 @Configuration
@@ -41,12 +46,21 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
+    public WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher
+            <? extends ProviderSpecificOnlinePaymentRequest> weChatPayCreateOrderRequestPopulatorDispatcher() {
+        WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher<? extends ProviderSpecificOnlinePaymentRequest> dispatcher
+                = new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher(asList(new WxPayNativeUnifiedOrderRequestTypeNativePopulator()));
+        return dispatcher;
+    }
+
+    @Bean
     public WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway(WeChatPayProperties weChatPayProperties) {
         return new WeChatPayOnlinePaymentGateway(wxPayService(weChatPayProperties),
                 nonceGenerator(),
                 ipAddressExtractor(),
                 weChatPayProperties.paymentResultNotificationWebhookEndpointUri(),
-                weChatPayProperties.refundResultNotificationWebhookEndpointUri());
+                weChatPayProperties.refundResultNotificationWebhookEndpointUri(),
+                null);
     }
 
     @Bean

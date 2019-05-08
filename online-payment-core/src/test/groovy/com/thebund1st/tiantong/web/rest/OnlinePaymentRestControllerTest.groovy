@@ -33,7 +33,7 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
 
         and:
         def dummyProviderSpecificRequest = new DummyPaySpecificRequest(dummyId: "dummyId")
-        onlinePaymentProviderGateway.request(onlinePayment) >> dummyProviderSpecificRequest
+        onlinePaymentProviderGateway.request(onlinePayment, command.providerSpecificRequest) >> dummyProviderSpecificRequest
 
         when:
         def resultActions = mockMvc.perform(post("/api/online/payments")

@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.dummypay;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.ProviderSpecificRequest;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 
@@ -16,7 +17,8 @@ public class DummyPayOnlinePaymentProviderGateway implements MethodBasedOnlinePa
     }
 
     @Override
-    public ProviderSpecificRequest request(OnlinePayment onlinePayment) {
+    public ProviderSpecificRequest request(OnlinePayment onlinePayment,
+                                           ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
         DummyPaySpecificRequest dummyPaySpecificRequest = new DummyPaySpecificRequest();
         dummyPaySpecificRequest.setDummyId(UUID.randomUUID().toString());
         return dummyPaySpecificRequest;

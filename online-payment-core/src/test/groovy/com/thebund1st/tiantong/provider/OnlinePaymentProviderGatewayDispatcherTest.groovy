@@ -1,8 +1,9 @@
 package com.thebund1st.tiantong.provider
 
-
+import com.thebund1st.tiantong.core.EmptyOnlinePaymentRequest
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.exceptions.NoSuchOnlinePaymentProviderGatewayException
+import com.thebund1st.tiantong.dummypay.DummyPaySpecificOnlinePaymentRequest
 import com.thebund1st.tiantong.dummypay.DummyPaySpecificRequest
 import spock.lang.Specification
 
@@ -27,13 +28,14 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
 
         given:
         def onlinePayment = anOnlinePayment().byMethod("DUMMY_PAY").build()
+        def providerSpecificRequest = new DummyPaySpecificOnlinePaymentRequest(dummy: 'foo')
 
         and:
         def request = new DummyPaySpecificRequest(dummyId: "dummyId")
-        dummyGateway.request(onlinePayment) >> request
+        dummyGateway.request(onlinePayment, providerSpecificRequest) >> request
 
         when:
-        def actual = subject.request(onlinePayment)
+        def actual = subject.request(onlinePayment, providerSpecificRequest)
 
         then:
         assert request == actual
@@ -43,13 +45,14 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
 
         given:
         def onlinePayment = anOnlinePayment().byMethod("ANOTHER_DUMMY").build()
+        def providerSpecificRequest = new EmptyOnlinePaymentRequest()
 
         and:
         def request = new DummyPaySpecificRequest(dummyId: "anotherDummyId")
-        anotherDummyGateway.request(onlinePayment) >> request
+        anotherDummyGateway.request(onlinePayment, providerSpecificRequest) >> request
 
         when:
-        def actual = subject.request(onlinePayment)
+        def actual = subject.request(onlinePayment, providerSpecificRequest)
 
         then:
         assert request == actual
@@ -59,9 +62,10 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
 
         given:
         def onlinePayment = anOnlinePayment().idIs("1").byMethod("WHO_AM_I").build()
+        def providerSpecificRequest = new EmptyOnlinePaymentRequest()
 
         when:
-        subject.request(onlinePayment)
+        subject.request(onlinePayment, providerSpecificRequest)
 
         then:
         def exception = thrown(NoSuchOnlinePaymentProviderGatewayException)

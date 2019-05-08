@@ -7,6 +7,7 @@ import com.github.binarywang.wxpay.service.WxPayService;
 import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
+import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.ProviderSpecificRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
@@ -27,30 +28,33 @@ public class WeChatPayOnlinePaymentGateway implements
     private final IpAddressExtractor ipAddressExtractor;
     private final String webhookEndpoint;
     private final String notifyRefundResultWebhookEndpoint;
+    private final WxPayUnifiedOrderRequestProviderSpecificRequestPopulator<ProviderSpecificOnlinePaymentRequest>
+            wxPayUnifiedOrderRequestProviderSpecificRequestPopulator;
 
     @Override
-    public ProviderSpecificRequest request(OnlinePayment onlinePayment) {
-        WxPayUnifiedOrderResult response = requestPayment(onlinePayment);
+    public ProviderSpecificRequest request(OnlinePayment onlinePayment,
+                                           ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
+        WxPayUnifiedOrderResult response = requestPayment(onlinePayment, providerSpecificRequest);
         return new WeChatPaySpecificRequest(response);
     }
 
     @SneakyThrows
-    public WxPayUnifiedOrderResult requestPayment(OnlinePayment op) {
+    public WxPayUnifiedOrderResult requestPayment(OnlinePayment op,
+                                                  ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
         WxPayUnifiedOrderRequest req = new WxPayUnifiedOrderRequest();
         req.setAppid(wxPayService.getConfig().getAppId());
         req.setMchId(wxPayService.getConfig().getMchId());
         req.setBody(op.getSubject());
-        if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))) {
-            req.setProductId(extractProductId(op.getProviderSpecificInfo()));
-        } else if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))) {
-            req.setOpenid(extractOpenId(op.getProviderSpecificInfo()));
-        }
+        req.setTradeType(op.getMethod().getValue().replace("WECHAT_PAY_", ""));//TODO should extract from OnlinePayment or dedicated gateway method
         req.setOutTradeNo(op.getId().getValue()); // TODO maybe exposing id to public is not a good idea
         req.setTotalFee(toWeChatPayAmount(op.getAmount()));
-        req.setTradeType(op.getMethod().getValue().replace("WECHAT_PAY_", ""));//TODO should extract from OnlinePayment or dedicated gateway method
         req.setSpbillCreateIp(ipAddressExtractor.getLocalhostAddress());
         req.setNotifyUrl(webhookEndpoint);
         req.setNonceStr(nonceGenerator.next());
+        wxPayUnifiedOrderRequestProviderSpecificRequestPopulator.populate(req, providerSpecificRequest);
+        if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))) {
+            req.setOpenid(extractOpenId(op.getProviderSpecificInfo()));
+        }
         return this.wxPayService.unifiedOrder(req);
     }
 

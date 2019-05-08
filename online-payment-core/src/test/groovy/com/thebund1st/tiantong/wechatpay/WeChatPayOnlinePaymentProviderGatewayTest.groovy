@@ -5,7 +5,9 @@ import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult
 import com.github.binarywang.wxpay.config.WxPayConfig
 import com.github.binarywang.wxpay.service.WxPayService
+import com.thebund1st.tiantong.core.EmptyOnlinePaymentRequest
 import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest
 import spock.lang.Specification
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
@@ -17,6 +19,8 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
     WxPayService wxPayService = Mock()
     NonceGenerator nonceGenerator = Mock()
     IpAddressExtractor ipAddressExtractor = Mock()
+    WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher<? extends ProviderSpecificOnlinePaymentRequest> dispatcher =
+            new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher([new WxPayNativeUnifiedOrderRequestTypeNativePopulator()])
 
     WxPayConfig config = new WxPayConfig()
     private ipAddress = "172.23.231.22"
@@ -26,7 +30,8 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         subject = new WeChatPayOnlinePaymentGateway(wxPayService,
                 nonceGenerator, ipAddressExtractor,
                 "https://yourdomain.com/webhooks/wechatpay",
-                "https://yourdomain.com/webhooks/wechatpay/refund")
+                "https://yourdomain.com/webhooks/wechatpay/refund",
+                dispatcher)
         wxPayService.getConfig() >> this.config
         config.setAppId("this_is_app_id")
         config.setMchId("this_is_merchant_id")
@@ -46,7 +51,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         request.setTotalFee(10000)
         request.setTradeType("JSAPI")
         request.setSpbillCreateIp(this.ipAddress)
-        request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay");
+        request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay")
         request.setNonceStr(this.nonce)
         request.setOpenid("This is openId")
         def response = new WxPayUnifiedOrderResult()
@@ -57,7 +62,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         wxPayService.unifiedOrder(request) >> response
 
         when:
-        def actual = subject.request(op)
+        def actual = subject.request(op, new EmptyOnlinePaymentRequest())
 
         then:
         def payResult = (WeChatPaySpecificRequest) actual
@@ -67,8 +72,9 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
 
     def "it should create unified order for native"() {
         given:
+        def productId = "This is productId"
         def op = anOnlinePayment().amountIs(100)
-                .withProductId("This is productId")
+                .withProductId(productId)
                 .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
                 .build()
         def nonce = "this_is_a_unique_str"
@@ -81,9 +87,9 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         request.setTotalFee(10000)
         request.setTradeType("NATIVE")
         request.setSpbillCreateIp(ipAddress)
-        request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay");
+        request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay")
         request.setNonceStr(nonce)
-        request.setProductId("This is productId")
+        request.setProductId(productId)
         def response = new WxPayUnifiedOrderResult()
         response.setCodeURL("weixin://wxpay/bizpayurl?pr=lVQV8uF")
         and:
@@ -92,7 +98,8 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         wxPayService.unifiedOrder(request) >> response
 
         when:
-        def actual = subject.request(op)
+        def actual = subject.request(op, new WeChatPayNativeSpecificOnlinePaymentRequest(productId: productId))
+
 
         then:
         def payResult = (WeChatPaySpecificRequest) actual

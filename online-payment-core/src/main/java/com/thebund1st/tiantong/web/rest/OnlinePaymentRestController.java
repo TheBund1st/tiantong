@@ -31,7 +31,8 @@ public class OnlinePaymentRestController {
     @PostMapping("/api/online/payments")
     public OnlinePaymentResource handle(@RequestBody RequestOnlinePaymentCommand command) {
         OnlinePayment onlinePayment = onlinePaymentCommandHandler.handle(command);
-        ProviderSpecificRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment);
+        ProviderSpecificRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
+                command.getProviderSpecificRequest());
         return assemble(onlinePayment, providerSpecificRequest);
     }
 

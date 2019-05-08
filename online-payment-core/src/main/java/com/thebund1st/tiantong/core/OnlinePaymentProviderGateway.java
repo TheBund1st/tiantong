@@ -1,5 +1,6 @@
 package com.thebund1st.tiantong.core;
 
 public interface OnlinePaymentProviderGateway {
-    ProviderSpecificRequest request(OnlinePayment onlinePayment);
+    ProviderSpecificRequest request(OnlinePayment onlinePayment,
+                                    ProviderSpecificOnlinePaymentRequest providerSpecificRequest);
 }

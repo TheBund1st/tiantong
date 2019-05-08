@@ -4,12 +4,12 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration;
-import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
-import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher;
-import com.thebund1st.tiantong.wechatpay.WxPayNativeUnifiedOrderRequestTypeNativePopulator;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
+import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestTypeJsApiPopulator;
+import com.thebund1st.tiantong.wechatpay.WxPayNativeUnifiedOrderRequestTypeNativePopulator;
+import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -46,11 +46,12 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
-    public WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher
-            <? extends ProviderSpecificOnlinePaymentRequest> weChatPayCreateOrderRequestPopulatorDispatcher() {
-        WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher<? extends ProviderSpecificOnlinePaymentRequest> dispatcher
-                = new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher(asList(new WxPayNativeUnifiedOrderRequestTypeNativePopulator()));
-        return dispatcher;
+    public WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher weChatPayCreateOrderRequestPopulatorDispatcher() {
+        return
+                new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher(asList(
+                        new WxPayNativeUnifiedOrderRequestTypeNativePopulator(),
+                        new WxPayUnifiedOrderRequestTypeJsApiPopulator())
+                );
     }
 
     @Bean
@@ -60,7 +61,7 @@ public class WeChatPayConfiguration {
                 ipAddressExtractor(),
                 weChatPayProperties.paymentResultNotificationWebhookEndpointUri(),
                 weChatPayProperties.refundResultNotificationWebhookEndpointUri(),
-                null);
+                weChatPayCreateOrderRequestPopulatorDispatcher());
     }
 
     @Bean

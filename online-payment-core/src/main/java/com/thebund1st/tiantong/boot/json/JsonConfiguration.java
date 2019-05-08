@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.boot.json;
 
 import com.thebund1st.tiantong.json.deserializers.DummyPaySpecificOnlinePaymentRequestDeserializer;
+import com.thebund1st.tiantong.json.deserializers.WeChatPayJsApiSpecificOnlinePaymentRequestDeserializer;
 import com.thebund1st.tiantong.json.deserializers.WeChatPayNativeSpecificOnlinePaymentRequestDeserializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,5 +19,10 @@ public class JsonConfiguration {
     @Bean
     public WeChatPayNativeSpecificOnlinePaymentRequestDeserializer weChatPayNativeSpecificOnlinePaymentRequestDeserializer() {
         return new WeChatPayNativeSpecificOnlinePaymentRequestDeserializer();
+    }
+
+    @Bean
+    public WeChatPayJsApiSpecificOnlinePaymentRequestDeserializer weChatPayJsApiSpecificOnlinePaymentRequestDeserializer() {
+        return new WeChatPayJsApiSpecificOnlinePaymentRequestDeserializer();
     }
 }

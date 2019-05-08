@@ -4,7 +4,6 @@ import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.service.WxPayService;
-import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
@@ -52,22 +51,11 @@ public class WeChatPayOnlinePaymentGateway implements
         req.setNotifyUrl(webhookEndpoint);
         req.setNonceStr(nonceGenerator.next());
         wxPayUnifiedOrderRequestProviderSpecificRequestPopulator.populate(req, providerSpecificRequest);
-        if (op.getMethod().equals(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))) {
-            req.setOpenid(extractOpenId(op.getProviderSpecificInfo()));
-        }
         return this.wxPayService.unifiedOrder(req);
     }
 
     private int toWeChatPayAmount(double amount) {
         return BigDecimal.valueOf(amount * 100).intValue();
-    }
-
-    private String extractProductId(String providerSpecificInfo) {
-        return JsonPath.read(providerSpecificInfo, "$.productId");
-    }
-
-    private String extractOpenId(String providerSpecificInfo) {
-        return JsonPath.read(providerSpecificInfo, "$.openId");
     }
 
     @Override

@@ -29,4 +29,26 @@ class WeChatPaySpecificOnlinePaymentRequestJsonTest extends AbstractJsonTest {
                 (WeChatPayNativeSpecificOnlinePaymentRequest) actual.providerSpecificRequest
         assert request.productId == "foo"
     }
+
+    def "it should deserialize when request WeChat jsapi native"() {
+
+        given:
+        def body = """
+            {
+                "method": "WECHAT_PAY_JSAPI",
+                "providerSpecificRequest": {
+                    "openid": "foo"
+                }
+            }
+        """
+
+        when:
+        RequestOnlinePaymentCommand actual = this.json.readObject(new ByteArrayInputStream(body.getBytes()))
+
+        then:
+        assert actual.providerSpecificRequest instanceof WeChatPayJsApiSpecificOnlinePaymentRequest
+        WeChatPayJsApiSpecificOnlinePaymentRequest request =
+                (WeChatPayJsApiSpecificOnlinePaymentRequest) actual.providerSpecificRequest
+        assert request.openId == "foo"
+    }
 }

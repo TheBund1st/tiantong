@@ -20,7 +20,10 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
     NonceGenerator nonceGenerator = Mock()
     IpAddressExtractor ipAddressExtractor = Mock()
     WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher<? extends ProviderSpecificOnlinePaymentRequest> dispatcher =
-            new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher([new WxPayNativeUnifiedOrderRequestTypeNativePopulator()])
+            new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher([
+                    new WxPayNativeUnifiedOrderRequestTypeNativePopulator(),
+                    new WxPayUnifiedOrderRequestTypeJsApiPopulator()
+            ])
 
     WxPayConfig config = new WxPayConfig()
     private ipAddress = "172.23.231.22"
@@ -39,8 +42,9 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
 
     def "it should create unified order for jsapi"() {
         given:
+        def openId = "This is openId"
         def op = anOnlinePayment().amountIs(100)
-                .withOpenId("This is openId")
+                .withOpenId(openId)
                 .by(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))
                 .build()
         def request = new WxPayUnifiedOrderRequest()
@@ -53,7 +57,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         request.setSpbillCreateIp(this.ipAddress)
         request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay")
         request.setNonceStr(this.nonce)
-        request.setOpenid("This is openId")
+        request.setOpenid(openId)
         def response = new WxPayUnifiedOrderResult()
         response.setCodeURL("weixin://wxpay/bizpayurl?pr=lVQV8uF")
         and:
@@ -62,7 +66,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         wxPayService.unifiedOrder(request) >> response
 
         when:
-        def actual = subject.request(op, new EmptyOnlinePaymentRequest())
+        def actual = subject.request(op, new WeChatPayJsApiSpecificOnlinePaymentRequest(openId: openId))
 
         then:
         def payResult = (WeChatPaySpecificRequest) actual

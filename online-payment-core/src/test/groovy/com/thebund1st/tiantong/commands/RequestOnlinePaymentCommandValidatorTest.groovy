@@ -1,5 +1,7 @@
 package com.thebund1st.tiantong.commands
 
+import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.WeChatPayNativeSpecificOnlinePaymentRequest
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -30,5 +32,22 @@ class RequestOnlinePaymentCommandValidatorTest extends Specification {
         1.0    | true
         0      | false
         -1     | false
+    }
+
+    @Unroll("The provider specific request validation for WeChat Pay Native is #pass given the request is #request")
+    def "it should be able to validate WeChat Pay native"(ProviderSpecificOnlinePaymentRequest request,
+                                                                                                          boolean pass) {
+        expect:
+        RequestOnlinePaymentCommand command = aRequestOnlinePaymentCommand()
+                .byWeChatPayNative()
+                .with(request).build()
+        def constraintViolations = validator.validate(command)
+        assert constraintViolations.isEmpty() == pass
+
+        where:
+        request                                                           | pass
+        null                                                              | false
+        new WeChatPayNativeSpecificOnlinePaymentRequest()                 | false
+        new WeChatPayNativeSpecificOnlinePaymentRequest(productId: "foo") | true
     }
 }

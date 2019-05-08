@@ -12,7 +12,7 @@ import static java.util.Collections.singletonList;
 public class DummyPayOnlinePaymentProviderGateway implements MethodBasedOnlinePaymentProviderGateway {
     @Override
     public List<OnlinePayment.Method> matchedMethods() {
-        return singletonList(OnlinePayment.Method.of("DUMMY"));
+        return singletonList(OnlinePayment.Method.of("DUMMY_PAY"));
     }
 
     @Override

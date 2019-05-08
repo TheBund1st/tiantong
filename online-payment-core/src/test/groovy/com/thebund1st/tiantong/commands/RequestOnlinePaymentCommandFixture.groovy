@@ -28,7 +28,7 @@ class RequestOnlinePaymentCommandFixture {
     }
 
     def byDummy() {
-        by(OnlinePayment.Method.of("DUMMY"))
+        by(OnlinePayment.Method.of("DUMMY_PAY"))
     }
 
     def correlatedWith(OnlinePayment.Correlation correlation) {

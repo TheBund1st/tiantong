@@ -18,7 +18,7 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
 
     def setup() {
         def delegates = [:]
-        delegates[OnlinePayment.Method.of("DUMMY")] = dummyGateway
+        delegates[OnlinePayment.Method.of("DUMMY_PAY")] = dummyGateway
         delegates[OnlinePayment.Method.of("ANOTHER_DUMMY")] = anotherDummyGateway
         subject = new OnlinePaymentProviderGatewayDispatcher(delegates)
     }
@@ -26,7 +26,7 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
     def "it should dispatch online payment to corresponding provider gateway"() {
 
         given:
-        def onlinePayment = anOnlinePayment().byMethod("DUMMY").build()
+        def onlinePayment = anOnlinePayment().byMethod("DUMMY_PAY").build()
 
         and:
         def request = new DummyPaySpecificRequest(dummyId: "dummyId")

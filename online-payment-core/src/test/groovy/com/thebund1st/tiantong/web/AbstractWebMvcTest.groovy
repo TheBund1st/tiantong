@@ -5,6 +5,7 @@ import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler
 import com.thebund1st.tiantong.boot.dummypay.DummyPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfiguration
+import com.thebund1st.tiantong.boot.json.JsonConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
@@ -21,7 +22,8 @@ import spock.lang.Specification
 @WebMvcTest
 @Import([
         WeChatPayWebhookConfiguration, WeChatPayPropertiesConfiguration,
-        DummyPayWebhookConfiguration, DummyPayPropertiesConfiguration
+        DummyPayWebhookConfiguration, DummyPayPropertiesConfiguration,
+        JsonConfiguration
 ])
 class AbstractWebMvcTest extends Specification {
 

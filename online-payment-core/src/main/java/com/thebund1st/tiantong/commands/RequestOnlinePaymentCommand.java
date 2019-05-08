@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.thebund1st.tiantong.core.OnlinePayment.Correlation;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.json.ProviderSpecificInfoDeserializer;
-import com.thebund1st.tiantong.json.ProviderSpecificOnlinePaymentRequestDeserializer;
+import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificOnlinePaymentRequestDeserializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +38,6 @@ public class RequestOnlinePaymentCommand {
     @JsonDeserialize(using = ProviderSpecificInfoDeserializer.class)
     private String providerSpecificInfo;
 
-    @JsonDeserialize(using = ProviderSpecificOnlinePaymentRequestDeserializer.class)
+    @JsonDeserialize(using = MethodBasedProviderSpecificOnlinePaymentRequestDeserializer.class)
     private ProviderSpecificOnlinePaymentRequest providerSpecificRequest;
 }

@@ -35,7 +35,7 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert actual.lastModifiedAt == op.lastModifiedAt
         assert actual.subject == op.subject
         assert actual.body == op.body
-        assert actual.providerSpecificInfo == op.providerSpecificInfo
+        assert actual.providerSpecificOnlinePaymentRequest == op.providerSpecificOnlinePaymentRequest
     }
 
     def "it should update op"() {

@@ -30,7 +30,7 @@ class Customer {
                         "key":"${command.getCorrelation().getKey()}",
                         "value": "${command.getCorrelation().getValue()}"
                     },
-                    "providerSpecificInfo": {
+                    "providerSpecificRequest": {
                         "dummy": "dummy"
                     },
                     "subject": "${command.getSubject()}",

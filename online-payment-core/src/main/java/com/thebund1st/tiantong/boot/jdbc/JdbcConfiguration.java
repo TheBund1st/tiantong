@@ -5,6 +5,9 @@ import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentRepository;
 import com.thebund1st.tiantong.jdbc.JdbcOnlinePaymentResultNotificationRepository;
 import com.thebund1st.tiantong.jdbc.JdbcOnlineRefundRepository;
 import com.thebund1st.tiantong.jdbc.PostTransactionCommitDomainEventPublisher;
+import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificOnlinePaymentRequestDeserializer;
+import com.thebund1st.tiantong.json.deserializers.ProviderSpecificOnlinePaymentRequestJsonDeserializer;
+import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -17,9 +20,17 @@ public class JdbcConfiguration {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private ProviderSpecificOnlinePaymentRequestJsonSerializer providerSpecificOnlinePaymentRequestJsonSerializer;
+
+    @Autowired
+    private MethodBasedProviderSpecificOnlinePaymentRequestDeserializer providerSpecificOnlinePaymentRequestJsonDeserializer;
+
     @Bean
     public JdbcOnlinePaymentRepository jdbcOnlinePaymentRepository() {
-        return new JdbcOnlinePaymentRepository(jdbcTemplate);
+        return new JdbcOnlinePaymentRepository(jdbcTemplate,
+                providerSpecificOnlinePaymentRequestJsonSerializer,
+                providerSpecificOnlinePaymentRequestJsonDeserializer);
     }
 
     @Bean

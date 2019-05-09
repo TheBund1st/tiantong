@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.wechatpay.WeChatPayNativeSpecificOnlinePaymentRequest;
+import lombok.SneakyThrows;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -25,5 +26,11 @@ public class WeChatPayNativeSpecificOnlinePaymentRequestDeserializer
     @Override
     public boolean supports(String method) {
         return methods.contains(method);
+    }
+
+    @SneakyThrows
+    @Override
+    public ProviderSpecificOnlinePaymentRequest deserialize(String json) {
+        return getObjectMapper().readValue(json, WeChatPayNativeSpecificOnlinePaymentRequest.class);
     }
 }

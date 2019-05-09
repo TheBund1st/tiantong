@@ -33,6 +33,7 @@ public class OnlinePayment {
     private String subject;
     private String body;
     private String providerSpecificInfo;
+    private ProviderSpecificOnlinePaymentRequest providerSpecificOnlinePaymentRequest = new EmptyOnlinePaymentRequest();
 
 
     public OnlinePayment() {

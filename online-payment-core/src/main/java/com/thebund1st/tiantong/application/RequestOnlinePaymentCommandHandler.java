@@ -28,6 +28,7 @@ public class RequestOnlinePaymentCommandHandler {
         op.setSubject(command.getSubject());
         op.setBody(command.getBody());
         op.setProviderSpecificInfo(command.getProviderSpecificInfo());
+        op.setProviderSpecificOnlinePaymentRequest(command.getProviderSpecificRequest());
         onlinePaymentRepository.save(op);
         return op;
     }

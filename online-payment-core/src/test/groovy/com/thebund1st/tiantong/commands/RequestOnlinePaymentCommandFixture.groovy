@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.commands
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest
 import com.thebund1st.tiantong.dummypay.DummyPaySpecificOnlinePaymentRequest
@@ -53,11 +53,7 @@ class RequestOnlinePaymentCommandFixture {
     }
 
     def withDummySpecificInfo() {
-        this.providerSpecificInfo['dummy'] = "dummy"
-        target.setProviderSpecificInfo(new ObjectMapper().writeValueAsString(providerSpecificInfo))
-        def request = new DummyPaySpecificOnlinePaymentRequest()
-        request.setDummy('dummy')
-        this.target.setProviderSpecificRequest(request)
+        this.target.setProviderSpecificRequest(new DummyPaySpecificOnlinePaymentRequest(dummy: 'dummy'))
         this
     }
 

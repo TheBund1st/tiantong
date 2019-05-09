@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.boot
 
 import org.springframework.boot.autoconfigure.AutoConfigurations
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration
 import org.springframework.boot.test.context.runner.ApplicationContextRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -17,6 +18,7 @@ class AbstractAutoConfigurationTest extends Specification {
     protected final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(OnlinePaymentAutoConfiguration.class))
             .withUserConfiguration(JdbcTemplateConfiguration)
+            .withUserConfiguration(JacksonAutoConfiguration)
 
     @Configuration
     static class JdbcTemplateConfiguration {

@@ -27,6 +27,7 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                 .correlatedWith(command.getCorrelation())
                 .amountIs(command.getAmount())
                 .byMethod(command.getMethod())
+                .with(command.getProviderSpecificRequest())
                 .build()
         //noinspection GroovyAssignabilityCheck
         requestOnlinePaymentCommandHandler.handle(command) >> onlinePayment
@@ -45,9 +46,6 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                                 "correlation": {
                                     "key":"${command.getCorrelation().getKey()}",
                                     "value": "${command.getCorrelation().getValue()}"
-                                },
-                                "providerSpecificInfo": {
-                                    "dummy": "dummy"
                                 },
                                 "providerSpecificRequest": {
                                     "dummy": "dummy"

@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.core
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.utils.Randoms
+import com.thebund1st.tiantong.wechatpay.WeChatPayJsApiSpecificOnlinePaymentRequest
 
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
@@ -84,6 +85,11 @@ class OnlinePaymentFixture {
         this
     }
 
+    def with(ProviderSpecificOnlinePaymentRequest request) {
+        this.target.setProviderSpecificOnlinePaymentRequest(request)
+        this
+    }
+
     def build() {
         target.setProviderSpecificInfo(new ObjectMapper().writeValueAsString(providerSpecificInfo))
         target
@@ -98,5 +104,6 @@ class OnlinePaymentFixture {
                 .subjectIs("This is a test product")
                 .bodyIs("This is a test product details")
                 .withOpenId(Randoms.randomStr())
+                .with(new WeChatPayJsApiSpecificOnlinePaymentRequest(openId: Randoms.randomStr()))
     }
 }

@@ -2,6 +2,8 @@ package com.thebund1st.tiantong.jdbc;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificOnlinePaymentRequestDeserializer;
+import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +23,9 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
+    private final ProviderSpecificOnlinePaymentRequestJsonSerializer providerSpecificOnlinePaymentRequestJsonSerializer;
+
+    private final MethodBasedProviderSpecificOnlinePaymentRequestDeserializer providerSpecificOnlinePaymentRequestJsonDeserializer;
 
     @Override
     public void save(OnlinePayment model) {
@@ -34,7 +39,8 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                 model.getMethod().getValue(),
                 model.getSubject(),
                 model.getBody(),
-                model.getProviderSpecificInfo(),
+                providerSpecificOnlinePaymentRequestJsonSerializer
+                        .serialize(model.getProviderSpecificOnlinePaymentRequest()),
                 Timestamp.valueOf(model.getCreatedAt()),
                 Timestamp.valueOf(model.getLastModifiedAt())
         );
@@ -60,6 +66,9 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                     op.setSubject(rs.getString("SUBJECT"));
                     op.setBody(rs.getString("BODY"));
                     op.setProviderSpecificInfo(rs.getString("PROVIDER_SPECIFIC_INFO"));
+                    op.setProviderSpecificOnlinePaymentRequest(providerSpecificOnlinePaymentRequestJsonDeserializer
+                            .deserialize(rs.getString("METHOD"),
+                                    rs.getString("PROVIDER_SPECIFIC_INFO")));
                     op.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     op.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
                     return op;

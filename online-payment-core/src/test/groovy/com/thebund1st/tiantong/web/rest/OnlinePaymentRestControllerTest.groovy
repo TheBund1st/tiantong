@@ -65,27 +65,4 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                 .andExpect(jsonPath("providerSpecificRequest.dummyId", is("dummyId")))
     }
 
-    def "it should accept refund request"() {
-        given:
-        def onlinePayment = anOnlinePayment().idIs("a-unique-string").succeeded().build()
-        def onlineRefund = anOnlineRefund().with(onlinePayment).build()
-        def command = aRequestOnlineRefundCommand().with(onlineRefund).build()
-
-        and:
-        //noinspection GroovyAssignabilityCheck
-        requestOnlineRefundCommandHandler.handle(command) >> onlineRefund
-
-        when:
-        def resultActions = mockMvc.perform(post("/api/online/payments/a-unique-string/refunds")
-                .contentType(APPLICATION_JSON_UTF8)
-        )
-
-        then:
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("identifier", is(onlineRefund.getId().value)))
-
-        and:
-        1 * onlineRefundProviderGateway.request(onlineRefund)
-    }
 }

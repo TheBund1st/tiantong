@@ -3,6 +3,7 @@ package com.thebund1st.tiantong.json.deserializers;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.wechatpay.WeChatPayNativeSpecificOnlinePaymentRequest;
 import lombok.SneakyThrows;
@@ -14,7 +15,7 @@ import java.util.List;
 public class WeChatPayNativeSpecificOnlinePaymentRequestDeserializer
         extends AbstractMethodBasedProviderSpecificOnlinePaymentRequestDeserializer {
 
-    private List<String> methods = Collections.singletonList("WECHAT_PAY_NATIVE");
+    private List<OnlinePayment.Method> methods = Collections.singletonList(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"));
 
     @Override
     public ProviderSpecificOnlinePaymentRequest deserialize(JsonParser jp, DeserializationContext ctxt)
@@ -24,7 +25,7 @@ public class WeChatPayNativeSpecificOnlinePaymentRequestDeserializer
     }
 
     @Override
-    public boolean supports(String method) {
+    public boolean supports(OnlinePayment.Method method) {
         return methods.contains(method);
     }
 

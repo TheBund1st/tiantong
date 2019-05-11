@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.wechatpay;
 
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.thebund1st.tiantong.core.OnlinePayment;
 
 public class WxPayUnifiedOrderRequestTypeJsApiPopulator
         implements
@@ -13,7 +14,7 @@ public class WxPayUnifiedOrderRequestTypeJsApiPopulator
     }
 
     @Override
-    public boolean supports(String method) {
-        return "JSAPI".equals(method);
+    public boolean supports(OnlinePayment.Method method) {
+        return OnlinePayment.Method.of("WECHAT_PAY_JSAPI").equals(method);
     }
 }

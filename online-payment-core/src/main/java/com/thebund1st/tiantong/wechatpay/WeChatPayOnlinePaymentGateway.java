@@ -69,8 +69,7 @@ public class WeChatPayOnlinePaymentGateway implements
         return BigDecimal.valueOf(amount * 100).intValue();
     }
 
-    @Override
-    public List<OnlinePayment.Method> matchedMethods() {
+    private List<OnlinePayment.Method> matchedMethods() {
         return asList(
                 OnlinePayment.Method.of("WECHAT_PAY_NATIVE"),
                 OnlinePayment.Method.of("WECHAT_PAY_JSAPI")
@@ -120,7 +119,7 @@ public class WeChatPayOnlinePaymentGateway implements
     }
 
     @Override
-    public boolean supports(String method) {
-        return matchedMethods().contains(OnlinePayment.Method.of(method));
+    public boolean supports(OnlinePayment.Method method) {
+        return matchedMethods().contains(method);
     }
 }

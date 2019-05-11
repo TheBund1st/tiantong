@@ -25,8 +25,7 @@ public class DummyPayOnlinePaymentProviderGateway implements
     private final OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResultNotificationIdentifierGenerator;
     private List<OnlinePayment.Identifier> succeededOnlinePaymentGroup = new ArrayList<>();
 
-    @Override
-    public List<OnlinePayment.Method> matchedMethods() {
+    private List<OnlinePayment.Method> matchedMethods() {
         return singletonList(OnlinePayment.Method.of("DUMMY_PAY"));
     }
 
@@ -39,8 +38,8 @@ public class DummyPayOnlinePaymentProviderGateway implements
     }
 
     @Override
-    public boolean supports(String method) {
-        return matchedMethods().contains(OnlinePayment.Method.of(method));
+    public boolean supports(OnlinePayment.Method method) {
+        return matchedMethods().contains(method);
     }
 
     @Override

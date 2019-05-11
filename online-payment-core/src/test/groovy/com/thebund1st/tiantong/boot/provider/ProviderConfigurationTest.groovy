@@ -22,10 +22,12 @@ class ProviderConfigurationTest extends AbstractAutoConfigurationTest {
             WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway =
                     (WeChatPayOnlinePaymentGateway) it.getBean(WeChatPayOnlinePaymentGateway)
 
-            assert dispatcher.delegates
-                    .get(OnlinePayment.Method.of("WECHAT_PAY_NATIVE")) == weChatPayOnlinePaymentGateway
-            assert dispatcher.delegates
-                    .get(OnlinePayment.Method.of("WECHAT_PAY_JSAPI")) == weChatPayOnlinePaymentGateway
+            assert dispatcher.gatewayGroup
+                    .find { it.supports(OnlinePayment.Method.of("WECHAT_PAY_NATIVE")) } ==
+                    weChatPayOnlinePaymentGateway
+            assert dispatcher.gatewayGroup
+                    .find { it.supports(OnlinePayment.Method.of("WECHAT_PAY_JSAPI")) } ==
+                    weChatPayOnlinePaymentGateway
         }
     }
 }

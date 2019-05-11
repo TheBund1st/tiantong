@@ -18,10 +18,11 @@ class OnlinePaymentProviderGatewayDispatcherTest extends Specification {
     private OnlinePaymentProviderGatewayDispatcher subject
 
     def setup() {
-        def delegates = [:]
-        delegates[OnlinePayment.Method.of("DUMMY_PAY")] = dummyGateway
-        delegates[OnlinePayment.Method.of("ANOTHER_DUMMY")] = anotherDummyGateway
+        def delegates = [dummyGateway, anotherDummyGateway]
         subject = new OnlinePaymentProviderGatewayDispatcher(delegates)
+
+        dummyGateway.supports(OnlinePayment.Method.of("DUMMY_PAY")) >> true
+        anotherDummyGateway.supports(OnlinePayment.Method.of("ANOTHER_DUMMY")) >> true
     }
 
     def "it should dispatch online payment to corresponding provider gateway"() {

@@ -1,23 +1,23 @@
 package foo.bar.steps
 
 import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand
+import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway
 import foo.bar.DomainEventPublisherStub
 import io.restassured.response.ValidatableResponse
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
 import static io.restassured.RestAssured.given
+import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 
 class Customer {
-    private DomainEventPublisherStub domainEventPublisherStub
+    DomainEventPublisherStub domainEventPublisherStub
+    DummyPayOnlinePaymentProviderGateway dummyPayOnlinePaymentProviderGateway
     ValidatableResponse currentResponse
     RequestOnlinePaymentCommand currentRequestOnlinePaymentCommand
     String currentOnlinePaymentId
-
-    Customer(DomainEventPublisherStub domainEventPublisherStub) {
-        this.domainEventPublisherStub = domainEventPublisherStub
-    }
 
     def requestPayment(command) {
         //@formatter:off
@@ -87,12 +87,38 @@ class Customer {
         this
     }
 
+    def finishPaymentWithDummyPayButWeDontReceiveNotification() {
+        dummyPayOnlinePaymentProviderGateway
+                .addSucceededOnlinePayment(OnlinePayment.Identifier.of(currentOnlinePaymentId))
+        this
+    }
+
     def thenTheOnlinePaymentRequestIsSuccess() {
         this.currentResponse.statusCode(OK.value())
         assert this.currentResponse
                 .extract().body()
                 .jsonPath().get("result") == "OK"
-        domainEventPublisherStub.shouldReceivePaymentSucceedEvent(currentOnlinePaymentId)
+        thenTheOnlinePaymentIsSucceeded()
+    }
+
+    def thenTheOnlinePaymentIsSucceeded() {
+        assert domainEventPublisherStub.shouldReceivePaymentSucceedEvent(currentOnlinePaymentId).isPresent()
+        this
+    }
+
+    def thenTheOnlinePaymentResultIsPulledAndTheOnlinePaymentIsSucceeded() {
+        this.currentResponse.statusCode(CREATED.value())
+        assert domainEventPublisherStub.shouldReceivePaymentSucceedEvent(currentOnlinePaymentId).isPresent()
+        this
+    }
+
+    def tryPaymentResultSynchronization() {
+        //@formatter:off
+        this.currentResponse = aGiven()
+            .post("/api/online/payments/${currentOnlinePaymentId}/resultSynchronizations")
+        .then()
+            .log().everything()
+        //@formatter:on
         this
     }
 }

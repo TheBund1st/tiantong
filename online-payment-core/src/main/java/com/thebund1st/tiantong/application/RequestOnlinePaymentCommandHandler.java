@@ -8,12 +8,14 @@ import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
+@Validated
 public class RequestOnlinePaymentCommandHandler {
 
     private final OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator;

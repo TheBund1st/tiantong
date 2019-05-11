@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 public class OnlinePaymentRestController {
@@ -20,7 +22,7 @@ public class OnlinePaymentRestController {
 
     //TODO make the url path configurable
     @PostMapping("/api/online/payments")
-    public OnlinePaymentResource handle(@RequestBody RequestOnlinePaymentCommand command) {
+    public OnlinePaymentResource handle(@Valid @RequestBody RequestOnlinePaymentCommand command) {
         OnlinePayment onlinePayment = onlinePaymentCommandHandler.handle(command);
         ProviderSpecificRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
                 command.getProviderSpecificRequest());

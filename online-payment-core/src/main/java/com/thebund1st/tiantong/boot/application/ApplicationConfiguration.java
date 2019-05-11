@@ -3,6 +3,7 @@ package com.thebund1st.tiantong.boot.application;
 import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler;
+import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -41,6 +42,14 @@ public class ApplicationConfiguration {
                 onlinePaymentResultNotificationIdentifierGenerator,
                 domainEventPublisher,
                 clock);
+    }
+
+    @Bean
+    public SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler() {
+        return new SyncOnlinePaymentResultCommandHandler(
+                onlinePaymentRepository,
+                null,
+                onlinePaymentNotificationSubscriber());
     }
 
     @Bean

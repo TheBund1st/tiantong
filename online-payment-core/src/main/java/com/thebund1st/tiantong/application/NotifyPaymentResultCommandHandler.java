@@ -29,9 +29,17 @@ public class NotifyPaymentResultCommandHandler {
     public void handle(NotifyPaymentResultCommand command) {
         LocalDateTime now = clock.now();
         OnlinePaymentResultNotification notification = toResponse(command, now);
-        OnlinePayment onlinePayment = onlinePaymentRepository.mustFindBy(command.getOnlinePaymentId());
-        onlinePayment.on(notification);
-        onlinePaymentResultNotificationRepository.save(notification);
+        doHandle(notification);
+    }
+
+    public void handle(OnlinePaymentResultNotification paymentResult) {
+        doHandle(paymentResult);
+    }
+
+    private void doHandle(OnlinePaymentResultNotification paymentResult) {
+        OnlinePayment onlinePayment = onlinePaymentRepository.mustFindBy(paymentResult.getOnlinePaymentId());
+        onlinePayment.on(paymentResult);
+        onlinePaymentResultNotificationRepository.save(paymentResult);
         onlinePaymentRepository.update(onlinePayment);
         domainEventPublisher.publish(toOnlinePaymentSuccessEvent(onlinePayment));
     }

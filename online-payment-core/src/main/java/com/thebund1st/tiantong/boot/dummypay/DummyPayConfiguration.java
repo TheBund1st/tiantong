@@ -7,10 +7,12 @@ import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultComm
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+@ConditionalOnProperty(prefix = "tiantong.dummypay", name = "enabled", havingValue = "true")
 @Configuration
 @RequiredArgsConstructor
 @Import({DummyPayWebhookConfiguration.class, DummyPayPropertiesConfiguration.class})

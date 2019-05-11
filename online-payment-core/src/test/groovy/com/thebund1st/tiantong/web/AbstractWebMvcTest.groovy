@@ -12,6 +12,7 @@ import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
+import io.restassured.module.mockmvc.RestAssuredMockMvc
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -51,4 +52,11 @@ class AbstractWebMvcTest extends Specification {
     @SpringBean
     protected OnlineRefundProviderGateway onlineRefundProviderGateway = Mock()
 
+    def setup() {
+        RestAssuredMockMvc.mockMvc(mockMvc)
+    }
+
+    protected def given() {
+        RestAssuredMockMvc.given()
+    }
 }

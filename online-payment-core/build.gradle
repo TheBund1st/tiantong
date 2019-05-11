@@ -27,6 +27,8 @@ dependencies {
     compileOnly("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
     testCompile("org.springframework.boot:spring-boot-starter-test:${springBootVersion}")
+    testCompile 'io.rest-assured:spring-mock-mvc:4.0.0'
+    testCompile 'io.rest-assured:rest-assured:4.0.0'
 
     // spock
     testCompile('org.spockframework:spock-spring:1.2-groovy-2.4')

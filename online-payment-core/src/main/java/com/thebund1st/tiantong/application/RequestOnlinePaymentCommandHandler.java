@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.application;
 
 import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
+import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -33,5 +34,9 @@ public class RequestOnlinePaymentCommandHandler {
         op.setProviderSpecificOnlinePaymentRequest(command.getProviderSpecificRequest());
         onlinePaymentRepository.save(op);
         return op;
+    }
+
+    public OnlinePayment handle(SyncOnlinePaymentResultCommand command) {
+        return null;
     }
 }

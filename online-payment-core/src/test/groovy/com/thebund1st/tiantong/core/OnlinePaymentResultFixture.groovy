@@ -2,12 +2,18 @@ package com.thebund1st.tiantong.core
 
 import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand
 import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.utils.Randoms
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 
 class OnlinePaymentResultFixture {
     private OnlinePaymentResultNotification target = new OnlinePaymentResultNotification()
 
+
+    def idIs(String value) {
+        target.id = OnlinePaymentResultNotification.Identifier.of(value)
+        this
+    }
 
     def amountIs(double amount) {
         target.amount = amount
@@ -41,6 +47,7 @@ class OnlinePaymentResultFixture {
 
     static def anOnlinePaymentResult() {
         new OnlinePaymentResultFixture()
+                .idIs(Randoms.randomStr())
                 .amountIs(100.00)
                 .sendTo(anOnlinePayment().amountIs(100.00).build())
                 .succeed()

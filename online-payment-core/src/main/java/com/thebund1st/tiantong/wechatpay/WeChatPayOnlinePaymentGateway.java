@@ -1,26 +1,35 @@
 package com.thebund1st.tiantong.wechatpay;
 
+import com.github.binarywang.wxpay.bean.request.WxPayOrderQueryRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult;
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.ProviderSpecificRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
+import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 
 @RequiredArgsConstructor
 public class WeChatPayOnlinePaymentGateway implements
-        MethodBasedOnlinePaymentProviderGateway, OnlineRefundProviderGateway {
+        MethodBasedOnlinePaymentProviderGateway,
+        MethodBasedOnlinePaymentResultGateway,
+        OnlineRefundProviderGateway {
 
     private final WxPayService wxPayService;
     private final NonceGenerator nonceGenerator;
@@ -29,6 +38,8 @@ public class WeChatPayOnlinePaymentGateway implements
     private final String notifyRefundResultWebhookEndpoint;
     private final WxPayUnifiedOrderRequestProviderSpecificRequestPopulator<ProviderSpecificOnlinePaymentRequest>
             wxPayUnifiedOrderRequestProviderSpecificRequestPopulator;
+    private final OnlinePaymentResultNotificationIdentifierGenerator notificationIdentifierGenerator;
+    private final Clock clock;
 
     @Override
     public ProviderSpecificRequest request(OnlinePayment onlinePayment,
@@ -77,5 +88,39 @@ public class WeChatPayOnlinePaymentGateway implements
         req.setNonceStr(nonceGenerator.next());
         req.setNotifyUrl(notifyRefundResultWebhookEndpoint);
         this.wxPayService.refund(req);
+    }
+
+    @SneakyThrows
+    @Override
+    public Optional<OnlinePaymentResultNotification> pull(OnlinePayment onlinePayment) {
+        WxPayOrderQueryRequest req = new WxPayOrderQueryRequest();
+        req.setAppid(wxPayService.getConfig().getAppId());
+        req.setMchId(wxPayService.getConfig().getMchId());
+        req.setNonceStr(nonceGenerator.next());
+        req.setOutTradeNo(onlinePayment.getId().getValue());
+        WxPayOrderQueryResult result = this.wxPayService.queryOrder(req);
+        //TODO extract constant
+        if ("SUCCESS".equals(result.getTradeState())) {
+            OnlinePaymentResultNotification paymentResult = new OnlinePaymentResultNotification();
+            paymentResult.setId(notificationIdentifierGenerator.nextIdentifier());
+            paymentResult.setOnlinePaymentId(OnlinePayment.Identifier.of(result.getOutTradeNo()));
+            paymentResult.setAmount(BigDecimal.valueOf(result.getTotalFee())
+                    .divide(BigDecimal.valueOf(100)).doubleValue());
+            paymentResult.setCode(OnlinePaymentResultNotification.Code.SUCCESS);
+            paymentResult.setCreatedAt(clock.now());
+            paymentResult.setText(result.getXmlString());
+            return Optional.of(paymentResult);
+        } else if ("NOT_PAY".equals(result.getTradeState())) {
+            return Optional.empty();
+        } else {
+            //TODO handle "CLOSED"/"REFUND"/"PAYERROR" and others
+            return Optional.empty();
+        }
+
+    }
+
+    @Override
+    public boolean supports(String method) {
+        return matchedMethods().contains(OnlinePayment.Method.of(method));
     }
 }

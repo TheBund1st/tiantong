@@ -7,6 +7,7 @@ import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationRepository;
 import com.thebund1st.tiantong.core.refund.OnlineRefundIdentifierGenerator;
@@ -27,6 +28,7 @@ public class ApplicationConfiguration {
     private final Clock clock;
     private final OnlineRefundIdentifierGenerator onlineRefundIdentifierGenerator;
     private final OnlineRefundRepository onlineRefundRepository;
+    private final OnlinePaymentResultGateway onlinePaymentResultGateway;
 
 
     @Bean
@@ -48,7 +50,7 @@ public class ApplicationConfiguration {
     public SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler() {
         return new SyncOnlinePaymentResultCommandHandler(
                 onlinePaymentRepository,
-                null,
+                onlinePaymentResultGateway,
                 onlinePaymentNotificationSubscriber());
     }
 

@@ -1,5 +1,6 @@
 package com.thebund1st.tiantong.application
 
+
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator
 import com.thebund1st.tiantong.core.OnlinePaymentRepository

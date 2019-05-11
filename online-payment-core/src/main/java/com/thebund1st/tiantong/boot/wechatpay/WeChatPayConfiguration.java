@@ -4,6 +4,8 @@ import com.github.binarywang.wxpay.config.WxPayConfig;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.service.impl.WxPayServiceImpl;
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration;
+import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
+import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
@@ -12,6 +14,7 @@ import com.thebund1st.tiantong.wechatpay.WxPayNativeUnifiedOrderRequestTypeNativ
 import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -22,6 +25,12 @@ import static java.util.Arrays.asList;
 @Configuration
 @Import({WeChatPayWebhookConfiguration.class, WeChatPayPropertiesConfiguration.class})
 public class WeChatPayConfiguration {
+
+    @Autowired
+    private OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResultNotificationIdentifierGenerator;
+
+    @Autowired
+    private Clock clock;
 
     @Bean
     public NonceGenerator nonceGenerator() {
@@ -61,7 +70,10 @@ public class WeChatPayConfiguration {
                 ipAddressExtractor(),
                 weChatPayProperties.paymentResultNotificationWebhookEndpointUri(),
                 weChatPayProperties.refundResultNotificationWebhookEndpointUri(),
-                weChatPayCreateOrderRequestPopulatorDispatcher());
+                weChatPayCreateOrderRequestPopulatorDispatcher(),
+                onlinePaymentResultNotificationIdentifierGenerator,
+                clock
+        );
     }
 
     @Bean

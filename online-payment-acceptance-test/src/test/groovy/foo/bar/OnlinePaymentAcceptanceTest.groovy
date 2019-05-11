@@ -1,6 +1,6 @@
 package foo.bar
 
-
+import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway
 import foo.bar.steps.Customer
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,11 +21,17 @@ class OnlinePaymentAcceptanceTest extends Specification {
     @Autowired
     private DomainEventPublisherStub domainEventPublisherStub
 
+    @Autowired
+    private DummyPayOnlinePaymentProviderGateway dummyPayOnlinePaymentProviderGateway
+
     private Customer customer
 
     void setup() {
         RestAssured.port = port
-        customer = new Customer(domainEventPublisherStub)
+        customer = new Customer(
+                domainEventPublisherStub: domainEventPublisherStub,
+                dummyPayOnlinePaymentProviderGateway: dummyPayOnlinePaymentProviderGateway
+        )
     }
 
     def "I want to launch an online payment request to my favorite online payment provider"() {
@@ -46,6 +52,19 @@ class OnlinePaymentAcceptanceTest extends Specification {
 
         then:
         customer.thenTheOnlinePaymentRequestIsSuccess()
+    }
+
+    def "The payment result can be synchronized to finish payment"() {
+        given:
+        customer.requestPaymentToDummyPay()
+        customer.thenTheRequestIsSentToTheOnlinePaymentProvider()
+        customer.finishPaymentWithDummyPayButWeDontReceiveNotification()
+
+        when:
+        customer.tryPaymentResultSynchronization()
+
+        then:
+        customer.thenTheOnlinePaymentResultIsPulledAndTheOnlinePaymentIsSucceeded()
     }
 
 

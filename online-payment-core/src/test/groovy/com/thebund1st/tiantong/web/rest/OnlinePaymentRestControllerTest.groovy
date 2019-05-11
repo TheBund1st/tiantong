@@ -1,12 +1,13 @@
 package com.thebund1st.tiantong.web.rest
 
+import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand
 import com.thebund1st.tiantong.dummypay.DummyPaySpecificRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
+import org.springframework.http.HttpStatus
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
-import static com.thebund1st.tiantong.commands.RequestOnlineRefundCommandFixture.aRequestOnlineRefundCommand
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
-import static com.thebund1st.tiantong.core.refund.OnlineRefundFixture.anOnlineRefund
+import static com.thebund1st.tiantong.core.OnlinePaymentResultFixture.anOnlinePaymentResult
 import static org.hamcrest.Matchers.is
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -64,5 +65,45 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                 .andExpect(jsonPath("method", is(onlinePayment.getMethod().getValue())))
                 .andExpect(jsonPath("providerSpecificRequest.dummyId", is("dummyId")))
     }
+
+    def "it should accept request to sync an online payment"() {
+        given:
+        def onlinePayment = anOnlinePayment().build()
+        def onlinePaymentResult = anOnlinePaymentResult().sendTo(onlinePayment).build()
+
+        and:
+        syncOnlinePaymentResultCommandHandler
+                .handle(new SyncOnlinePaymentResultCommand(onlinePayment.id.value)) >> Optional.of(onlinePaymentResult)
+
+        when:
+        //@formatter:off
+        def then = given()
+            .post("/api/online/payments/${onlinePayment.id.value}/resultSynchronizations")
+        .then()
+        //@formatter:on
+
+        then:
+        then.statusCode(HttpStatus.CREATED.value())
+    }
+
+    def "it should return payment required given online payment result is not found"() {
+        given:
+        def onlinePayment = anOnlinePayment().build()
+
+        and:
+        syncOnlinePaymentResultCommandHandler
+                .handle(new SyncOnlinePaymentResultCommand(onlinePayment.id.value)) >> Optional.empty()
+
+        when:
+        //@formatter:off
+        def then = given()
+            .post("/api/online/payments/${onlinePayment.id.value}/resultSynchronizations")
+        .then()
+        //@formatter:on
+
+        then:
+        then.statusCode(HttpStatus.PAYMENT_REQUIRED.value())
+    }
+
 
 }

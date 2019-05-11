@@ -1,11 +1,12 @@
 package com.thebund1st.tiantong.amqp
 
+import com.thebund1st.tiantong.boot.amqp.AmqpConfiguration
 import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
 import org.springframework.context.annotation.Import
-import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import spock.lang.Specification
 
@@ -13,9 +14,8 @@ import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static java.util.concurrent.TimeUnit.SECONDS
 import static org.awaitility.Awaitility.await
 
-@Import(TestAmqpConfiguration)
-@SpringBootTest
-@ActiveProfiles("commit")
+@Import([TestAmqpConfiguration, AmqpConfiguration, RabbitAutoConfiguration])
+@ContextConfiguration
 @TestPropertySource(properties = "tiantong.domainEventPublisherDelegate.type=amqp")
 class AmqpDomainEventPublisherTest extends Specification {
 

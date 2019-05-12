@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.boot.amqp.AmqpConfiguration;
 import com.thebund1st.tiantong.boot.application.ApplicationConfiguration;
 import com.thebund1st.tiantong.boot.core.CoreConfiguration;
 import com.thebund1st.tiantong.boot.dummypay.DummyPayConfiguration;
+import com.thebund1st.tiantong.boot.http.RequestMappingConfiguration;
 import com.thebund1st.tiantong.boot.jdbc.JdbcConfiguration;
 import com.thebund1st.tiantong.boot.json.JsonConfiguration;
 import com.thebund1st.tiantong.boot.logging.LoggingConfiguration;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Import;
         "com.thebund1st.tiantong.web",
 })
 @Import({
+        RequestMappingConfiguration.class,
         JsonConfiguration.class,
         AmqpConfiguration.class,
         DummyPayConfiguration.class,

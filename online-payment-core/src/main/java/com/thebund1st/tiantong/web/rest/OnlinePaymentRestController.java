@@ -14,26 +14,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.FOUND;
-import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.PAYMENT_REQUIRED;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping(path = "#{requestMappingProperties.prefix}")
 public class OnlinePaymentRestController {
 
     private final RequestOnlinePaymentCommandHandler onlinePaymentCommandHandler;
     private final OnlinePaymentProviderGateway onlinePaymentProviderGateway;
     private final SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler;
 
-    //TODO make the url path configurable
-    @PostMapping("/api/online/payments")
+    @PostMapping("/online/payments")
     public OnlinePaymentResource handle(@Valid @RequestBody RequestOnlinePaymentCommand command) {
         OnlinePayment onlinePayment = onlinePaymentCommandHandler.handle(command);
         ProviderSpecificRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
@@ -41,8 +40,7 @@ public class OnlinePaymentRestController {
         return assemble(onlinePayment, providerSpecificRequest);
     }
 
-    //TODO make the url path configurable
-    @PostMapping("/api/online/payments/{onlinePaymentId}/resultSynchronizations")
+    @PostMapping("/online/payments/{onlinePaymentId}/resultSynchronizations")
     public ResponseEntity handle(@PathVariable("onlinePaymentId") String onlinePaymentId) {
         Optional<OnlinePaymentResultNotification> resultMaybe = syncOnlinePaymentResultCommandHandler
                 .handle(new SyncOnlinePaymentResultCommand(onlinePaymentId));

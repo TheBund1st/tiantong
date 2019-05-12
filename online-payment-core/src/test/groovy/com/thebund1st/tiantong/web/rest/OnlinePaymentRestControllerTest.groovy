@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand
 import com.thebund1st.tiantong.dummypay.DummyPaySpecificRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.TestPropertySource
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment

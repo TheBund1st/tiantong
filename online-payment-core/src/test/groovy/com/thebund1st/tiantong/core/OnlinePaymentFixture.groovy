@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.utils.Randoms
 import com.thebund1st.tiantong.wechatpay.WeChatPayJsApiSpecificOnlinePaymentRequest
 
+import java.time.LocalDateTime
+
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 import static java.time.LocalDateTime.now
@@ -87,6 +89,11 @@ class OnlinePaymentFixture {
 
     def with(ProviderSpecificOnlinePaymentRequest request) {
         this.target.setProviderSpecificOnlinePaymentRequest(request)
+        this
+    }
+
+    def createdAt(LocalDateTime localDateTime) {
+        this.target.setCreatedAt(localDateTime)
         this
     }
 

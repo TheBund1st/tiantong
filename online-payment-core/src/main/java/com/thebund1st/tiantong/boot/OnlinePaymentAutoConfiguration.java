@@ -1,5 +1,6 @@
 package com.thebund1st.tiantong.boot;
 
+import com.thebund1st.tiantong.boot.actuator.endpoint.EndpointConfiguration;
 import com.thebund1st.tiantong.boot.amqp.AmqpConfiguration;
 import com.thebund1st.tiantong.boot.application.ApplicationConfiguration;
 import com.thebund1st.tiantong.boot.core.CoreConfiguration;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Import;
         "com.thebund1st.tiantong.web",
 })
 @Import({
+        EndpointConfiguration.class,
         RequestMappingConfiguration.class,
         JsonConfiguration.class,
         AmqpConfiguration.class,

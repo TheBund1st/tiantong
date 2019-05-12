@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler
+import com.thebund1st.tiantong.boot.actuator.endpoint.EndpointConfiguration
 import com.thebund1st.tiantong.boot.dummypay.DummyPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfiguration
 import com.thebund1st.tiantong.boot.http.RequestMappingConfiguration

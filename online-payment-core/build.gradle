@@ -30,11 +30,16 @@ dependencies {
     testCompile 'io.rest-assured:spring-mock-mvc:4.0.0'
     testCompile 'io.rest-assured:rest-assured:4.0.0'
 
+    // actuator
+    compileOnly("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+    testCompile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+
     // spock
     testCompile('org.spockframework:spock-spring:1.2-groovy-2.4')
     testCompile("net.bytebuddy:byte-buddy-agent:${byteBuddyVersion}")
     testCompile("net.bytebuddy:byte-buddy:${byteBuddyVersion}")
     testCompile 'org.awaitility:awaitility-groovy:3.1.2'
+    testCompile group: 'com.github.hippoom', name: 'test-data-builder', version: '0.5.0'
 
     //aop
     compileOnly("org.springframework.boot:spring-boot-starter-aop:${springBootVersion}")

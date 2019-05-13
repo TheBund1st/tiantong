@@ -4,7 +4,7 @@ import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
-import com.thebund1st.tiantong.core.ProviderSpecificRequest;
+import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.time.Clock;
@@ -30,8 +30,8 @@ public class DummyPayOnlinePaymentProviderGateway implements
     }
 
     @Override
-    public ProviderSpecificRequest request(OnlinePayment onlinePayment,
-                                           ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
+    public ProviderSpecificUserAgentOnlinePaymentRequest request(OnlinePayment onlinePayment,
+                                                                 ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
         DummyPaySpecificRequest dummyPaySpecificRequest = new DummyPaySpecificRequest();
         dummyPaySpecificRequest.setDummyId(UUID.randomUUID().toString());
         return dummyPaySpecificRequest;

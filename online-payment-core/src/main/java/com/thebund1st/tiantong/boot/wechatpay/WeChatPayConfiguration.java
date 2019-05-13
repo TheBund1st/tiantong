@@ -8,10 +8,13 @@ import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGen
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
+import com.thebund1st.tiantong.wechatpay.WeChatPayJsApiSpecificUserAgentOnlinePaymentRequestAssembler;
+import com.thebund1st.tiantong.wechatpay.WeChatPayNativeSpecificUserAgentOnlinePaymentRequestAssembler;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
-import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestTypeJsApiPopulator;
+import com.thebund1st.tiantong.wechatpay.WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher;
 import com.thebund1st.tiantong.wechatpay.WxPayNativeUnifiedOrderRequestTypeNativePopulator;
 import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher;
+import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestTypeJsApiPopulator;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,13 +67,25 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
+    public WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher
+    weChatPayProviderSpecificUserAgentRequestAssemblerDispatcher(WxPayService wxPayService) {
+        return
+                new WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher(asList(
+                        new WeChatPayNativeSpecificUserAgentOnlinePaymentRequestAssembler(),
+                        new WeChatPayJsApiSpecificUserAgentOnlinePaymentRequestAssembler(nonceGenerator(), clock, wxPayService))
+                );
+    }
+
+    @Bean
     public WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway(WeChatPayProperties weChatPayProperties) {
-        return new WeChatPayOnlinePaymentGateway(wxPayService(weChatPayProperties),
+        WxPayService wxPayService = wxPayService(weChatPayProperties);
+        return new WeChatPayOnlinePaymentGateway(wxPayService,
                 nonceGenerator(),
                 ipAddressExtractor(),
                 weChatPayProperties.paymentResultNotificationWebhookEndpointUri(),
                 weChatPayProperties.refundResultNotificationWebhookEndpointUri(),
                 weChatPayCreateOrderRequestPopulatorDispatcher(),
+                weChatPayProviderSpecificUserAgentRequestAssemblerDispatcher(wxPayService),
                 onlinePaymentResultNotificationIdentifierGenerator,
                 clock
         );

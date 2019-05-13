@@ -7,7 +7,7 @@ import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
-import com.thebund1st.tiantong.core.ProviderSpecificRequest;
+import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
 import com.thebund1st.tiantong.web.rest.resources.OnlinePaymentResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class OnlinePaymentRestController {
     @PostMapping("/online/payments")
     public OnlinePaymentResource handle(@Valid @RequestBody RequestOnlinePaymentCommand command) {
         OnlinePayment onlinePayment = onlinePaymentCommandHandler.handle(command);
-        ProviderSpecificRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
+        ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
                 command.getProviderSpecificRequest());
         return assemble(onlinePayment, providerSpecificRequest);
     }
@@ -51,7 +51,7 @@ public class OnlinePaymentRestController {
 
 
     private OnlinePaymentResource assemble(OnlinePayment onlinePayment,
-                                           ProviderSpecificRequest providerSpecificRequest) {
+                                           ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest) {
         OnlinePaymentResource resource = new OnlinePaymentResource();
         resource.setIdentifier(onlinePayment.getId().getValue());
         resource.setAmount(onlinePayment.getAmount());

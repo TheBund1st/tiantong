@@ -15,7 +15,7 @@ import spock.lang.Specification
 abstract class AbstractJsonTest extends Specification {
 
     @Autowired
-    private ObjectMapper objectMapper
+    protected ObjectMapper objectMapper
 
     def setup() {
         JacksonTester.initFields(this, objectMapper)

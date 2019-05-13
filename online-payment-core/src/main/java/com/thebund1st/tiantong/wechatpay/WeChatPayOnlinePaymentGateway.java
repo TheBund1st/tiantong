@@ -11,7 +11,7 @@ import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
-import com.thebund1st.tiantong.core.ProviderSpecificRequest;
+import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
@@ -38,14 +38,15 @@ public class WeChatPayOnlinePaymentGateway implements
     private final String notifyRefundResultWebhookEndpoint;
     private final WxPayUnifiedOrderRequestProviderSpecificRequestPopulator<ProviderSpecificOnlinePaymentRequest>
             wxPayUnifiedOrderRequestProviderSpecificRequestPopulator;
+    private final WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler weChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler;
     private final OnlinePaymentResultNotificationIdentifierGenerator notificationIdentifierGenerator;
     private final Clock clock;
 
     @Override
-    public ProviderSpecificRequest request(OnlinePayment onlinePayment,
-                                           ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
-        WxPayUnifiedOrderResult response = requestPayment(onlinePayment, providerSpecificRequest);
-        return new WeChatPaySpecificRequest(response);
+    public ProviderSpecificUserAgentOnlinePaymentRequest request(OnlinePayment onlinePayment,
+                                                                 ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
+        WxPayUnifiedOrderResult result = requestPayment(onlinePayment, providerSpecificRequest);
+        return weChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler.from(onlinePayment, result);
     }
 
     @SneakyThrows

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Component
 public class Clock {
@@ -13,5 +14,9 @@ public class Clock {
 
     public LocalDateTime now() {
         return LocalDateTime.now(zoneId);
+    }
+
+    public long epochSecond() {
+        return ZonedDateTime.now(zoneId).toEpochSecond();
     }
 }

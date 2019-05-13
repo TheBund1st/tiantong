@@ -3,12 +3,14 @@ package com.thebund1st.tiantong.application.scheduling;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RequiredArgsConstructor
 public class SyncOnlinePaymentResultsCommandHandler {
 
@@ -33,7 +35,13 @@ public class SyncOnlinePaymentResultsCommandHandler {
     private void doSyncOnlinePaymentResultsBy(LocalDateTime localDateTime, Pageable pageable) {
         Page<OnlinePaymentResultSynchronizationJob> page = onlinePaymentResultSynchronizationJobStore
                 .find(localDateTime, pageable);
-        page.forEach(onlinePaymentResultSynchronizationJobHandler::handle);
+        page.forEach(command -> {
+            try {
+                onlinePaymentResultSynchronizationJobHandler.handle(command);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
         if (page.hasNext()) {
             doSyncOnlinePaymentResultsBy(localDateTime, page.nextPageable());
         }

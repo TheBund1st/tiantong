@@ -2,13 +2,16 @@ package com.thebund1st.tiantong.core;
 
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
+import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.function.Predicate;
 
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
@@ -70,6 +73,31 @@ public class OnlinePayment {
         return PENDING == getStatus();
     }
 
+    public static Predicate<OnlinePayment> shouldCloseSpecification(LocalDateTime now, int keepMinutes) {
+        Predicate<OnlinePayment> isPending = OnlinePayment::isPending;
+        Predicate<OnlinePayment> ago = onlinePayment ->
+                Duration.between(onlinePayment.getCreatedAt(), now).toMinutes() >= keepMinutes;
+        return isPending.and(ago);
+    }
+
+    public OnlinePaymentClosedEvent toAboutToCloseEvent(LocalDateTime now) {
+        OnlinePaymentClosedEvent event = new OnlinePaymentClosedEvent();
+        event.setOnlinePaymentId(getId());
+        event.setOnlinePaymentVersion(getVersion());
+        event.setCorrelation(correlation);
+        event.setWhen(now);
+        return event;
+    }
+
+    public void close(LocalDateTime now) {
+        if (isPending()) {
+            this.status = Status.CLOSED;
+            this.lastModifiedAt = now;
+        } else {
+            throw new OnlinePaymentAlreadyClosedException(this);
+        }
+    }
+
     @Getter
     @EqualsAndHashCode
     public static class Identifier {
@@ -90,7 +118,7 @@ public class OnlinePayment {
     }
 
     public enum Status {
-        UNKNOWN(-1), PENDING(0), SUCCESS(1), FAILURE(2);
+        UNKNOWN(-1), PENDING(0), SUCCESS(1), FAILURE(2), CLOSED(3);
 
         @Getter
         private int value;

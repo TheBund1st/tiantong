@@ -22,22 +22,23 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
 
     private final NotifyPaymentResultCommandHandler notifyPaymentResultCommandHandler;
 
+    private final CloseOnlinePaymentCommandHandler closeOnlinePaymentCommandHandler;
+
     public Optional<OnlinePaymentResultNotification> handle(SyncOnlinePaymentResultCommand command) {
         OnlinePayment onlinePayment = onlinePaymentRepository
                 .mustFindBy(OnlinePayment.Identifier.of(command.getOnlinePaymentId()));
         if (onlinePayment.isPending()) {
             Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
-            resultMaybe.ifPresent(paymentResult -> {
-                try {
-                    notifyPaymentResultCommandHandler.handle(paymentResult);
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                }
-            });
+            if (resultMaybe.isPresent()) {
+                notifyPaymentResultCommandHandler.handle(resultMaybe.get());
+            } else {
+                closeOnlinePaymentCommandHandler.closeIfNecessary(onlinePayment);
+            }
             return resultMaybe;
         } else {
             return Optional.empty();
         }
+
     }
 
     @Override

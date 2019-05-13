@@ -10,4 +10,9 @@ public class OnlinePaymentAlreadyClosedException extends RuntimeException {
         super(String.format("Online Payment [%s] has been marked as %s, it failed to handle [%s]",
                 onlinePayment.getId().getValue(), onlinePayment.getStatus(), notification));
     }
+
+    public OnlinePaymentAlreadyClosedException(OnlinePayment onlinePayment) {
+        super(String.format("Online Payment [%s] has been marked as %s, it failed to close",
+                onlinePayment.getId().getValue(), onlinePayment.getStatus()));
+    }
 }

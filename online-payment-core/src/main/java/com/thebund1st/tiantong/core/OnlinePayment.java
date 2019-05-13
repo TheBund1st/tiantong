@@ -63,7 +63,11 @@ public class OnlinePayment {
     }
 
     private boolean isClosed() {
-        return getStatus() != PENDING;
+        return !isPending();
+    }
+
+    public boolean isPending() {
+        return PENDING == getStatus();
     }
 
     @Getter

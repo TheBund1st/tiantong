@@ -35,7 +35,7 @@ class SyncOnlinePaymentResultCommandHandlerTest extends Specification {
         assert actual == Optional.of(paymentResult)
     }
 
-    def "it should skip sync online payment result"() {
+    def "it should skip sync online payment result given no result"() {
         given:
         def onlinePayment = anOnlinePayment().build()
         def command = new SyncOnlinePaymentResultCommand(onlinePayment.id.value)
@@ -43,6 +43,21 @@ class SyncOnlinePaymentResultCommandHandlerTest extends Specification {
         and:
         onlinePaymentRepository.mustFindBy(onlinePayment.id) >> onlinePayment
         onlinePaymentResultGateway.pull(onlinePayment) >> Optional.empty()
+
+        when:
+        def actual = subject.handle(command)
+
+        then:
+        assert !actual.isPresent()
+    }
+
+    def "it should skip sync online payment result given the online payment is not pending"() {
+        given:
+        def onlinePayment = anOnlinePayment().succeeded().build()
+        def command = new SyncOnlinePaymentResultCommand(onlinePayment.id.value)
+
+        and:
+        onlinePaymentRepository.mustFindBy(onlinePayment.id) >> onlinePayment
 
         when:
         def actual = subject.handle(command)

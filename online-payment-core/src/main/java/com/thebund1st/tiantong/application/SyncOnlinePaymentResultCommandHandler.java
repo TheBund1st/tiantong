@@ -8,9 +8,11 @@ import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResultSynchronizationJobHandler {
 
@@ -23,11 +25,19 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
     public Optional<OnlinePaymentResultNotification> handle(SyncOnlinePaymentResultCommand command) {
         OnlinePayment onlinePayment = onlinePaymentRepository
                 .mustFindBy(OnlinePayment.Identifier.of(command.getOnlinePaymentId()));
-        //FIXME filter payments that is not pending
-        Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
-        resultMaybe
-                .ifPresent(notifyPaymentResultCommandHandler::handle);
-        return resultMaybe;
+        if (onlinePayment.isPending()) {
+            Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
+            resultMaybe.ifPresent(paymentResult -> {
+                try {
+                    notifyPaymentResultCommandHandler.handle(paymentResult);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+            return resultMaybe;
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override

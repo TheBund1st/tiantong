@@ -12,6 +12,7 @@ import com.thebund1st.tiantong.boot.json.JsonConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
+import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
@@ -57,6 +58,9 @@ class AbstractWebMvcTest extends Specification {
 
     @SpringBean
     protected SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler = Mock()
+
+    @SpringBean
+    protected OnlinePaymentRepository onlinePaymentRepository = Mock()
 
     def setup() {
         RestAssuredMockMvc.mockMvc(mockMvc)

@@ -63,7 +63,7 @@ public class JdbcOnlineRefundRepository implements OnlineRefundRepository {
     }
 
     private LocalDateTime toDateTime(ResultSet rs, String columnLabel) throws java.sql.SQLException {
-        return rs.getObject(columnLabel, LocalDateTime.class);
+        return rs.getTimestamp(columnLabel).toLocalDateTime();
     }
 
 }

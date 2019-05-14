@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class JdbcOnlinePaymentResultNotificationRepository implements OnlinePaym
                     model.setAmount(rs.getDouble("AMOUNT"));
                     model.setCode(OnlinePaymentResultNotification.Code.of(rs.getInt("CODE")));
                     model.setText(rs.getString("TEXT"));
-                    model.setCreatedAt(rs.getObject("CREATED_AT", LocalDateTime.class));
+                    model.setCreatedAt(rs.getTimestamp("CREATED_AT").toLocalDateTime());
                     return model;
                 });
     }

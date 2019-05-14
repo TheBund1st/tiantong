@@ -6,11 +6,13 @@ import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
 import com.thebund1st.tiantong.web.rest.resources.OnlinePaymentResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +33,7 @@ public class OnlinePaymentRestController {
     private final RequestOnlinePaymentCommandHandler onlinePaymentCommandHandler;
     private final OnlinePaymentProviderGateway onlinePaymentProviderGateway;
     private final SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler;
+    private final OnlinePaymentRepository onlinePaymentRepository;
 
     @PostMapping("/online/payments")
     public OnlinePaymentResource handle(@Valid @RequestBody RequestOnlinePaymentCommand command) {
@@ -38,6 +41,12 @@ public class OnlinePaymentRestController {
         ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
                 command.getProviderSpecificRequest());
         return assemble(onlinePayment, providerSpecificRequest);
+    }
+
+    @GetMapping("/online/payments/{onlinePaymentId}")
+    public OnlinePaymentResource findBy(@PathVariable("onlinePaymentId") String onlinePaymentId) {
+        OnlinePayment onlinePayment = onlinePaymentRepository.mustFindBy(OnlinePayment.Identifier.of(onlinePaymentId));
+        return assemble(onlinePayment);
     }
 
     @PostMapping("/online/payments/{onlinePaymentId}/resultSynchronizations")
@@ -52,11 +61,17 @@ public class OnlinePaymentRestController {
 
     private OnlinePaymentResource assemble(OnlinePayment onlinePayment,
                                            ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest) {
+        OnlinePaymentResource resource = assemble(onlinePayment);
+        resource.setProviderSpecificRequest(providerSpecificRequest);
+        return resource;
+    }
+
+    private OnlinePaymentResource assemble(OnlinePayment onlinePayment) {
         OnlinePaymentResource resource = new OnlinePaymentResource();
         resource.setIdentifier(onlinePayment.getId().getValue());
         resource.setAmount(onlinePayment.getAmount());
         resource.setMethod(onlinePayment.getMethod().getValue());
-        resource.setProviderSpecificRequest(providerSpecificRequest);
+        resource.setStatus(onlinePayment.getStatus().name());
         return resource;
     }
 }

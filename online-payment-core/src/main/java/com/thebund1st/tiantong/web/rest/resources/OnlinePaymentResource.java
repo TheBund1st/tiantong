@@ -9,6 +9,7 @@ public class OnlinePaymentResource {
     private String identifier;
     private double amount;
     private String method;
+    private String status;
     private ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest;
 
 

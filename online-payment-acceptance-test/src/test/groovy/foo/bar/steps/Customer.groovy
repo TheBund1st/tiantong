@@ -129,4 +129,18 @@ class Customer {
         Thread.sleep(3000)
         this
     }
+
+    def theOnlinePaymentIsClosed() {
+        //@formatter:off
+        this.currentResponse = aGiven()
+            .get("/api/online/payments/${currentOnlinePaymentId}")
+        .then()
+            .log().everything()
+        .statusCode(OK.value())
+        assert this.currentResponse
+                .extract().body()
+                .jsonPath().get("status") == "CLOSED"
+        //@formatter:on
+        this
+    }
 }

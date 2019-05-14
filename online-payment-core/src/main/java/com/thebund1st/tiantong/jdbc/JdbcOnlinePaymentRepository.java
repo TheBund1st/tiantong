@@ -93,7 +93,7 @@ public class JdbcOnlinePaymentRepository implements
                         "LAST_MODIFIED_AT = ? " +
                         "WHERE ID = ? " +
                         "AND VERSION = ?",
-                SUCCESS.getValue(),
+                onlinePayment.getStatus().getValue(),
                 Timestamp.valueOf(onlinePayment.getLastModifiedAt()),
                 onlinePaymentId,
                 onlinePaymentVersion
@@ -105,7 +105,7 @@ public class JdbcOnlinePaymentRepository implements
     }
 
     private LocalDateTime toDateTime(ResultSet rs, String columnLabel) throws java.sql.SQLException {
-        return rs.getObject(columnLabel, LocalDateTime.class);
+        return rs.getTimestamp(columnLabel).toLocalDateTime();
     }
 
     @Override

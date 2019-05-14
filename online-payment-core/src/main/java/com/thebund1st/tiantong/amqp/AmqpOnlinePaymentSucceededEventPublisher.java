@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 @RequiredArgsConstructor
-public class AmqpOnlinePaymentSuccededEventPublisher implements AmqpDomainEventPublisher {
+public class AmqpOnlinePaymentSucceededEventPublisher implements AmqpDomainEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 

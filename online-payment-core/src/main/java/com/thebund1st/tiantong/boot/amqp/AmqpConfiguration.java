@@ -2,7 +2,7 @@ package com.thebund1st.tiantong.boot.amqp;
 
 import com.thebund1st.tiantong.amqp.AmqpDomainEventPublisher;
 import com.thebund1st.tiantong.amqp.AmqpDomainEventPublisherDispatcher;
-import com.thebund1st.tiantong.amqp.AmqpOnlinePaymentSuccededEventPublisher;
+import com.thebund1st.tiantong.amqp.AmqpOnlinePaymentSucceededEventPublisher;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +15,8 @@ import java.util.List;
 public class AmqpConfiguration {
 
     @Bean
-    public AmqpOnlinePaymentSuccededEventPublisher amqpOnlinePaymentSuccededEventPublisher(RabbitTemplate rabbitTemplate) {
-        return new AmqpOnlinePaymentSuccededEventPublisher(rabbitTemplate, "onlinePaymentSucceededTopic");
+    public AmqpOnlinePaymentSucceededEventPublisher amqpOnlinePaymentSuccededEventPublisher(RabbitTemplate rabbitTemplate) {
+        return new AmqpOnlinePaymentSucceededEventPublisher(rabbitTemplate, "onlinePaymentSucceededTopic");
     }
 
     @Bean(name = "domainEventPublisherDelegate")

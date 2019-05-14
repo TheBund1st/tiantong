@@ -73,10 +73,8 @@ public class ApplicationConfiguration {
 
     @Bean
     public CloseOnlinePaymentCommandHandler closeOnlinePaymentCommandHandler() {
-        CloseOnlinePaymentCommandHandler handler = new CloseOnlinePaymentCommandHandler(onlinePaymentRepository,
+        return new CloseOnlinePaymentCommandHandler(onlinePaymentRepository,
                 domainEventPublisher,
                 clock);
-        handler.setKeep(onlinePaymentResultSynchronizationProperties.getExpires());
-        return handler;
     }
 }

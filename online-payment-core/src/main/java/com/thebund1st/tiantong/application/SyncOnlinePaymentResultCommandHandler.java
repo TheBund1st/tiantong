@@ -32,6 +32,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
             if (resultMaybe.isPresent()) {
                 notifyPaymentResultCommandHandler.handle(resultMaybe.get());
             } else {
+                //TODO consider closing online payment on provider side
                 closeOnlinePaymentCommandHandler.closeIfNecessary(onlinePayment);
             }
             return resultMaybe;

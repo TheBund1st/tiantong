@@ -7,6 +7,7 @@ import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent
 import com.thebund1st.tiantong.time.Clock
 import spock.lang.Specification
 
+import java.time.Duration
 import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
@@ -24,7 +25,9 @@ class CloseOnlinePaymentCommandHandlerTest extends Specification {
     def "it should emit online payment is about to close event given the online payment exceeds max result waiting time"() {
         given:
         def now = LocalDateTime.now()
-        def onlinePayment = anOnlinePayment().createdAt(now.minusMinutes(30)).build()
+        def onlinePayment = anOnlinePayment()
+                .createdAt(now.minusMinutes(30))
+                .expires(Duration.ofMinutes(29)).build()
 
         and:
         clock.now() >> now
@@ -47,7 +50,9 @@ class CloseOnlinePaymentCommandHandlerTest extends Specification {
     def "it should do nothing online payment does not exceed max result waiting time"() {
         given:
         def now = LocalDateTime.now()
-        def onlinePayment = anOnlinePayment().createdAt(now.minusMinutes(29)).build()
+        def onlinePayment = anOnlinePayment()
+                .createdAt(now.minusMinutes(30))
+                .expires(Duration.ofMinutes(31)).build()
 
         and:
         clock.now() >> now

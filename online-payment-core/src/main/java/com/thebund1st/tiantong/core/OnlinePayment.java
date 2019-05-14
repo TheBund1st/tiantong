@@ -74,14 +74,17 @@ public class OnlinePayment {
         return PENDING == getStatus();
     }
 
-    public static Predicate<OnlinePayment> shouldCloseSpecification(LocalDateTime now, Duration keep) {
+    public static Predicate<OnlinePayment> shouldCloseSpecification(LocalDateTime now) {
         Predicate<OnlinePayment> isPending = OnlinePayment::isPending;
-        Predicate<OnlinePayment> ago = onlinePayment ->
-                Duration.between(onlinePayment.getCreatedAt(), now).compareTo(keep) >= 0;
+        Predicate<OnlinePayment> ago = (onlinePayment) -> onlinePayment.expiresBy(now);
         return isPending.and(ago);
     }
 
-    public OnlinePaymentClosedEvent toAboutToCloseEvent(LocalDateTime now) {
+    private boolean expiresBy(LocalDateTime now) {
+        return getExpiresAt().isBefore(now);
+    }
+
+    public OnlinePaymentClosedEvent toClosedEvent(LocalDateTime now) {
         OnlinePaymentClosedEvent event = new OnlinePaymentClosedEvent();
         event.setOnlinePaymentId(getId());
         event.setOnlinePaymentVersion(getVersion());

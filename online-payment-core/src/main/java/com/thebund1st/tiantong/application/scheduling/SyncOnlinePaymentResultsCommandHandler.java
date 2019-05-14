@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -24,11 +25,11 @@ public class SyncOnlinePaymentResultsCommandHandler {
     private int batchSize = 20;
 
     @Setter
-    private int delayInMinutes = 3;
+    private Duration delayInMinutes = Duration.ofMinutes(3);
 
 
     public void handle() {
-        LocalDateTime createdAt = clock.now().minusMinutes(delayInMinutes);
+        LocalDateTime createdAt = clock.now().minusSeconds(delayInMinutes.getSeconds());
         doSyncOnlinePaymentResultsBy(createdAt, PageRequest.of(0, batchSize));
     }
 

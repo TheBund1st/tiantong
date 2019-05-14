@@ -6,6 +6,7 @@ import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.core.refund.OnlineRefundIdentifierGenerator;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +14,13 @@ import java.util.UUID;
 
 @Configuration
 public class CoreConfiguration {
+
+    @ConfigurationProperties(prefix = "tiantong.online.payment.result.synchronization")
+    @Bean
+    public OnlinePaymentResultSynchronizationProperties onlinePaymentResultSynchronizationProperties() {
+        return new OnlinePaymentResultSynchronizationProperties();
+    }
+
     @Bean
     public OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator() {
         return () -> OnlinePayment.Identifier.of(aRandomUuidWithoutDash());

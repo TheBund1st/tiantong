@@ -5,6 +5,7 @@ import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler;
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler;
+import com.thebund1st.tiantong.boot.core.OnlinePaymentResultSynchronizationProperties;
 import com.thebund1st.tiantong.boot.application.scheduling.SchedulingConfiguration;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
@@ -16,6 +17,7 @@ import com.thebund1st.tiantong.core.refund.OnlineRefundIdentifierGenerator;
 import com.thebund1st.tiantong.core.refund.OnlineRefundRepository;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -33,6 +35,8 @@ public class ApplicationConfiguration {
     private final OnlineRefundIdentifierGenerator onlineRefundIdentifierGenerator;
     private final OnlineRefundRepository onlineRefundRepository;
     private final OnlinePaymentResultGateway onlinePaymentResultGateway;
+    @Autowired
+    private OnlinePaymentResultSynchronizationProperties onlinePaymentResultSynchronizationProperties;
 
 
     @Bean
@@ -67,8 +71,10 @@ public class ApplicationConfiguration {
 
     @Bean
     public CloseOnlinePaymentCommandHandler closeOnlinePaymentCommandHandler() {
-        return new CloseOnlinePaymentCommandHandler(onlinePaymentRepository,
+        CloseOnlinePaymentCommandHandler handler = new CloseOnlinePaymentCommandHandler(onlinePaymentRepository,
                 domainEventPublisher,
                 clock);
+        handler.setKeep(onlinePaymentResultSynchronizationProperties.getKeep());
+        return handler;
     }
 }

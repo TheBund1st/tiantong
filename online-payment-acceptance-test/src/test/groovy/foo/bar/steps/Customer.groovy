@@ -108,8 +108,11 @@ class Customer {
 
     def thenTheOnlinePaymentResultIsPulledAndTheOnlinePaymentIsSucceeded() {
         this.currentResponse.statusCode(CREATED.value())
-        assert domainEventPublisherStub.shouldReceivePaymentSucceedEvent(currentOnlinePaymentId).isPresent()
-        this
+        thenTheOnlinePaymentIsSucceeded()
+    }
+
+    def thenTheOnlinePaymentResultIsPulledAutomaticallyAndTheOnlinePaymentIsSucceeded() {
+        thenTheOnlinePaymentIsSucceeded()
     }
 
     def tryPaymentResultSynchronization() {
@@ -119,6 +122,11 @@ class Customer {
         .then()
             .log().everything()
         //@formatter:on
+        this
+    }
+
+    def waitForPaymentResultSynchronization() {
+        Thread.sleep(3000)
         this
     }
 }

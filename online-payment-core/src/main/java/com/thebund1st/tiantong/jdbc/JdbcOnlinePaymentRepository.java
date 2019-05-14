@@ -117,7 +117,7 @@ public class JdbcOnlinePaymentRepository implements
                         "AND CREATED_AT <= ? ",
                 new Object[]{
                         PENDING.getValue(),
-                        localDateTime
+                        Timestamp.valueOf(localDateTime)
                 },
                 (rs, rowNum) -> rs.getLong("TOTAL_ELEMENTS"));
         List<OnlinePaymentResultSynchronizationJob> content = jdbcTemplate.query("SELECT * FROM ONLINE_PAYMENT " +
@@ -127,7 +127,7 @@ public class JdbcOnlinePaymentRepository implements
                         "LIMIT ?, ?",
                 new Object[]{
                         PENDING.getValue(),
-                        localDateTime,
+                        Timestamp.valueOf(localDateTime),
                         pageable.getOffset(),
                         pageable.getPageSize()
                 },

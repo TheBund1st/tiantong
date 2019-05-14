@@ -73,10 +73,10 @@ public class OnlinePayment {
         return PENDING == getStatus();
     }
 
-    public static Predicate<OnlinePayment> shouldCloseSpecification(LocalDateTime now, int keepMinutes) {
+    public static Predicate<OnlinePayment> shouldCloseSpecification(LocalDateTime now, Duration keep) {
         Predicate<OnlinePayment> isPending = OnlinePayment::isPending;
         Predicate<OnlinePayment> ago = onlinePayment ->
-                Duration.between(onlinePayment.getCreatedAt(), now).toMinutes() >= keepMinutes;
+                Duration.between(onlinePayment.getCreatedAt(), now).compareTo(keep) >= 0;
         return isPending.and(ago);
     }
 

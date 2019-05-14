@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,7 @@ public class WeChatPayOnlinePaymentGateway implements
     private final WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler weChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler;
     private final OnlinePaymentResultNotificationIdentifierGenerator notificationIdentifierGenerator;
     private final Clock clock;
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Override
     public ProviderSpecificUserAgentOnlinePaymentRequest request(OnlinePayment onlinePayment,
@@ -62,6 +64,8 @@ public class WeChatPayOnlinePaymentGateway implements
         req.setSpbillCreateIp(ipAddressExtractor.getLocalhostAddress());
         req.setNotifyUrl(webhookEndpoint);
         req.setNonceStr(nonceGenerator.next());
+        req.setTimeStart(dateTimeFormatter.format(op.getCreatedAt()));
+        req.setTimeExpire(dateTimeFormatter.format(op.getExpiresAt()));
         wxPayUnifiedOrderRequestProviderSpecificRequestPopulator.populate(req, providerSpecificRequest);
         return this.wxPayService.unifiedOrder(req);
     }

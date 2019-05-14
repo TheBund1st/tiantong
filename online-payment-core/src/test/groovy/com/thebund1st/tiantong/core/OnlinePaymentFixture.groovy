@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.utils.Randoms
 import com.thebund1st.tiantong.wechatpay.WeChatPayJsApiSpecificOnlinePaymentRequest
 
+import java.time.Duration
 import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
@@ -97,6 +98,11 @@ class OnlinePaymentFixture {
         this
     }
 
+    def expires(Duration duration) {
+        this.target.expires(duration)
+        this
+    }
+
     def build() {
         target.setProviderSpecificInfo(new ObjectMapper().writeValueAsString(providerSpecificInfo))
         target
@@ -112,5 +118,6 @@ class OnlinePaymentFixture {
                 .bodyIs("This is a test product details")
                 .withOpenId(Randoms.randomStr())
                 .with(new WeChatPayJsApiSpecificOnlinePaymentRequest(openId: Randoms.randomStr()))
+                .expires(Duration.ofMinutes(30))
     }
 }

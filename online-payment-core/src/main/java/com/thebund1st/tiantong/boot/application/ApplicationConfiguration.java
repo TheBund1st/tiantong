@@ -41,8 +41,10 @@ public class ApplicationConfiguration {
 
     @Bean
     public RequestOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler() {
-        return new RequestOnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator,
+        RequestOnlinePaymentCommandHandler handler = new RequestOnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator,
                 onlinePaymentRepository, clock);
+        handler.setExpires(onlinePaymentResultSynchronizationProperties.getExpires());
+        return handler;
     }
 
     @Bean
@@ -74,7 +76,7 @@ public class ApplicationConfiguration {
         CloseOnlinePaymentCommandHandler handler = new CloseOnlinePaymentCommandHandler(onlinePaymentRepository,
                 domainEventPublisher,
                 clock);
-        handler.setKeep(onlinePaymentResultSynchronizationProperties.getKeep());
+        handler.setKeep(onlinePaymentResultSynchronizationProperties.getExpires());
         return handler;
     }
 }

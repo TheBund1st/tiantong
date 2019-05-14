@@ -28,7 +28,7 @@ public class JdbcOnlinePaymentRepository implements
         OnlinePaymentResultSynchronizationJobStore {
 
     private static final String OP_COLUMNS = "ID, VERSION, AMOUNT, CORRELATION_KEY, CORRELATION_VALUE, STATUS, " +
-            "METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, CREATED_AT, LAST_MODIFIED_AT";
+            "METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, CREATED_AT, LAST_MODIFIED_AT, EXPIRES_AT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -51,12 +51,13 @@ public class JdbcOnlinePaymentRepository implements
                 providerSpecificOnlinePaymentRequestJsonSerializer
                         .serialize(model.getProviderSpecificOnlinePaymentRequest()),
                 Timestamp.valueOf(model.getCreatedAt()),
-                Timestamp.valueOf(model.getLastModifiedAt())
+                Timestamp.valueOf(model.getLastModifiedAt()),
+                Timestamp.valueOf(model.getExpiresAt())
         );
     }
 
     protected String insertOnlinePaymentSql() {
-        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
+        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
     }
 
     @Override
@@ -80,6 +81,7 @@ public class JdbcOnlinePaymentRepository implements
                                     rs.getString("PROVIDER_SPECIFIC_INFO")));
                     op.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     op.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
+                    op.setExpiresAt(toDateTime(rs, "EXPIRES_AT"));
                     return op;
                 });
     }

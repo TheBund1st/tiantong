@@ -32,6 +32,7 @@ public class OnlinePayment {
     private Method method;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
+    private LocalDateTime expiresAt;
 
     private String subject;
     private String body;
@@ -96,6 +97,10 @@ public class OnlinePayment {
         } else {
             throw new OnlinePaymentAlreadyClosedException(this);
         }
+    }
+
+    public void expires(Duration expires) {
+        this.expiresAt = getCreatedAt().plusSeconds(expires.getSeconds());
     }
 
     @Getter

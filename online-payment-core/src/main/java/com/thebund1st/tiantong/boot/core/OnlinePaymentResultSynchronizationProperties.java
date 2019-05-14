@@ -9,5 +9,5 @@ public class OnlinePaymentResultSynchronizationProperties {
 
     private Duration delay = Duration.ofMinutes(3);
 
-    private Duration keep = Duration.ofMinutes(30);
+    private Duration expires = Duration.ofMinutes(30);
 }

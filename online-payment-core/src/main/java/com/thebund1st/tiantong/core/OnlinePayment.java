@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
 import static lombok.AccessLevel.PRIVATE;
@@ -58,8 +59,18 @@ public class OnlinePayment {
         if (amountMismatches(notification.getAmount())) {
             throw new FakeOnlinePaymentNotificationException(this, notification);
         }
-        this.status = SUCCESS;
+        this.status = mapped(notification.getCode());
         this.lastModifiedAt = notification.getCreatedAt();
+    }
+
+    private Status mapped(OnlinePaymentResultNotification.Code code) {
+        if (OnlinePaymentResultNotification.Code.SUCCESS == code) {
+            return SUCCESS;
+        } else if (OnlinePaymentResultNotification.Code.FAILURE == code) {
+            return FAILURE;
+        } else {
+            throw new IllegalStateException(String.format("Cannot map %s to online payment status", code));
+        }
     }
 
     private boolean amountMismatches(double amount) {

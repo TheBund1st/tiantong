@@ -76,7 +76,7 @@ class Customer {
                     "dummyPaymentId": "${UUID.randomUUID().toString()}",
                     "onlinePaymentId": "${currentOnlinePaymentId}",
                     "amount": ${currentRequestOnlinePaymentCommand.amount},
-                    "result": "${currentRequestOnlinePaymentCommand.method}"
+                    "result": "SUCCESS"
                 }
             """)
         .when()

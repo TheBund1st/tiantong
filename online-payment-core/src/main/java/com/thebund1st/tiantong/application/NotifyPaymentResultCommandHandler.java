@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.FAILURE;
+import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS;
+
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
@@ -41,7 +44,9 @@ public class NotifyPaymentResultCommandHandler {
         onlinePayment.on(paymentResult);
         onlinePaymentResultNotificationRepository.save(paymentResult);
         onlinePaymentRepository.update(onlinePayment);
-        domainEventPublisher.publish(toOnlinePaymentSuccessEvent(onlinePayment));
+        if (SUCCESS == paymentResult.getCode()) {
+            domainEventPublisher.publish(toOnlinePaymentSuccessEvent(onlinePayment));
+        }
     }
 
     private OnlinePaymentResultNotification toResponse(NotifyPaymentResultCommand command, LocalDateTime now) {
@@ -51,7 +56,7 @@ public class NotifyPaymentResultCommandHandler {
         response.setAmount(command.getAmount());
         response.setText(command.getText());
         response.setCreatedAt(now);
-        response.setCode(OnlinePaymentResultNotification.Code.SUCCESS);
+        response.setCode(command.isSuccess() ? SUCCESS : FAILURE);
         return response;
     }
 

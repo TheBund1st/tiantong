@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.CLOSED;
 import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.FAILURE;
 import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS;
 
@@ -46,6 +47,8 @@ public class NotifyPaymentResultCommandHandler {
         onlinePaymentRepository.update(onlinePayment);
         if (SUCCESS == paymentResult.getCode()) {
             domainEventPublisher.publish(toOnlinePaymentSuccessEvent(onlinePayment));
+        } else if (CLOSED == paymentResult.getCode()) {
+            domainEventPublisher.publish(onlinePayment.toClosedEvent(onlinePayment.getLastModifiedAt()));
         }
     }
 

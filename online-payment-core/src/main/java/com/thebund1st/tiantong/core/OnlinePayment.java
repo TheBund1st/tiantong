@@ -13,6 +13,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.CLOSED;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
@@ -56,8 +57,10 @@ public class OnlinePayment {
         if (isClosed()) {
             throw new OnlinePaymentAlreadyClosedException(this, notification);
         }
-        if (amountMismatches(notification.getAmount())) {
-            throw new FakeOnlinePaymentNotificationException(this, notification);
+        if (notification.getCode() == OnlinePaymentResultNotification.Code.SUCCESS) {
+            if (amountMismatches(notification.getAmount())) {
+                throw new FakeOnlinePaymentNotificationException(this, notification);
+            }
         }
         this.status = mapped(notification.getCode());
         this.lastModifiedAt = notification.getCreatedAt();
@@ -68,6 +71,8 @@ public class OnlinePayment {
             return SUCCESS;
         } else if (OnlinePaymentResultNotification.Code.FAILURE == code) {
             return FAILURE;
+        } else if (OnlinePaymentResultNotification.Code.CLOSED == code) {
+            return CLOSED;
         } else {
             throw new IllegalStateException(String.format("Cannot map %s to online payment status", code));
         }
@@ -106,7 +111,7 @@ public class OnlinePayment {
 
     public void close(LocalDateTime now) {
         if (isPending()) {
-            this.status = Status.CLOSED;
+            this.status = CLOSED;
             this.lastModifiedAt = now;
         } else {
             throw new OnlinePaymentAlreadyClosedException(this);

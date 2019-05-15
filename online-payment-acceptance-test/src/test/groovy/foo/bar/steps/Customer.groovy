@@ -126,7 +126,7 @@ class Customer {
     }
 
     def waitForPaymentResultSynchronization() {
-        Thread.sleep(3000)
+        Thread.sleep(4000)
         this
     }
 

@@ -3,6 +3,7 @@ package com.thebund1st.tiantong.application
 import com.thebund1st.tiantong.core.*
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException
+import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent
 import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent
 import com.thebund1st.tiantong.time.Clock
 import spock.lang.Ignore
@@ -11,6 +12,7 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.CLOSED
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.FAILURE
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
@@ -104,6 +106,44 @@ class NotifyPaymentResultCommandHandlerTest extends Specification {
 
         and:
         0 * eventPublisher.publish(_)
+    }
+
+    def "it should mark the online payment closed"() {
+        given:
+        def op = anOnlinePayment().build()
+        def now = LocalDateTime.now()
+        def result = anOnlinePaymentResponse().to(op.id).closed().at(now).build()
+
+        and:
+        onlinePaymentRepository.mustFindBy(op.id) >> op
+        clock.now() >> now
+        onlinePaymentResponseIdentifierGenerator.nextIdentifier() >> result.id
+
+        when:
+        //noinspection GroovyAssignabilityCheck
+        target.handle(result)
+
+        then:
+        assert op.lastModifiedAt == now
+        assert op.status == CLOSED
+
+        and:
+        //noinspection GroovyAssignabilityCheck
+        1 * onlinePaymentResponseRepository.save({
+            it.id == result.id
+            it.text == result.text
+            it.onlinePaymentId == op.id
+            it.code == CLOSED
+            it.createdAt == now
+        })
+
+        and:
+        1 * eventPublisher.publish({
+            it.onlinePaymentId == op.id
+            it.onlinePaymentVersion == op.version
+            it.correlation == op.correlation
+            it.when == now
+        } as OnlinePaymentClosedEvent)
     }
 
     def "it should throw when handling duplicate events"() {

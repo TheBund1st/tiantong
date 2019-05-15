@@ -1,12 +1,12 @@
 package com.thebund1st.tiantong.boot.application;
 
-import com.thebund1st.tiantong.application.CloseOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler;
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler;
-import com.thebund1st.tiantong.boot.core.OnlinePaymentResultSynchronizationProperties;
 import com.thebund1st.tiantong.boot.application.scheduling.SchedulingConfiguration;
+import com.thebund1st.tiantong.boot.core.OnlinePaymentResultSynchronizationProperties;
+import com.thebund1st.tiantong.core.CloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -35,6 +35,7 @@ public class ApplicationConfiguration {
     private final OnlineRefundIdentifierGenerator onlineRefundIdentifierGenerator;
     private final OnlineRefundRepository onlineRefundRepository;
     private final OnlinePaymentResultGateway onlinePaymentResultGateway;
+    private final CloseOnlinePaymentGateway closeOnlinePaymentGateway;
     @Autowired
     private OnlinePaymentResultSynchronizationProperties onlinePaymentResultSynchronizationProperties;
 
@@ -62,7 +63,8 @@ public class ApplicationConfiguration {
                 onlinePaymentRepository,
                 onlinePaymentResultGateway,
                 onlinePaymentNotificationSubscriber(),
-                closeOnlinePaymentCommandHandler());
+                closeOnlinePaymentGateway,
+                clock);
     }
 
     @Bean
@@ -71,10 +73,4 @@ public class ApplicationConfiguration {
                 onlineRefundIdentifierGenerator, onlineRefundRepository, clock);
     }
 
-    @Bean
-    public CloseOnlinePaymentCommandHandler closeOnlinePaymentCommandHandler() {
-        return new CloseOnlinePaymentCommandHandler(onlinePaymentRepository,
-                domainEventPublisher,
-                clock);
-    }
 }

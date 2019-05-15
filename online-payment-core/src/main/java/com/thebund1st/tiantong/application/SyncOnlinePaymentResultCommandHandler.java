@@ -3,10 +3,12 @@ package com.thebund1st.tiantong.application;
 import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJob;
 import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJobHandler;
 import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
+import com.thebund1st.tiantong.core.CloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
+import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,18 +24,18 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
 
     private final NotifyPaymentResultCommandHandler notifyPaymentResultCommandHandler;
 
-    private final CloseOnlinePaymentCommandHandler closeOnlinePaymentCommandHandler;
+    private final CloseOnlinePaymentGateway closeOnlinePaymentGateway;
+
+    private final Clock clock;
 
     public Optional<OnlinePaymentResultNotification> handle(SyncOnlinePaymentResultCommand command) {
         OnlinePayment onlinePayment = onlinePaymentRepository
                 .mustFindBy(OnlinePayment.Identifier.of(command.getOnlinePaymentId()));
         if (onlinePayment.isPending()) {
             Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
-            if (resultMaybe.isPresent()) {
-                notifyPaymentResultCommandHandler.handle(resultMaybe.get());
-            } else {
-                //TODO consider closing online payment on provider side
-                closeOnlinePaymentCommandHandler.closeIfNecessary(onlinePayment);
+            resultMaybe.ifPresent(notifyPaymentResultCommandHandler::handle);
+            if (OnlinePayment.shouldCloseSpecification(clock.now()).test(onlinePayment)) {
+                closeOnlinePaymentGateway.close(onlinePayment);
             }
             return resultMaybe;
         } else {

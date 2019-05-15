@@ -41,7 +41,7 @@ public class OnlinePaymentResultNotification {
     }
 
     public enum Code {
-        UNKNOWN(-1), SUCCESS(1), FAILURE(2);
+        UNKNOWN(-1), SUCCESS(1), FAILURE(2), CLOSED(3);
 
         @Getter
         private int value;

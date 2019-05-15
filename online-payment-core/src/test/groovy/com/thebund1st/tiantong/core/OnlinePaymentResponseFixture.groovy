@@ -35,6 +35,11 @@ class OnlinePaymentResponseFixture {
         this
     }
 
+    def closed() {
+        target.setCode(OnlinePaymentResultNotification.Code.CLOSED)
+        this
+    }
+
     def at(LocalDateTime now) {
         target.setCreatedAt(now)
         this
@@ -52,4 +57,5 @@ class OnlinePaymentResponseFixture {
                 .succeeded()
                 .at(now())
     }
+
 }

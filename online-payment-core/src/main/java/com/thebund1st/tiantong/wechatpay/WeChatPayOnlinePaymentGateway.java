@@ -1,5 +1,6 @@
 package com.thebund1st.tiantong.wechatpay;
 
+import com.github.binarywang.wxpay.bean.request.WxPayOrderCloseRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayOrderQueryRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayRefundRequest;
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
@@ -13,6 +14,7 @@ import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
+import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.time.Clock;
@@ -30,7 +32,8 @@ import static java.util.Arrays.asList;
 public class WeChatPayOnlinePaymentGateway implements
         MethodBasedOnlinePaymentProviderGateway,
         MethodBasedOnlinePaymentResultGateway,
-        OnlineRefundProviderGateway {
+        OnlineRefundProviderGateway,
+        MethodBasedCloseOnlinePaymentGateway {
 
     private final WxPayService wxPayService;
     private final NonceGenerator nonceGenerator;
@@ -94,6 +97,14 @@ public class WeChatPayOnlinePaymentGateway implements
         this.wxPayService.refund(req);
     }
 
+    @Override
+    @SneakyThrows
+    public void close(OnlinePayment onlinePayment) {
+        WxPayOrderCloseRequest request = new WxPayOrderCloseRequest();
+        request.setOutTradeNo(onlinePayment.getId().getValue());
+        this.wxPayService.closeOrder(request);//the implementation checks success already
+    }
+
     @SneakyThrows
     @Override
     public Optional<OnlinePaymentResultNotification> pull(OnlinePayment onlinePayment) {
@@ -105,15 +116,9 @@ public class WeChatPayOnlinePaymentGateway implements
         WxPayOrderQueryResult result = this.wxPayService.queryOrder(req);
         //TODO extract constant
         if ("SUCCESS".equals(result.getTradeState())) {
-            OnlinePaymentResultNotification paymentResult = new OnlinePaymentResultNotification();
-            paymentResult.setId(notificationIdentifierGenerator.nextIdentifier());
-            paymentResult.setOnlinePaymentId(OnlinePayment.Identifier.of(result.getOutTradeNo()));
-            paymentResult.setAmount(BigDecimal.valueOf(result.getTotalFee())
-                    .divide(BigDecimal.valueOf(100)).doubleValue());
-            paymentResult.setCode(OnlinePaymentResultNotification.Code.SUCCESS);
-            paymentResult.setCreatedAt(clock.now());
-            paymentResult.setText(result.getXmlString());
-            return Optional.of(paymentResult);
+            return anOnlinePaymentResultNotification(result, OnlinePaymentResultNotification.Code.SUCCESS);
+        } else if ("CLOSED".equals(result.getTradeState())) {
+            return anOnlinePaymentResultNotification(result, OnlinePaymentResultNotification.Code.CLOSED);
         } else if ("NOT_PAY".equals(result.getTradeState())) {
             return Optional.empty();
         } else {
@@ -121,6 +126,21 @@ public class WeChatPayOnlinePaymentGateway implements
             return Optional.empty();
         }
 
+    }
+
+    private Optional<OnlinePaymentResultNotification> anOnlinePaymentResultNotification(WxPayOrderQueryResult result, OnlinePaymentResultNotification.Code closed) {
+        OnlinePaymentResultNotification paymentResult = new OnlinePaymentResultNotification();
+        paymentResult.setId(notificationIdentifierGenerator.nextIdentifier());
+        paymentResult.setOnlinePaymentId(OnlinePayment.Identifier.of(result.getOutTradeNo()));
+        if (result.getTotalFee() != null) {
+            //TODO null if closed
+            paymentResult.setAmount(BigDecimal.valueOf(result.getTotalFee())
+                    .divide(BigDecimal.valueOf(100)).doubleValue());
+        }
+        paymentResult.setCode(closed);
+        paymentResult.setCreatedAt(clock.now());
+        paymentResult.setText(result.getXmlString());
+        return Optional.of(paymentResult);
     }
 
     @Override

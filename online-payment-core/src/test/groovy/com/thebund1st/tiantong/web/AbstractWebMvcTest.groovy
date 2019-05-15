@@ -4,12 +4,15 @@ import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler
+import com.thebund1st.tiantong.boot.actuator.endpoint.EndpointConfiguration
 import com.thebund1st.tiantong.boot.dummypay.DummyPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfiguration
+import com.thebund1st.tiantong.boot.http.RequestMappingConfiguration
 import com.thebund1st.tiantong.boot.json.JsonConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.WeChatPayPropertiesConfiguration
 import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfiguration
 import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
+import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
@@ -25,7 +28,7 @@ import spock.lang.Specification
 @Import([
         WeChatPayWebhookConfiguration, WeChatPayPropertiesConfiguration,
         DummyPayWebhookConfiguration, DummyPayPropertiesConfiguration,
-        JsonConfiguration
+        JsonConfiguration, RequestMappingConfiguration
 ])
 class AbstractWebMvcTest extends Specification {
 
@@ -55,6 +58,9 @@ class AbstractWebMvcTest extends Specification {
 
     @SpringBean
     protected SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler = Mock()
+
+    @SpringBean
+    protected OnlinePaymentRepository onlinePaymentRepository = Mock()
 
     def setup() {
         RestAssuredMockMvc.mockMvc(mockMvc)

@@ -13,7 +13,7 @@ class AlipayLearningTest extends Specification {
 
     def setup() {
         alipayClient = new DefaultAlipayClient("https://openapi.alipaydev.com/gateway.do",
-                getAppId(), getPrivateKey(), "json", "UTF-8", getPublicKey(), "RSA2")
+                getAppId(), getPrivateKey(), "nativeJson", "UTF-8", getPublicKey(), "RSA2")
     }
 
     def "it should create unified order"() {

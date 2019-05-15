@@ -2,11 +2,13 @@ package foo.bar;
 
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@ToString
 public class DomainEventPublisherStub implements DomainEventPublisher {
     private List<Object> events = new ArrayList<>();
 

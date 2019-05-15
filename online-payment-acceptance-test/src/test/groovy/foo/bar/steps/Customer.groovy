@@ -76,7 +76,7 @@ class Customer {
                     "dummyPaymentId": "${UUID.randomUUID().toString()}",
                     "onlinePaymentId": "${currentOnlinePaymentId}",
                     "amount": ${currentRequestOnlinePaymentCommand.amount},
-                    "result": "${currentRequestOnlinePaymentCommand.method}"
+                    "result": "SUCCESS"
                 }
             """)
         .when()
@@ -108,8 +108,11 @@ class Customer {
 
     def thenTheOnlinePaymentResultIsPulledAndTheOnlinePaymentIsSucceeded() {
         this.currentResponse.statusCode(CREATED.value())
-        assert domainEventPublisherStub.shouldReceivePaymentSucceedEvent(currentOnlinePaymentId).isPresent()
-        this
+        thenTheOnlinePaymentIsSucceeded()
+    }
+
+    def thenTheOnlinePaymentResultIsPulledAutomaticallyAndTheOnlinePaymentIsSucceeded() {
+        thenTheOnlinePaymentIsSucceeded()
     }
 
     def tryPaymentResultSynchronization() {
@@ -118,6 +121,25 @@ class Customer {
             .post("/api/online/payments/${currentOnlinePaymentId}/resultSynchronizations")
         .then()
             .log().everything()
+        //@formatter:on
+        this
+    }
+
+    def waitForPaymentResultSynchronization() {
+        Thread.sleep(4000)
+        this
+    }
+
+    def theOnlinePaymentIsClosed() {
+        //@formatter:off
+        this.currentResponse = aGiven()
+            .get("/api/online/payments/${currentOnlinePaymentId}")
+        .then()
+            .log().everything()
+        .statusCode(OK.value())
+        assert this.currentResponse
+                .extract().body()
+                .jsonPath().get("status") == "CLOSED"
         //@formatter:on
         this
     }

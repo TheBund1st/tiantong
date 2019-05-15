@@ -67,5 +67,30 @@ class OnlinePaymentAcceptanceTest extends Specification {
         customer.thenTheOnlinePaymentResultIsPulledAndTheOnlinePaymentIsSucceeded()
     }
 
+    def "The payment result can be synchronized automatically to finish payment"() {
+        given:
+        customer.requestPaymentToDummyPay()
+        customer.thenTheRequestIsSentToTheOnlinePaymentProvider()
+        customer.finishPaymentWithDummyPayButWeDontReceiveNotification()
+
+        when:
+        customer.waitForPaymentResultSynchronization()
+
+        then:
+        customer.thenTheOnlinePaymentResultIsPulledAutomaticallyAndTheOnlinePaymentIsSucceeded()
+    }
+
+    def "The online payment should be closed eventually given not paid"() {
+        given:
+        customer.requestPaymentToDummyPay()
+        customer.thenTheRequestIsSentToTheOnlinePaymentProvider()
+
+        when:
+        customer.waitForPaymentResultSynchronization()
+
+        then:
+        customer.theOnlinePaymentIsClosed()
+    }
+
 
 }

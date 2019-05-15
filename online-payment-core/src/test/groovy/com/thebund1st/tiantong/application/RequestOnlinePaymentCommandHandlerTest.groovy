@@ -7,6 +7,7 @@ import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.time.Clock
 import spock.lang.Specification
 
+import java.time.Duration
 import java.time.LocalDateTime
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
@@ -17,8 +18,13 @@ class RequestOnlinePaymentCommandHandlerTest extends Specification {
     private OnlinePaymentIdentifierGenerator onlinePaymentIdentifierGenerator = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private Clock clock = Mock()
-    private RequestOnlinePaymentCommandHandler target = new RequestOnlinePaymentCommandHandler(
-            onlinePaymentIdentifierGenerator, onlinePaymentRepository, clock)
+    private RequestOnlinePaymentCommandHandler target
+
+    def setup() {
+        target = new RequestOnlinePaymentCommandHandler(
+                onlinePaymentIdentifierGenerator, onlinePaymentRepository, clock)
+        target.setExpires(Duration.ofMinutes(30))
+    }
 
     def "it should create an online payment"() {
         given:
@@ -47,6 +53,7 @@ class RequestOnlinePaymentCommandHandlerTest extends Specification {
         assert actual.subject == command.subject
         assert actual.body == command.body
         assert actual.providerSpecificInfo == command.providerSpecificInfo
+        assert actual.expiresAt == now.plusMinutes(30)
     }
 
 }

@@ -1,5 +1,6 @@
 package com.thebund1st.tiantong.provider;
 
+import com.thebund1st.tiantong.core.MethodMatcherFunction;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
@@ -10,19 +11,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class OnlinePaymentResultGatewayDispatcher implements OnlinePaymentResultGateway {
+public class OnlinePaymentResultGatewayDispatcher
+        implements OnlinePaymentResultGateway,
+        MethodMatcherFunction<MethodBasedOnlinePaymentResultGateway, Optional<OnlinePaymentResultNotification>> {
 
     private final List<MethodBasedOnlinePaymentResultGateway> gatewayGroup;
 
     @Override
     public Optional<OnlinePaymentResultNotification> pull(OnlinePayment onlinePayment) {
-        Optional<MethodBasedOnlinePaymentResultGateway> gateway = gatewayGroup.stream()
-                .filter(g -> g.supports(onlinePayment.getMethod().getValue()))
-                .findFirst();
-        if (gateway.isPresent()) {
-            return gateway.get().pull(onlinePayment);
-        } else {
-            throw new NoSuchOnlinePaymentProviderGatewayException(onlinePayment);
-        }
+        return dispatch(gatewayGroup, onlinePayment::getMethod)
+                .apply((methodAware) -> methodAware.pull(onlinePayment),
+                        () -> new NoSuchOnlinePaymentProviderGatewayException(onlinePayment));
     }
+
 }

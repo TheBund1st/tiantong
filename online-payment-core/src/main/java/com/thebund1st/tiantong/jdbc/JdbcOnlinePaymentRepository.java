@@ -1,25 +1,34 @@
 package com.thebund1st.tiantong.jdbc;
 
+import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJob;
+import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJobStore;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificOnlinePaymentRequestDeserializer;
 import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
 
 
 @RequiredArgsConstructor
-public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
+public class JdbcOnlinePaymentRepository implements
+        OnlinePaymentRepository,
+        OnlinePaymentResultSynchronizationJobStore {
 
     private static final String OP_COLUMNS = "ID, VERSION, AMOUNT, CORRELATION_KEY, CORRELATION_VALUE, STATUS, " +
-            "METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, CREATED_AT, LAST_MODIFIED_AT";
+            "METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, CREATED_AT, LAST_MODIFIED_AT, EXPIRES_AT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -42,12 +51,13 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                 providerSpecificOnlinePaymentRequestJsonSerializer
                         .serialize(model.getProviderSpecificOnlinePaymentRequest()),
                 Timestamp.valueOf(model.getCreatedAt()),
-                Timestamp.valueOf(model.getLastModifiedAt())
+                Timestamp.valueOf(model.getLastModifiedAt()),
+                Timestamp.valueOf(model.getExpiresAt())
         );
     }
 
     protected String insertOnlinePaymentSql() {
-        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
+        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
     }
 
     @Override
@@ -71,6 +81,7 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                                     rs.getString("PROVIDER_SPECIFIC_INFO")));
                     op.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     op.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
+                    op.setExpiresAt(toDateTime(rs, "EXPIRES_AT"));
                     return op;
                 });
     }
@@ -84,7 +95,7 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
                         "LAST_MODIFIED_AT = ? " +
                         "WHERE ID = ? " +
                         "AND VERSION = ?",
-                SUCCESS.getValue(),
+                onlinePayment.getStatus().getValue(),
                 Timestamp.valueOf(onlinePayment.getLastModifiedAt()),
                 onlinePaymentId,
                 onlinePaymentVersion
@@ -96,7 +107,37 @@ public class JdbcOnlinePaymentRepository implements OnlinePaymentRepository {
     }
 
     private LocalDateTime toDateTime(ResultSet rs, String columnLabel) throws java.sql.SQLException {
-        return rs.getObject(columnLabel, LocalDateTime.class);
+        return rs.getTimestamp(columnLabel).toLocalDateTime();
     }
 
+    @Override
+    public Page<OnlinePaymentResultSynchronizationJob> find(LocalDateTime localDateTime, Pageable pageable) {
+        //FIXME extract where clause
+        @SuppressWarnings("ConstantConditions")
+        long totalElements = jdbcTemplate.queryForObject("SELECT COUNT(ID) AS TOTAL_ELEMENTS FROM ONLINE_PAYMENT " +
+                        "WHERE STATUS = ? " +
+                        "AND CREATED_AT <= ? ",
+                new Object[]{
+                        PENDING.getValue(),
+                        Timestamp.valueOf(localDateTime)
+                },
+                (rs, rowNum) -> rs.getLong("TOTAL_ELEMENTS"));
+        List<OnlinePaymentResultSynchronizationJob> content = jdbcTemplate.query("SELECT * FROM ONLINE_PAYMENT " +
+                        "WHERE STATUS = ? " +
+                        "AND CREATED_AT <= ? " +
+                        "ORDER BY CREATED_AT ASC " +
+                        "LIMIT ?, ?",
+                new Object[]{
+                        PENDING.getValue(),
+                        Timestamp.valueOf(localDateTime),
+                        pageable.getOffset(),
+                        pageable.getPageSize()
+                },
+                (rs, rowNum) -> {
+                    OnlinePaymentResultSynchronizationJob job = new OnlinePaymentResultSynchronizationJob();
+                    job.setOnlinePaymentId(OnlinePayment.Identifier.of(rs.getString("ID")));
+                    return job;
+                });
+        return new PageImpl<>(content, pageable, totalElements);
+    }
 }

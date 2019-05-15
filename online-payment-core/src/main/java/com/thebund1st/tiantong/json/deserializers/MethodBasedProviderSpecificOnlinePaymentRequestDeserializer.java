@@ -5,17 +5,20 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
 import com.thebund1st.tiantong.core.EmptyOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.MethodMatcherFunction;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class MethodBasedProviderSpecificOnlinePaymentRequestDeserializer
-        extends JsonDeserializer<ProviderSpecificOnlinePaymentRequest> {
+        extends JsonDeserializer<ProviderSpecificOnlinePaymentRequest>
+        implements MethodMatcherFunction<AbstractMethodBasedProviderSpecificOnlinePaymentRequestDeserializer,
+                        ProviderSpecificOnlinePaymentRequest> {
 
     private final List<AbstractMethodBasedProviderSpecificOnlinePaymentRequestDeserializer> delegateGroup;
 
@@ -39,13 +42,8 @@ public class MethodBasedProviderSpecificOnlinePaymentRequestDeserializer
 
     private ProviderSpecificOnlinePaymentRequest deDeserialize(String method,
                                                                Function<AbstractMethodBasedProviderSpecificOnlinePaymentRequestDeserializer, ProviderSpecificOnlinePaymentRequest> function) {
-        Optional<AbstractMethodBasedProviderSpecificOnlinePaymentRequestDeserializer> deserializer = delegateGroup.stream()
-                .filter(d -> d.supports(method))
-                .findAny();
-        if (deserializer.isPresent()) {
-            return function.apply(deserializer.get());
-        } else {
-            return new EmptyOnlinePaymentRequest();
-        }
+        return dispatchOrElse(delegateGroup,
+                () -> OnlinePayment.Method.of(method))
+                .apply(function, EmptyOnlinePaymentRequest::new);
     }
 }

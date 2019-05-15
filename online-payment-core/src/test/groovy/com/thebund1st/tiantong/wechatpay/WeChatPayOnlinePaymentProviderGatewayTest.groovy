@@ -14,6 +14,8 @@ import com.thebund1st.tiantong.time.Clock
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResultFixture.anOnlinePaymentResult
@@ -32,10 +34,17 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
                     new WxPayNativeUnifiedOrderRequestTypeNativePopulator(),
                     new WxPayUnifiedOrderRequestTypeJsApiPopulator()
             ])
+    WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher weChatPayProviderSpecificUserAgentRequestAssembler =
+            new WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher([
+                    new WeChatPayNativeSpecificUserAgentOnlinePaymentRequestAssembler(),
+                    new WeChatPayJsApiSpecificUserAgentOnlinePaymentRequestAssembler(nonceGenerator, clock, wxPayService),
+            ])
 
     WxPayConfig config = new WxPayConfig()
     private ipAddress = "172.23.231.22"
     private nonce = "this_is_a_unique_str"
+    private long epochSecond = ZonedDateTime.now().toEpochSecond()
+    private LocalDateTime now = LocalDateTime.now()
 
     def setup() {
         subject = new WeChatPayOnlinePaymentGateway(wxPayService,
@@ -43,11 +52,16 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
                 "https://yourdomain.com/webhooks/wechatpay",
                 "https://yourdomain.com/webhooks/wechatpay/refund",
                 dispatcher,
+                weChatPayProviderSpecificUserAgentRequestAssembler,
                 onlinePaymentResultNotificationIdentifierGenerator,
                 clock)
         wxPayService.getConfig() >> this.config
         config.setAppId("this_is_app_id")
         config.setMchId("this_is_merchant_id")
+
+        clock.epochSecond() >> epochSecond
+
+        clock.now() >> now
     }
 
     def "it should create unified order for jsapi"() {
@@ -68,8 +82,12 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay")
         request.setNonceStr(this.nonce)
         request.setOpenid(openId)
+        request.setTimeStart(DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(op.createdAt))
+        request.setTimeExpire(DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(op.expiresAt))
         def response = new WxPayUnifiedOrderResult()
         response.setCodeURL("weixin://wxpay/bizpayurl?pr=lVQV8uF")
+        response.setPrepayId("this_is_prepay_id")
+        response.setAppid(config.getAppId())
         and:
         nonceGenerator.next() >> this.nonce
         ipAddressExtractor.getLocalhostAddress() >> this.ipAddress
@@ -79,9 +97,14 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         def actual = subject.request(op, new WeChatPayJsApiSpecificOnlinePaymentRequest(openId: openId))
 
         then:
-        def payResult = (WeChatPaySpecificRequest) actual
+        def payResult = (WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest) actual
 
-        assert payResult.getCodeUrl() == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
+        assert payResult.getAppId() == this.config.getAppId()
+        assert payResult.getTimestamp() == "${this.epochSecond}"
+        assert payResult.getNonceStr() == this.nonce
+        assert payResult.getPayload() == "prepay_id=${response.getPrepayId()}"
+        assert payResult.getSignType() == "MD5"
+        assert payResult.getPaySign()
     }
 
     def "it should create unified order for native"() {
@@ -104,6 +127,8 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         request.setNotifyUrl("https://yourdomain.com/webhooks/wechatpay")
         request.setNonceStr(nonce)
         request.setProductId(productId)
+        request.setTimeStart(DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(op.createdAt))
+        request.setTimeExpire(DateTimeFormatter.ofPattern("yyyyMMddHHmmss").format(op.expiresAt))
         def response = new WxPayUnifiedOrderResult()
         response.setCodeURL("weixin://wxpay/bizpayurl?pr=lVQV8uF")
         and:
@@ -116,7 +141,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
 
 
         then:
-        def payResult = (WeChatPaySpecificRequest) actual
+        def payResult = (WeChatPayNativeSpecificUserAgentOnlinePaymentRequest) actual
         assert payResult.getCodeUrl() == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
     }
 

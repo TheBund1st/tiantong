@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.wechatpay
 
-import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult
+
 import com.thebund1st.tiantong.json.AbstractJsonTest
 import org.springframework.boot.test.json.JacksonTester
 
@@ -8,21 +8,47 @@ import static org.assertj.core.api.Java6Assertions.assertThat
 
 class WeChatPaySpecificRequestJsonTest extends AbstractJsonTest {
 
-    private JacksonTester<WeChatPaySpecificRequest> json
+    private JacksonTester<WeChatPayNativeSpecificUserAgentOnlinePaymentRequest> nativeJson
+    private JacksonTester<WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest> jsApiJson
 
-    def "it should serialize"() {
-
-
+    def "it should serialize WeChatPayNativeSpecificOnlinePaymentUserAgentRequest"() {
         given:
-        WxPayUnifiedOrderResult result = new WxPayUnifiedOrderResult()
-        result.codeURL = "https://www.codeurl.com"
-        WeChatPaySpecificRequest request = new WeChatPaySpecificRequest(result)
+        WeChatPayNativeSpecificUserAgentOnlinePaymentRequest request = new WeChatPayNativeSpecificUserAgentOnlinePaymentRequest()
+        request.setCodeUrl("https://www.codeurl.com")
 
         when:
-        def content = this.json.write(request)
+        def content = this.nativeJson.write(request)
 
         then:
         assertThat(content)
                 .extractingJsonPathStringValue("@.code_url").isEqualTo(request.codeUrl)
+    }
+
+    def "it should serialize WeChatPayJsApiSpecificOnlinePaymentUserAgentRequest"() {
+        given:
+        WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest request = new WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest()
+        request.setAppId("appId")
+        request.setTimestamp("timestamp")
+        request.setPayload("package")
+        request.setNonceStr("nonce")
+        request.setSignType("signType")
+        request.setPaySign("paySign")
+
+        when:
+        def content = this.jsApiJson.write(request)
+
+        then:
+        assertThat(content)
+                .extractingJsonPathStringValue("@.appId").isEqualTo(request.appId)
+        assertThat(content)
+                .extractingJsonPathStringValue("@.timeStamp").isEqualTo(request.timestamp)
+        assertThat(content)
+                .extractingJsonPathStringValue("@.nonceStr").isEqualTo(request.nonceStr)
+        assertThat(content)
+                .extractingJsonPathStringValue("@.package").isEqualTo(request.payload)
+        assertThat(content)
+                .extractingJsonPathStringValue("@.signType").isEqualTo(request.signType)
+        assertThat(content)
+                .extractingJsonPathStringValue("@.paySign").isEqualTo(request.paySign)
     }
 }

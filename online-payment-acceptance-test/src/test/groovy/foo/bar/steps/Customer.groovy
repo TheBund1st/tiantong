@@ -1,6 +1,6 @@
 package foo.bar.steps
 
-import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand
+import com.thebund1st.tiantong.commands.CreateOnlinePaymentCommand
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway
 import foo.bar.DomainEventPublisherStub
@@ -16,7 +16,7 @@ class Customer {
     DomainEventPublisherStub domainEventPublisherStub
     DummyPayOnlinePaymentProviderGateway dummyPayOnlinePaymentProviderGateway
     ValidatableResponse currentResponse
-    RequestOnlinePaymentCommand currentRequestOnlinePaymentCommand
+    CreateOnlinePaymentCommand currentRequestOnlinePaymentCommand
     String currentOnlinePaymentId
 
     def requestPayment(command) {

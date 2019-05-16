@@ -1,14 +1,15 @@
 package com.thebund1st.tiantong.core
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
-import com.thebund1st.tiantong.wechatpay.WeChatPayJsApiSpecificOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequest
 
 import java.time.Duration
 import java.time.LocalDateTime
 
-import static com.thebund1st.tiantong.commands.OnlinePaymentNotificationFixture.anOnlinePaymentNotification
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayJsApi
 import static java.time.LocalDateTime.now
 
 class OnlinePaymentFixture {
@@ -88,7 +89,7 @@ class OnlinePaymentFixture {
         this
     }
 
-    def with(ProviderSpecificOnlinePaymentRequest request) {
+    def with(ProviderSpecificCreateOnlinePaymentRequest request) {
         this.target.setProviderSpecificOnlinePaymentRequest(request)
         this
     }
@@ -112,12 +113,12 @@ class OnlinePaymentFixture {
         new OnlinePaymentFixture()
                 .idIs(OnlinePayment.Identifier.of(Randoms.randomStr()))
                 .amountIs(100.00)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))
+                .by(weChatPayJsApi())
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
                 .subjectIs("This is a test product")
                 .bodyIs("This is a test product details")
                 .withOpenId(Randoms.randomStr())
-                .with(new WeChatPayJsApiSpecificOnlinePaymentRequest(openId: Randoms.randomStr()))
+                .with(new WeChatPayJsApiCreateOnlinePaymentRequest(openId: Randoms.randomStr()))
                 .expires(Duration.ofMinutes(30))
     }
 }

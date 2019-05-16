@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.boot.application;
 
 import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
-import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.application.CreateOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler;
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler;
 import com.thebund1st.tiantong.boot.application.scheduling.SchedulingConfiguration;
@@ -41,8 +41,8 @@ public class ApplicationConfiguration {
 
 
     @Bean
-    public RequestOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler() {
-        RequestOnlinePaymentCommandHandler handler = new RequestOnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator,
+    public CreateOnlinePaymentCommandHandler requestOnlinePaymentCommandHandler() {
+        CreateOnlinePaymentCommandHandler handler = new CreateOnlinePaymentCommandHandler(onlinePaymentIdentifierGenerator,
                 onlinePaymentRepository, clock);
         handler.setExpires(onlinePaymentResultSynchronizationProperties.getExpires());
         return handler;

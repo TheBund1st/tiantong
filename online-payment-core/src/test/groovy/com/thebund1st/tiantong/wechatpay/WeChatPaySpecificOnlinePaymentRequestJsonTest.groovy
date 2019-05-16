@@ -1,12 +1,14 @@
 package com.thebund1st.tiantong.wechatpay
 
-import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand
+import com.thebund1st.tiantong.commands.CreateOnlinePaymentCommand
 import com.thebund1st.tiantong.json.AbstractJsonTest
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeCreateOnlinePaymentRequest
 import org.springframework.boot.test.json.JacksonTester
 
 class WeChatPaySpecificOnlinePaymentRequestJsonTest extends AbstractJsonTest {
 
-    private JacksonTester<RequestOnlinePaymentCommand> json
+    private JacksonTester<CreateOnlinePaymentCommand> json
 
     def "it should deserialize when request WeChat pay native"() {
 
@@ -21,12 +23,12 @@ class WeChatPaySpecificOnlinePaymentRequestJsonTest extends AbstractJsonTest {
         """
 
         when:
-        RequestOnlinePaymentCommand actual = this.json.readObject(new ByteArrayInputStream(body.getBytes()))
+        CreateOnlinePaymentCommand actual = this.json.readObject(new ByteArrayInputStream(body.getBytes()))
 
         then:
-        assert actual.providerSpecificRequest instanceof WeChatPayNativeSpecificOnlinePaymentRequest
-        WeChatPayNativeSpecificOnlinePaymentRequest request =
-                (WeChatPayNativeSpecificOnlinePaymentRequest) actual.providerSpecificRequest
+        assert actual.providerSpecificRequest instanceof WeChatPayNativeCreateOnlinePaymentRequest
+        WeChatPayNativeCreateOnlinePaymentRequest request =
+                (WeChatPayNativeCreateOnlinePaymentRequest) actual.providerSpecificRequest
         assert request.productId == "foo"
     }
 
@@ -43,12 +45,12 @@ class WeChatPaySpecificOnlinePaymentRequestJsonTest extends AbstractJsonTest {
         """
 
         when:
-        RequestOnlinePaymentCommand actual = this.json.readObject(new ByteArrayInputStream(body.getBytes()))
+        CreateOnlinePaymentCommand actual = this.json.readObject(new ByteArrayInputStream(body.getBytes()))
 
         then:
-        assert actual.providerSpecificRequest instanceof WeChatPayJsApiSpecificOnlinePaymentRequest
-        WeChatPayJsApiSpecificOnlinePaymentRequest request =
-                (WeChatPayJsApiSpecificOnlinePaymentRequest) actual.providerSpecificRequest
+        assert actual.providerSpecificRequest instanceof WeChatPayJsApiCreateOnlinePaymentRequest
+        WeChatPayJsApiCreateOnlinePaymentRequest request =
+                (WeChatPayJsApiCreateOnlinePaymentRequest) actual.providerSpecificRequest
         assert request.openId == "foo"
     }
 }

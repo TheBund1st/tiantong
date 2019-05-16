@@ -2,18 +2,20 @@ package com.thebund1st.tiantong.wechatpay
 
 
 import com.thebund1st.tiantong.json.AbstractJsonTest
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiLaunchOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeLaunchOnlinePaymentRequest
 import org.springframework.boot.test.json.JacksonTester
 
 import static org.assertj.core.api.Java6Assertions.assertThat
 
 class WeChatPaySpecificRequestJsonTest extends AbstractJsonTest {
 
-    private JacksonTester<WeChatPayNativeSpecificUserAgentOnlinePaymentRequest> nativeJson
-    private JacksonTester<WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest> jsApiJson
+    private JacksonTester<WeChatPayNativeLaunchOnlinePaymentRequest> nativeJson
+    private JacksonTester<WeChatPayJsApiLaunchOnlinePaymentRequest> jsApiJson
 
     def "it should serialize WeChatPayNativeSpecificOnlinePaymentUserAgentRequest"() {
         given:
-        WeChatPayNativeSpecificUserAgentOnlinePaymentRequest request = new WeChatPayNativeSpecificUserAgentOnlinePaymentRequest()
+        WeChatPayNativeLaunchOnlinePaymentRequest request = new WeChatPayNativeLaunchOnlinePaymentRequest()
         request.setCodeUrl("https://www.codeurl.com")
 
         when:
@@ -26,7 +28,7 @@ class WeChatPaySpecificRequestJsonTest extends AbstractJsonTest {
 
     def "it should serialize WeChatPayJsApiSpecificOnlinePaymentUserAgentRequest"() {
         given:
-        WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest request = new WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest()
+        WeChatPayJsApiLaunchOnlinePaymentRequest request = new WeChatPayJsApiLaunchOnlinePaymentRequest()
         request.setAppId("appId")
         request.setTimestamp("timestamp")
         request.setPayload("package")

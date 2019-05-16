@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.json.serializers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -11,7 +11,7 @@ public class ProviderSpecificOnlinePaymentRequestJsonSerializer {
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
-    public String serialize(ProviderSpecificOnlinePaymentRequest request) {
+    public String serialize(ProviderSpecificCreateOnlinePaymentRequest request) {
         return objectMapper.writeValueAsString(request);
     }
 }

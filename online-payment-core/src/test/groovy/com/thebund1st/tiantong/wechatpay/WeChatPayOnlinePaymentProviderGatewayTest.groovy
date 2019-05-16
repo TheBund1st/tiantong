@@ -7,10 +7,19 @@ import com.github.binarywang.wxpay.bean.result.WxPayOrderQueryResult
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult
 import com.github.binarywang.wxpay.config.WxPayConfig
 import com.github.binarywang.wxpay.service.WxPayService
-import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator
-import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.time.Clock
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiLaunchOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiLaunchOnlinePaymentRequestAssembler
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeCreateOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeLaunchOnlinePaymentRequest
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeLaunchOnlinePaymentRequestAssembler
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -20,6 +29,8 @@ import java.time.format.DateTimeFormatter
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResultFixture.anOnlinePaymentResult
 import static com.thebund1st.tiantong.core.refund.OnlineRefundFixture.anOnlineRefund
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayJsApi
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayNative
 
 class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
 
@@ -29,15 +40,15 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
     IpAddressExtractor ipAddressExtractor = Mock()
     Clock clock = Mock()
     OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResultNotificationIdentifierGenerator = Mock()
-    WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher<? extends ProviderSpecificOnlinePaymentRequest> dispatcher =
-            new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher([
-                    new WxPayNativeUnifiedOrderRequestTypeNativePopulator(),
-                    new WxPayUnifiedOrderRequestTypeJsApiPopulator()
+    WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher<? extends ProviderSpecificCreateOnlinePaymentRequest> dispatcher =
+            new WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher([
+                    new WeChatPayNativeCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator(),
+                    new WeChatPayJsApiCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator()
             ])
-    WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher weChatPayProviderSpecificUserAgentRequestAssembler =
-            new WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher([
-                    new WeChatPayNativeSpecificUserAgentOnlinePaymentRequestAssembler(),
-                    new WeChatPayJsApiSpecificUserAgentOnlinePaymentRequestAssembler(nonceGenerator, clock, wxPayService),
+    WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher weChatPayProviderSpecificUserAgentRequestAssembler =
+            new WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher([
+                    new WeChatPayNativeLaunchOnlinePaymentRequestAssembler(),
+                    new WeChatPayJsApiLaunchOnlinePaymentRequestAssembler(nonceGenerator, clock, wxPayService),
             ])
 
     WxPayConfig config = new WxPayConfig()
@@ -69,7 +80,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         def openId = "This is openId"
         def op = anOnlinePayment().amountIs(100)
                 .withOpenId(openId)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))
+                .by(weChatPayJsApi())
                 .build()
         def request = new WxPayUnifiedOrderRequest()
         request.setAppid("this_is_app_id")
@@ -94,10 +105,10 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         wxPayService.unifiedOrder(request) >> response
 
         when:
-        def actual = subject.request(op, new WeChatPayJsApiSpecificOnlinePaymentRequest(openId: openId))
+        def actual = subject.create(op, new WeChatPayJsApiCreateOnlinePaymentRequest(openId: openId))
 
         then:
-        def payResult = (WeChatPayJsApiSpecificUserAgentOnlinePaymentRequest) actual
+        def payResult = (WeChatPayJsApiLaunchOnlinePaymentRequest) actual
 
         assert payResult.getAppId() == this.config.getAppId()
         assert payResult.getTimestamp() == "${this.epochSecond}"
@@ -112,7 +123,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         def productId = "This is productId"
         def op = anOnlinePayment().amountIs(100)
                 .withProductId(productId)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+                .by(weChatPayNative())
                 .build()
         def nonce = "this_is_a_unique_str"
         def ipAddress = "172.23.231.22"
@@ -137,11 +148,11 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         wxPayService.unifiedOrder(request) >> response
 
         when:
-        def actual = subject.request(op, new WeChatPayNativeSpecificOnlinePaymentRequest(productId: productId))
+        def actual = subject.create(op, new WeChatPayNativeCreateOnlinePaymentRequest(productId: productId))
 
 
         then:
-        def payResult = (WeChatPayNativeSpecificUserAgentOnlinePaymentRequest) actual
+        def payResult = (WeChatPayNativeLaunchOnlinePaymentRequest) actual
         assert payResult.getCodeUrl() == 'weixin://wxpay/bizpayurl?pr=lVQV8uF'
     }
 
@@ -150,7 +161,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         def productId = "This is productId"
         def op = anOnlinePayment().amountIs(100)
                 .withProductId(productId)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+                .by(weChatPayNative())
                 .build()
         def nonce = "this_is_a_unique_str"
         def request = new WxPayOrderQueryRequest()
@@ -191,7 +202,7 @@ class WeChatPayOnlinePaymentProviderGatewayTest extends Specification {
         def productId = "This is productId"
         def op = anOnlinePayment().amountIs(100)
                 .withProductId(productId)
-                .by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+                .by(weChatPayNative())
                 .build()
         def nonce = "this_is_a_unique_str"
         def request = new WxPayOrderQueryRequest()

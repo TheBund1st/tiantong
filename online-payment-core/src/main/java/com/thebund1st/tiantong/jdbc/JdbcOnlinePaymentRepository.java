@@ -4,7 +4,7 @@ import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchro
 import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJobStore;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
-import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificOnlinePaymentRequestDeserializer;
+import com.thebund1st.tiantong.json.deserializers.ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher;
 import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.thebund1st.tiantong.core.OnlinePayment.Status.PENDING;
-import static com.thebund1st.tiantong.core.OnlinePayment.Status.SUCCESS;
 
 
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class JdbcOnlinePaymentRepository implements
 
     private final ProviderSpecificOnlinePaymentRequestJsonSerializer providerSpecificOnlinePaymentRequestJsonSerializer;
 
-    private final MethodBasedProviderSpecificOnlinePaymentRequestDeserializer providerSpecificOnlinePaymentRequestJsonDeserializer;
+    private final ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher providerSpecificOnlinePaymentRequestJsonDeserializer;
 
     @Override
     public void save(OnlinePayment model) {

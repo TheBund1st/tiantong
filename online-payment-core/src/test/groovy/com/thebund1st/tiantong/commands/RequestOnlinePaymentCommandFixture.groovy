@@ -1,13 +1,16 @@
 package com.thebund1st.tiantong.commands
 
-
 import com.thebund1st.tiantong.core.OnlinePayment
-import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest
-import com.thebund1st.tiantong.dummypay.DummyPaySpecificOnlinePaymentRequest
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
+import com.thebund1st.tiantong.dummypay.DummyPayCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
 
+import static com.thebund1st.tiantong.dummypay.DummyPayMethods.dummyPay
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayJsApi
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayNative
+
 class RequestOnlinePaymentCommandFixture {
-    private RequestOnlinePaymentCommand target = new RequestOnlinePaymentCommand()
+    private CreateOnlinePaymentCommand target = new CreateOnlinePaymentCommand()
     private Map providerSpecificInfo = [:]
 
     def amountIs(double amount) {
@@ -21,15 +24,15 @@ class RequestOnlinePaymentCommandFixture {
     }
 
     def byWeChatPayJsApi() {
-        by(OnlinePayment.Method.of("WECHAT_PAY_JSAPI"))
+        by(weChatPayJsApi())
     }
 
     def byWeChatPayNative() {
-        by(OnlinePayment.Method.of("WECHAT_PAY_NATIVE"))
+        by(weChatPayNative())
     }
 
     def byDummy() {
-        by(OnlinePayment.Method.of("DUMMY_PAY"))
+        by(dummyPay())
     }
 
     def correlatedWith(OnlinePayment.Correlation correlation) {
@@ -53,11 +56,11 @@ class RequestOnlinePaymentCommandFixture {
     }
 
     def withDummySpecificInfo() {
-        this.target.setProviderSpecificRequest(new DummyPaySpecificOnlinePaymentRequest(dummy: 'dummy'))
+        this.target.setProviderSpecificRequest(new DummyPayCreateOnlinePaymentRequest(dummy: 'dummy'))
         this
     }
 
-    def with(ProviderSpecificOnlinePaymentRequest request) {
+    def with(ProviderSpecificCreateOnlinePaymentRequest request) {
         this.target.setProviderSpecificRequest(request)
         this
     }

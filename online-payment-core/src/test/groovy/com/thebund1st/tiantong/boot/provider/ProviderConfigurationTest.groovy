@@ -3,9 +3,12 @@ package com.thebund1st.tiantong.boot.provider
 
 import com.thebund1st.tiantong.boot.AbstractAutoConfigurationTest
 import com.thebund1st.tiantong.core.OnlinePayment
-import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway
-import com.thebund1st.tiantong.provider.OnlinePaymentProviderGatewayDispatcher
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway
+import com.thebund1st.tiantong.provider.CreateOnlinePaymentProviderGatewayDispatcher
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway
+
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayJsApi
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayNative
 
 class ProviderConfigurationTest extends AbstractAutoConfigurationTest {
 
@@ -16,17 +19,17 @@ class ProviderConfigurationTest extends AbstractAutoConfigurationTest {
 
         then:
         contextRunner.run { it ->
-            OnlinePaymentProviderGatewayDispatcher dispatcher =
-                    (OnlinePaymentProviderGatewayDispatcher) it.getBean(OnlinePaymentProviderGateway)
+            CreateOnlinePaymentProviderGatewayDispatcher dispatcher =
+                    (CreateOnlinePaymentProviderGatewayDispatcher) it.getBean(ProviderSpecificCreateOnlinePaymentGateway)
 
             WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway =
                     (WeChatPayOnlinePaymentGateway) it.getBean(WeChatPayOnlinePaymentGateway)
 
             assert dispatcher.gatewayGroup
-                    .find { it.supports(OnlinePayment.Method.of("WECHAT_PAY_NATIVE")) } ==
+                    .find { it.supports(weChatPayNative()) } ==
                     weChatPayOnlinePaymentGateway
             assert dispatcher.gatewayGroup
-                    .find { it.supports(OnlinePayment.Method.of("WECHAT_PAY_JSAPI")) } ==
+                    .find { it.supports(weChatPayJsApi()) } ==
                     weChatPayOnlinePaymentGateway
         }
     }

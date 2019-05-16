@@ -1,13 +1,13 @@
 package com.thebund1st.tiantong.boot.provider;
 
 import com.thebund1st.tiantong.core.CloseOnlinePaymentGateway;
-import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
 import com.thebund1st.tiantong.provider.CloseOnlinePaymentGatewayDispatcher;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
-import com.thebund1st.tiantong.provider.OnlinePaymentProviderGatewayDispatcher;
+import com.thebund1st.tiantong.provider.CreateOnlinePaymentProviderGatewayDispatcher;
 import com.thebund1st.tiantong.provider.OnlinePaymentResultGatewayDispatcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ public class ProviderConfiguration {
 
     @Primary
     @Bean
-    public OnlinePaymentProviderGateway onlinePaymentProviderGatewayDispatcher() {
-        return new OnlinePaymentProviderGatewayDispatcher(delegates);
+    public ProviderSpecificCreateOnlinePaymentGateway onlinePaymentProviderGatewayDispatcher() {
+        return new CreateOnlinePaymentProviderGatewayDispatcher(delegates);
     }
 
     @Primary

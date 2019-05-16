@@ -1,10 +1,9 @@
 package com.thebund1st.tiantong.web.rest
 
 import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand
-import com.thebund1st.tiantong.dummypay.DummyPaySpecificRequest
+import com.thebund1st.tiantong.dummypay.DummyPayLaunchOnlinePaymentRequest
 import com.thebund1st.tiantong.web.AbstractWebMvcTest
 import org.springframework.http.HttpStatus
-import org.springframework.test.context.TestPropertySource
 
 import static com.thebund1st.tiantong.commands.RequestOnlinePaymentCommandFixture.aRequestOnlinePaymentCommand
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
@@ -35,8 +34,8 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         requestOnlinePaymentCommandHandler.handle(command) >> onlinePayment
 
         and:
-        def dummyProviderSpecificRequest = new DummyPaySpecificRequest(dummyId: "dummyId")
-        onlinePaymentProviderGateway.request(onlinePayment, command.providerSpecificRequest) >> dummyProviderSpecificRequest
+        def dummyProviderSpecificRequest = new DummyPayLaunchOnlinePaymentRequest(dummyId: "dummyId")
+        onlinePaymentProviderGateway.create(onlinePayment, command.providerSpecificRequest) >> dummyProviderSpecificRequest
 
         when:
         def resultActions = mockMvc.perform(post("/api/online/payments")

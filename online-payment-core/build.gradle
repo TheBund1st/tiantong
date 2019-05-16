@@ -91,5 +91,7 @@ dependencies {
 
     testCompile 'com.alipay.sdk:alipay-sdk-java:3.7.26.ALL'
     compileOnly 'com.alipay.sdk:alipay-sdk-java:3.7.26.ALL'
+
+    testCompile 'com.tngtech.archunit:archunit:0.10.2'
 }
 

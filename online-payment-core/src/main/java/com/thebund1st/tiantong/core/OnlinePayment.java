@@ -2,6 +2,8 @@ package com.thebund1st.tiantong.core;
 
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,7 +41,7 @@ public class OnlinePayment {
     private String subject;
     private String body;
     private String providerSpecificInfo;
-    private ProviderSpecificOnlinePaymentRequest providerSpecificOnlinePaymentRequest = new EmptyOnlinePaymentRequest();
+    private ProviderSpecificCreateOnlinePaymentRequest providerSpecificOnlinePaymentRequest = new FlattenedProviderSpecificCreateOnlinePaymentRequest();
 
 
     public OnlinePayment() {

@@ -8,13 +8,13 @@ import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGen
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
-import com.thebund1st.tiantong.wechatpay.WeChatPayJsApiSpecificUserAgentOnlinePaymentRequestAssembler;
-import com.thebund1st.tiantong.wechatpay.WeChatPayNativeSpecificUserAgentOnlinePaymentRequestAssembler;
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiLaunchOnlinePaymentRequestAssembler;
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeLaunchOnlinePaymentRequestAssembler;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
-import com.thebund1st.tiantong.wechatpay.WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher;
-import com.thebund1st.tiantong.wechatpay.WxPayNativeUnifiedOrderRequestTypeNativePopulator;
-import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher;
-import com.thebund1st.tiantong.wechatpay.WxPayUnifiedOrderRequestTypeJsApiPopulator;
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher;
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher;
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
 import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,21 +58,21 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
-    public WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher weChatPayCreateOrderRequestPopulatorDispatcher() {
+    public WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher weChatPayCreateOrderRequestPopulatorDispatcher() {
         return
-                new WxPayUnifiedOrderRequestProviderSpecificRequestPopulatorDispatcher(asList(
-                        new WxPayNativeUnifiedOrderRequestTypeNativePopulator(),
-                        new WxPayUnifiedOrderRequestTypeJsApiPopulator())
+                new WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher(asList(
+                        new WeChatPayNativeCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator(),
+                        new WeChatPayJsApiCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator())
                 );
     }
 
     @Bean
-    public WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher
+    public WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher
     weChatPayProviderSpecificUserAgentRequestAssemblerDispatcher(WxPayService wxPayService) {
         return
-                new WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssemblerDispatcher(asList(
-                        new WeChatPayNativeSpecificUserAgentOnlinePaymentRequestAssembler(),
-                        new WeChatPayJsApiSpecificUserAgentOnlinePaymentRequestAssembler(nonceGenerator(), clock, wxPayService))
+                new WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher(asList(
+                        new WeChatPayNativeLaunchOnlinePaymentRequestAssembler(),
+                        new WeChatPayJsApiLaunchOnlinePaymentRequestAssembler(nonceGenerator(), clock, wxPayService))
                 );
     }
 

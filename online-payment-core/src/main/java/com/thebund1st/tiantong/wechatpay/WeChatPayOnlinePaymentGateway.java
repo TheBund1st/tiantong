@@ -11,13 +11,15 @@ import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
-import com.thebund1st.tiantong.core.ProviderSpecificOnlinePaymentRequest;
-import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.time.Clock;
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayLaunchOnlinePaymentRequestAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
@@ -26,6 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayJsApi;
+import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayNative;
 import static java.util.Arrays.asList;
 
 @RequiredArgsConstructor
@@ -40,23 +44,23 @@ public class WeChatPayOnlinePaymentGateway implements
     private final IpAddressExtractor ipAddressExtractor;
     private final String webhookEndpoint;
     private final String notifyRefundResultWebhookEndpoint;
-    private final WxPayUnifiedOrderRequestProviderSpecificRequestPopulator<ProviderSpecificOnlinePaymentRequest>
-            wxPayUnifiedOrderRequestProviderSpecificRequestPopulator;
-    private final WeChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler weChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler;
+    private final WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator<ProviderSpecificCreateOnlinePaymentRequest>
+            weChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
+    private final WeChatPayLaunchOnlinePaymentRequestAssembler weChatPayLaunchOnlinePaymentRequestAssembler;
     private final OnlinePaymentResultNotificationIdentifierGenerator notificationIdentifierGenerator;
     private final Clock clock;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     @Override
-    public ProviderSpecificUserAgentOnlinePaymentRequest request(OnlinePayment onlinePayment,
-                                                                 ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
+    public ProviderSpecificLaunchOnlinePaymentRequest create(OnlinePayment onlinePayment,
+                                                             ProviderSpecificCreateOnlinePaymentRequest providerSpecificRequest) {
         WxPayUnifiedOrderResult result = requestPayment(onlinePayment, providerSpecificRequest);
-        return weChatPayProviderSpecificUserAgentOnlinePaymentRequestAssembler.from(onlinePayment, result);
+        return weChatPayLaunchOnlinePaymentRequestAssembler.from(onlinePayment, result);
     }
 
     @SneakyThrows
     public WxPayUnifiedOrderResult requestPayment(OnlinePayment op,
-                                                  ProviderSpecificOnlinePaymentRequest providerSpecificRequest) {
+                                                  ProviderSpecificCreateOnlinePaymentRequest providerSpecificRequest) {
         WxPayUnifiedOrderRequest req = new WxPayUnifiedOrderRequest();
         req.setAppid(wxPayService.getConfig().getAppId());
         req.setMchId(wxPayService.getConfig().getMchId());
@@ -69,7 +73,7 @@ public class WeChatPayOnlinePaymentGateway implements
         req.setNonceStr(nonceGenerator.next());
         req.setTimeStart(dateTimeFormatter.format(op.getCreatedAt()));
         req.setTimeExpire(dateTimeFormatter.format(op.getExpiresAt()));
-        wxPayUnifiedOrderRequestProviderSpecificRequestPopulator.populate(req, providerSpecificRequest);
+        weChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator.populate(req, providerSpecificRequest);
         return this.wxPayService.unifiedOrder(req);
     }
 
@@ -79,8 +83,8 @@ public class WeChatPayOnlinePaymentGateway implements
 
     private List<OnlinePayment.Method> matchedMethods() {
         return asList(
-                OnlinePayment.Method.of("WECHAT_PAY_NATIVE"),
-                OnlinePayment.Method.of("WECHAT_PAY_JSAPI")
+                weChatPayNative(),
+                weChatPayJsApi()
         );
     }
 

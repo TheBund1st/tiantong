@@ -1,14 +1,14 @@
 package com.thebund1st.tiantong.web.rest;
 
-import com.thebund1st.tiantong.application.RequestOnlinePaymentCommandHandler;
+import com.thebund1st.tiantong.application.CreateOnlinePaymentCommandHandler;
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler;
-import com.thebund1st.tiantong.commands.RequestOnlinePaymentCommand;
+import com.thebund1st.tiantong.commands.CreateOnlinePaymentCommand;
 import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
-import com.thebund1st.tiantong.core.OnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
-import com.thebund1st.tiantong.core.ProviderSpecificUserAgentOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.web.rest.resources.OnlinePaymentResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,15 +30,15 @@ import static org.springframework.http.HttpStatus.PAYMENT_REQUIRED;
 @RequestMapping(path = "#{requestMappingProperties.prefix}")
 public class OnlinePaymentRestController {
 
-    private final RequestOnlinePaymentCommandHandler onlinePaymentCommandHandler;
-    private final OnlinePaymentProviderGateway onlinePaymentProviderGateway;
+    private final CreateOnlinePaymentCommandHandler onlinePaymentCommandHandler;
+    private final ProviderSpecificCreateOnlinePaymentGateway providerSpecificCreateOnlinePaymentGateway;
     private final SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler;
     private final OnlinePaymentRepository onlinePaymentRepository;
 
     @PostMapping("/online/payments")
-    public OnlinePaymentResource handle(@Valid @RequestBody RequestOnlinePaymentCommand command) {
+    public OnlinePaymentResource handle(@Valid @RequestBody CreateOnlinePaymentCommand command) {
         OnlinePayment onlinePayment = onlinePaymentCommandHandler.handle(command);
-        ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest = onlinePaymentProviderGateway.request(onlinePayment,
+        ProviderSpecificLaunchOnlinePaymentRequest providerSpecificRequest = providerSpecificCreateOnlinePaymentGateway.create(onlinePayment,
                 command.getProviderSpecificRequest());
         return assemble(onlinePayment, providerSpecificRequest);
     }
@@ -60,7 +60,7 @@ public class OnlinePaymentRestController {
 
 
     private OnlinePaymentResource assemble(OnlinePayment onlinePayment,
-                                           ProviderSpecificUserAgentOnlinePaymentRequest providerSpecificRequest) {
+                                           ProviderSpecificLaunchOnlinePaymentRequest providerSpecificRequest) {
         OnlinePaymentResource resource = assemble(onlinePayment);
         resource.setProviderSpecificRequest(providerSpecificRequest);
         return resource;

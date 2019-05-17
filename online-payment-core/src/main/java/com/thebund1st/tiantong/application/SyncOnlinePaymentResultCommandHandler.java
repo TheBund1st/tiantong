@@ -6,7 +6,7 @@ import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
-import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
 
     private final OnlinePaymentRepository onlinePaymentRepository;
 
-    private final OnlinePaymentResultGateway onlinePaymentResultGateway;
+    private final ProviderSpecificPullOnlinePaymentResultGateway providerSpecificPullOnlinePaymentResultGateway;
 
     private final NotifyOnlinePaymentResultCommandHandler notifyOnlinePaymentResultCommandHandler;
 
@@ -32,7 +32,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
         OnlinePayment onlinePayment = onlinePaymentRepository
                 .mustFindBy(OnlinePayment.Identifier.of(command.getOnlinePaymentId()));
         if (onlinePayment.isPending()) {
-            Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
+            Optional<OnlinePaymentResultNotification> resultMaybe = providerSpecificPullOnlinePaymentResultGateway.pull(onlinePayment);
             resultMaybe.ifPresent(notifyOnlinePaymentResultCommandHandler::handle);
             if (OnlinePayment.shouldCloseSpecification(clock.now()).test(onlinePayment)) {
                 providerSpecificCloseOnlinePaymentGateway.close(onlinePayment);

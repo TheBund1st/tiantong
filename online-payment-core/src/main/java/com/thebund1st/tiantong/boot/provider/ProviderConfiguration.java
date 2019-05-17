@@ -2,13 +2,13 @@ package com.thebund1st.tiantong.boot.provider;
 
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway;
-import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.provider.ProviderSpecificCloseOnlinePaymentGatewayDispatcher;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedCreateOnlinePaymentGateway;
-import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
+import com.thebund1st.tiantong.provider.MethodBasedPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.provider.ProviderSpecificCreateOnlinePaymentGatewayDispatcher;
-import com.thebund1st.tiantong.provider.OnlinePaymentResultGatewayDispatcher;
+import com.thebund1st.tiantong.provider.ProviderSpecificPullOnlinePaymentResultGatewayDispatcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +23,7 @@ public class ProviderConfiguration {
 
     private final List<MethodBasedCreateOnlinePaymentGateway> delegates;
     @Autowired
-    private List<MethodBasedOnlinePaymentResultGateway> paymentResultGatewayGroup;
+    private List<MethodBasedPullOnlinePaymentResultGateway> paymentResultGatewayGroup;
     @Autowired
     private List<MethodBasedCloseOnlinePaymentGateway> closeOnlinePaymentGatewayGroup;
 
@@ -35,8 +35,8 @@ public class ProviderConfiguration {
 
     @Primary
     @Bean
-    public OnlinePaymentResultGateway onlinePaymentResultGateway() {
-        return new OnlinePaymentResultGatewayDispatcher(paymentResultGatewayGroup);
+    public ProviderSpecificPullOnlinePaymentResultGateway onlinePaymentResultGateway() {
+        return new ProviderSpecificPullOnlinePaymentResultGatewayDispatcher(paymentResultGatewayGroup);
     }
 
     @Primary

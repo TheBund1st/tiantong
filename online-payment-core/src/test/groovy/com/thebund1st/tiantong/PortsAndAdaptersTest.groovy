@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGa
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest
+import com.thebund1st.tiantong.core.payment.ProviderSpecificPullOnlinePaymentResultGateway
 import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer
 import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultCommandAssembler
 import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultResponseBodyAssembler
@@ -47,15 +48,20 @@ class PortsAndAdaptersTest extends Specification {
         "${ProviderSpecificLaunchOnlinePaymentRequest.simpleName} implementations should be named with universal suffix" | classes()
                 .that().implement(ProviderSpecificLaunchOnlinePaymentRequest)
                 .should().haveSimpleNameEndingWith("LaunchOnlinePaymentRequest")
-        "${ProviderSpecificCreateOnlinePaymentGateway.simpleName} implementations should be named with universal suffix" | classes()
+        "${ProviderSpecificCreateOnlinePaymentGateway.simpleName} implementations should be named with universal suffix"     | classes()
                 .that().implement(ProviderSpecificCreateOnlinePaymentGateway)
                 .should().haveSimpleNameEndingWith("CreateOnlinePaymentGateway")
                 .orShould().haveSimpleName(ProviderSpecificCreateOnlinePaymentGateway.simpleName + "Dispatcher")
                 .orShould().haveSimpleNameEndingWith("OnlinePaymentGateway")
-        "${ProviderSpecificCloseOnlinePaymentGateway.simpleName} implementations should be named with universal suffix" | classes()
+        "${ProviderSpecificCloseOnlinePaymentGateway.simpleName} implementations should be named with universal suffix"      | classes()
                 .that().implement(ProviderSpecificCloseOnlinePaymentGateway)
                 .should().haveSimpleNameEndingWith("CloseOnlinePaymentGateway")
                 .orShould().haveSimpleName(ProviderSpecificCloseOnlinePaymentGateway.simpleName + "Dispatcher")
+                .orShould().haveSimpleNameEndingWith("OnlinePaymentGateway")
+        "${ProviderSpecificPullOnlinePaymentResultGateway.simpleName} implementations should be named with universal suffix" | classes()
+                .that().implement(ProviderSpecificPullOnlinePaymentResultGateway)
+                .should().haveSimpleNameEndingWith("PullOnlinePaymentResultGateway")
+                .orShould().haveSimpleName(ProviderSpecificPullOnlinePaymentResultGateway.simpleName + "Dispatcher")
                 .orShould().haveSimpleNameEndingWith("OnlinePaymentGateway")
     }
 

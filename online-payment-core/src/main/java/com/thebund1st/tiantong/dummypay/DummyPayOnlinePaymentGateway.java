@@ -7,7 +7,7 @@ import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentR
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedCreateOnlinePaymentGateway;
-import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
+import com.thebund1st.tiantong.provider.MethodBasedPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ import static com.thebund1st.tiantong.dummypay.DummyPayMethods.dummyPay;
 @RequiredArgsConstructor
 public class DummyPayOnlinePaymentGateway implements
         MethodBasedCreateOnlinePaymentGateway,
-        MethodBasedOnlinePaymentResultGateway,
+        MethodBasedPullOnlinePaymentResultGateway,
         MethodBasedCloseOnlinePaymentGateway {
 
     private final Clock clock;

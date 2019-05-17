@@ -10,7 +10,7 @@ import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGa
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
-import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationRepository;
 import com.thebund1st.tiantong.core.refund.OnlineRefundIdentifierGenerator;
@@ -34,7 +34,7 @@ public class ApplicationConfiguration {
     private final Clock clock;
     private final OnlineRefundIdentifierGenerator onlineRefundIdentifierGenerator;
     private final OnlineRefundRepository onlineRefundRepository;
-    private final OnlinePaymentResultGateway onlinePaymentResultGateway;
+    private final ProviderSpecificPullOnlinePaymentResultGateway providerSpecificPullOnlinePaymentResultGateway;
     private final ProviderSpecificCloseOnlinePaymentGateway providerSpecificCloseOnlinePaymentGateway;
     @Autowired
     private OnlinePaymentResultSynchronizationProperties onlinePaymentResultSynchronizationProperties;
@@ -61,7 +61,7 @@ public class ApplicationConfiguration {
     public SyncOnlinePaymentResultCommandHandler syncOnlinePaymentResultCommandHandler() {
         return new SyncOnlinePaymentResultCommandHandler(
                 onlinePaymentRepository,
-                onlinePaymentResultGateway,
+                providerSpecificPullOnlinePaymentResultGateway,
                 onlinePaymentNotificationSubscriber(),
                 providerSpecificCloseOnlinePaymentGateway,
                 clock);

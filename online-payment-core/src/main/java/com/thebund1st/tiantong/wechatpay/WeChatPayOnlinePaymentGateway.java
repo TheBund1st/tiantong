@@ -16,7 +16,7 @@ import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentR
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedCreateOnlinePaymentGateway;
-import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
+import com.thebund1st.tiantong.provider.MethodBasedPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
 import com.thebund1st.tiantong.wechatpay.payment.WeChatPayLaunchOnlinePaymentRequestAssembler;
@@ -35,7 +35,7 @@ import static java.util.Arrays.asList;
 @RequiredArgsConstructor
 public class WeChatPayOnlinePaymentGateway implements
         MethodBasedCreateOnlinePaymentGateway,
-        MethodBasedOnlinePaymentResultGateway,
+        MethodBasedPullOnlinePaymentResultGateway,
         OnlineRefundProviderGateway,
         MethodBasedCloseOnlinePaymentGateway {
 
@@ -119,14 +119,14 @@ public class WeChatPayOnlinePaymentGateway implements
         req.setOutTradeNo(onlinePayment.getId().getValue());
         WxPayOrderQueryResult result = this.wxPayService.queryOrder(req);
         //TODO extract constant
-        if ("SUCCESS".equals(result.getTradeState())) {
+        if (WeChatPayTradeStates.SUCCESS.equals(result.getTradeState())) {
             return anOnlinePaymentResultNotification(result, OnlinePaymentResultNotification.Code.SUCCESS);
-        } else if ("CLOSED".equals(result.getTradeState())) {
+        } else if (WeChatPayTradeStates.CLOSED.equals(result.getTradeState())) {
             return anOnlinePaymentResultNotification(result, OnlinePaymentResultNotification.Code.CLOSED);
-        } else if ("NOT_PAY".equals(result.getTradeState())) {
+        } else if (WeChatPayTradeStates.NOT_PAY.equals(result.getTradeState())) {
             return Optional.empty();
         } else {
-            //TODO handle "CLOSED"/"REFUND"/"PAYERROR" and others
+            //TODO handle "REFUND"/"PAYERROR" and others
             return Optional.empty();
         }
 

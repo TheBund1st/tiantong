@@ -1,9 +1,10 @@
 package com.thebund1st.tiantong.boot.dummypay.webhooks;
 
-import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler;
+import com.thebund1st.tiantong.application.NotifyOnlinePaymentResultCommandHandler;
 import com.thebund1st.tiantong.boot.dummypay.DummyPayProperties;
-import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler;
-import com.thebund1st.tiantong.dummypay.webhooks.DummyPaymentResultNotificationWebhookEndpoint;
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultCommandAssembler;
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultResponseBodyAssembler;
+import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultWebhookEndpoint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,26 +17,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DummyPayWebhookConfiguration {
     @Autowired
-    private DummyPayNotifyPaymentResultCommandAssembler notifyPaymentResultCommandAssembler;
+    private DummyPayNotifyOnlinePaymentResultCommandAssembler notifyPaymentResultCommandAssembler;
     @Autowired
-    private NotifyPaymentResultCommandHandler notifyPaymentResultCommandHandler;
+    private NotifyOnlinePaymentResultCommandHandler notifyOnlinePaymentResultCommandHandler;
+    @Autowired
+    private DummyPayNotifyOnlinePaymentResultResponseBodyAssembler dummyPayNotifyOnlinePaymentResultResponseBodyAssembler;
     @Autowired
     private DummyPayProperties dummyPayProperties;
 
     @Bean
-    public FilterRegistrationBean<DummyPaymentResultNotificationWebhookEndpoint>
+    public FilterRegistrationBean<NotifyOnlinePaymentResultWebhookEndpoint>
     dummyPayPaymentResultNotificationWebhookEndpointFilterRegistrationBean() {
-        FilterRegistrationBean<DummyPaymentResultNotificationWebhookEndpoint> registrationBean
+        FilterRegistrationBean<NotifyOnlinePaymentResultWebhookEndpoint> registrationBean
                 = new FilterRegistrationBean<>();
         registrationBean.setFilter(dummyPayPaymentResultNotificationWebhookEndpoint());
         registrationBean.addUrlPatterns(dummyPayProperties.getPaymentResultNotificationWebhookEndpointPath());
         return registrationBean;
     }
 
-    private DummyPaymentResultNotificationWebhookEndpoint dummyPayPaymentResultNotificationWebhookEndpoint() {
-        return new DummyPaymentResultNotificationWebhookEndpoint(
+    private NotifyOnlinePaymentResultWebhookEndpoint dummyPayPaymentResultNotificationWebhookEndpoint() {
+        return new NotifyOnlinePaymentResultWebhookEndpoint(
                 notifyPaymentResultCommandAssembler,
-                notifyPaymentResultCommandHandler
+                notifyOnlinePaymentResultCommandHandler,
+                dummyPayNotifyOnlinePaymentResultResponseBodyAssembler
         );
     }
 

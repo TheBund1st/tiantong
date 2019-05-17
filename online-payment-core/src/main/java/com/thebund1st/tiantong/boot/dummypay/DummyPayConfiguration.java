@@ -3,7 +3,8 @@ package com.thebund1st.tiantong.boot.dummypay;
 import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfiguration;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway;
-import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler;
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultCommandAssembler;
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultResponseBodyAssembler;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,12 @@ public class DummyPayConfiguration {
     }
 
     @Bean
-    public DummyPayNotifyPaymentResultCommandAssembler dummyNotifyPaymentResultCommandAssembler() {
-        return new DummyPayNotifyPaymentResultCommandAssembler();
+    public DummyPayNotifyOnlinePaymentResultCommandAssembler dummyNotifyPaymentResultCommandAssembler() {
+        return new DummyPayNotifyOnlinePaymentResultCommandAssembler();
+    }
+
+    @Bean
+    public DummyPayNotifyOnlinePaymentResultResponseBodyAssembler dummyPayNotifyOnlinePaymentResultResponseBodyAssembler() {
+        return new DummyPayNotifyOnlinePaymentResultResponseBodyAssembler();
     }
 }

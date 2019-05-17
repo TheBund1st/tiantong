@@ -6,7 +6,6 @@ import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedExcepti
 import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent
 import com.thebund1st.tiantong.events.OnlinePaymentSucceededEvent
 import com.thebund1st.tiantong.time.Clock
-import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -18,14 +17,14 @@ import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResponseFixture.anOnlinePaymentResponse
 import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
 
-class NotifyPaymentResultCommandHandlerTest extends Specification {
+class NotifyOnlinePaymentResultCommandHandlerTest extends Specification {
 
     private DomainEventPublisher eventPublisher = Mock()
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private OnlinePaymentResultNotificationRepository onlinePaymentResponseRepository = Mock()
     private OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResponseIdentifierGenerator = Mock()
     private Clock clock = Mock()
-    private NotifyPaymentResultCommandHandler target = new NotifyPaymentResultCommandHandler(
+    private NotifyOnlinePaymentResultCommandHandler target = new NotifyOnlinePaymentResultCommandHandler(
             onlinePaymentRepository,
             onlinePaymentResponseRepository,
             onlinePaymentResponseIdentifierGenerator,

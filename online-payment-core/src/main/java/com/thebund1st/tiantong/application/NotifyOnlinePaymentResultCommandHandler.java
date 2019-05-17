@@ -22,7 +22,7 @@ import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class NotifyPaymentResultCommandHandler {
+public class NotifyOnlinePaymentResultCommandHandler {
 
     private final OnlinePaymentRepository onlinePaymentRepository;
     private final OnlinePaymentResultNotificationRepository onlinePaymentResultNotificationRepository;

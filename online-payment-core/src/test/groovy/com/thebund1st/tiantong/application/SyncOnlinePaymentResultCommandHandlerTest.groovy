@@ -18,7 +18,7 @@ class SyncOnlinePaymentResultCommandHandlerTest extends Specification {
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private OnlinePaymentResultGateway onlinePaymentResultGateway = Mock()
     private CloseOnlinePaymentGateway closeOnlinePaymentGateway = Mock()
-    private NotifyPaymentResultCommandHandler notifyPaymentResultCommandHandler = Mock()
+    private NotifyOnlinePaymentResultCommandHandler notifyPaymentResultCommandHandler = Mock()
     private Clock clock = Mock()
     private SyncOnlinePaymentResultCommandHandler subject =
             new SyncOnlinePaymentResultCommandHandler(onlinePaymentRepository,

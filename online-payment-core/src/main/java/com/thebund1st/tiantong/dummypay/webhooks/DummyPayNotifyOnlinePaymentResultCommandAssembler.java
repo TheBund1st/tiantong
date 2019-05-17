@@ -3,12 +3,12 @@ package com.thebund1st.tiantong.dummypay.webhooks;
 import com.jayway.jsonpath.JsonPath;
 import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
-import com.thebund1st.tiantong.web.webhooks.NotifyPaymentResultCommandAssembler;
+import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultCommandAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
-public class DummyPayNotifyPaymentResultCommandAssembler implements NotifyPaymentResultCommandAssembler {
+public class DummyPayNotifyOnlinePaymentResultCommandAssembler implements NotifyOnlinePaymentResultCommandAssembler {
     private static final String SUCCESS = "SUCCESS";
 
     @SneakyThrows

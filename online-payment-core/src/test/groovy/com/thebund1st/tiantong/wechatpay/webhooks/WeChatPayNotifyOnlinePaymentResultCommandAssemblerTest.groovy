@@ -5,13 +5,13 @@ import com.github.binarywang.wxpay.service.WxPayService
 import com.thebund1st.tiantong.core.refund.OnlineRefund
 import spock.lang.Specification
 
-class WeChatPayNotifyPaymentResultCommandAssemblerTest extends Specification {
+class WeChatPayNotifyOnlinePaymentResultCommandAssemblerTest extends Specification {
 
-    private WeChatPayNotifyPaymentResultCommandAssembler subject
+    private WeChatPayNotifyOnlinePaymentResultCommandAssembler subject
     private WxPayService wxPayService = Mock()
 
     def setup() {
-        subject = new WeChatPayNotifyPaymentResultCommandAssembler(wxPayService)
+        subject = new WeChatPayNotifyOnlinePaymentResultCommandAssembler(wxPayService)
     }
 
     def "it should parse raw notification to notify refund result command"() {

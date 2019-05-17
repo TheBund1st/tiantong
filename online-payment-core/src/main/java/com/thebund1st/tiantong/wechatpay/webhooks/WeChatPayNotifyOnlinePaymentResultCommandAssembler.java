@@ -8,14 +8,14 @@ import com.thebund1st.tiantong.commands.NotifyRefundResultCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
-import com.thebund1st.tiantong.web.webhooks.NotifyPaymentResultCommandAssembler;
+import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultCommandAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.math.BigDecimal;
 
 @RequiredArgsConstructor
-public class WeChatPayNotifyPaymentResultCommandAssembler implements NotifyPaymentResultCommandAssembler {
+public class WeChatPayNotifyOnlinePaymentResultCommandAssembler implements NotifyOnlinePaymentResultCommandAssembler {
     private static final String SUCCESS = "SUCCESS";
     private final WxPayService wxPayService;
 

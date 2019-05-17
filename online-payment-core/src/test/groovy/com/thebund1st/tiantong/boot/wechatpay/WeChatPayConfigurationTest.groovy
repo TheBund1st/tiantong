@@ -5,7 +5,7 @@ import com.thebund1st.tiantong.boot.AbstractAutoConfigurationTest
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor
 import com.thebund1st.tiantong.wechatpay.NonceGenerator
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway
-import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
+import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyOnlinePaymentResultCommandAssembler
 import spock.lang.Ignore
 
 class WeChatPayConfigurationTest extends AbstractAutoConfigurationTest {
@@ -97,7 +97,7 @@ class WeChatPayConfigurationTest extends AbstractAutoConfigurationTest {
 
         then:
         then.run {
-            WeChatPayNotifyPaymentResultCommandAssembler actual = it.getBean(WeChatPayNotifyPaymentResultCommandAssembler)
+            WeChatPayNotifyOnlinePaymentResultCommandAssembler actual = it.getBean(WeChatPayNotifyOnlinePaymentResultCommandAssembler)
             assert actual != null
         }
     }

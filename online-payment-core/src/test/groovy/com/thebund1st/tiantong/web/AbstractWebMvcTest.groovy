@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.web
 
-import com.thebund1st.tiantong.application.NotifyPaymentResultCommandHandler
 import com.thebund1st.tiantong.application.CreateOnlinePaymentCommandHandler
+import com.thebund1st.tiantong.application.NotifyOnlinePaymentResultCommandHandler
 import com.thebund1st.tiantong.application.RequestOnlineRefundCommandHandler
 import com.thebund1st.tiantong.application.SyncOnlinePaymentResultCommandHandler
 import com.thebund1st.tiantong.boot.dummypay.DummyPayPropertiesConfiguration
@@ -13,8 +13,10 @@ import com.thebund1st.tiantong.boot.wechatpay.webhooks.WeChatPayWebhookConfigura
 import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway
-import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyPaymentResultCommandAssembler
-import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultCommandAssembler
+import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultResponseBodyAssembler
+import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyOnlinePaymentResultCommandAssembler
+import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyOnlinePaymentResultResponseBodyAssembler
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,13 +43,21 @@ class AbstractWebMvcTest extends Specification {
     protected ProviderSpecificCreateOnlinePaymentGateway onlinePaymentProviderGateway = Mock()
 
     @SpringBean
-    protected WeChatPayNotifyPaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler = Mock()
+    protected WeChatPayNotifyOnlinePaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler = Mock()
 
     @SpringBean
-    protected DummyPayNotifyPaymentResultCommandAssembler dummyNotifyPaymentResultCommandAssembler = Mock()
+    protected DummyPayNotifyOnlinePaymentResultCommandAssembler dummyNotifyPaymentResultCommandAssembler = Mock()
 
     @SpringBean
-    protected NotifyPaymentResultCommandHandler onlinePaymentNotificationSubscriber = Mock()
+    protected WeChatPayNotifyOnlinePaymentResultResponseBodyAssembler weChatPayNotifyOnlinePaymentResultResponseBodyAssembler =
+            new WeChatPayNotifyOnlinePaymentResultResponseBodyAssembler()
+
+    @SpringBean
+    protected DummyPayNotifyOnlinePaymentResultResponseBodyAssembler dummyPayNotifyOnlinePaymentResultResponseBodyAssembler =
+            new DummyPayNotifyOnlinePaymentResultResponseBodyAssembler()
+
+    @SpringBean
+    protected NotifyOnlinePaymentResultCommandHandler onlinePaymentNotificationSubscriber = Mock()
 
     @SpringBean
     protected RequestOnlineRefundCommandHandler requestOnlineRefundCommandHandler = Mock()

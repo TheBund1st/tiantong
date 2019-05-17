@@ -3,6 +3,8 @@ package com.thebund1st.tiantong
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest
 import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer
+import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultCommandAssembler
+import com.thebund1st.tiantong.web.webhooks.NotifyOnlinePaymentResultResponseBodyAssembler
 import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator
 import com.thebund1st.tiantong.wechatpay.payment.WeChatPayLaunchOnlinePaymentRequestAssembler
 import com.tngtech.archunit.core.domain.JavaClasses
@@ -55,12 +57,27 @@ class PortsAndAdaptersTest extends Specification {
         "${MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer.simpleName} implementations should be named with universal suffix" | classes()
                 .that().areAssignableTo(MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer)
                 .should().haveSimpleNameEndingWith("CreateOnlinePaymentRequestJsonDeserializer")
-        "json serializers should be named with universal suffix" | classes()
+        "json serializers should be named with universal suffix"                                                                                    | classes()
                 .that().resideInAPackage("com.thebud1st.tiantong.json.serializers")
                 .should().haveSimpleNameEndingWith("JsonSerializer")
-        "json deserializers should be named with universal suffix" | classes()
+        "json deserializers should be named with universal suffix"                                                                                  | classes()
                 .that().resideInAPackage("com.thebud1st.tiantong.json.deserializers")
                 .should().haveSimpleNameEndingWith("JsonDeserializer")
+    }
+
+    @Unroll("#rule")
+    def "Webhook Implementations Rules"(def rule, ArchRule ruleCheck) {
+        expect:
+        ruleCheck.check(this.importedClasses)
+
+        where:
+        rule                                                                                                                 | ruleCheck
+        "${NotifyOnlinePaymentResultCommandAssembler.simpleName} implementations should be named with universal suffix"      | classes()
+                .that().areAssignableTo(NotifyOnlinePaymentResultCommandAssembler)
+                .should().haveSimpleNameEndingWith("NotifyOnlinePaymentResultCommandAssembler")
+        "${NotifyOnlinePaymentResultResponseBodyAssembler.simpleName} implementations should be named with universal suffix" | classes()
+                .that().areAssignableTo(NotifyOnlinePaymentResultResponseBodyAssembler)
+                .should().haveSimpleNameEndingWith("NotifyOnlinePaymentResultResponseBodyAssembler")
     }
 
     @Unroll("#rule")

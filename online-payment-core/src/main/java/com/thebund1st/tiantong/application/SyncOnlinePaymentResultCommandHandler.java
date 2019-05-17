@@ -22,7 +22,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
 
     private final OnlinePaymentResultGateway onlinePaymentResultGateway;
 
-    private final NotifyPaymentResultCommandHandler notifyPaymentResultCommandHandler;
+    private final NotifyOnlinePaymentResultCommandHandler notifyOnlinePaymentResultCommandHandler;
 
     private final CloseOnlinePaymentGateway closeOnlinePaymentGateway;
 
@@ -33,7 +33,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
                 .mustFindBy(OnlinePayment.Identifier.of(command.getOnlinePaymentId()));
         if (onlinePayment.isPending()) {
             Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
-            resultMaybe.ifPresent(notifyPaymentResultCommandHandler::handle);
+            resultMaybe.ifPresent(notifyOnlinePaymentResultCommandHandler::handle);
             if (OnlinePayment.shouldCloseSpecification(clock.now()).test(onlinePayment)) {
                 closeOnlinePaymentGateway.close(onlinePayment);
             }

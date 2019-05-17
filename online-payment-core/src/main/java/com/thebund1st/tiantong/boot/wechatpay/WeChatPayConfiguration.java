@@ -8,14 +8,15 @@ import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGen
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.IpAddressExtractor;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
-import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiLaunchOnlinePaymentRequestAssembler;
-import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeLaunchOnlinePaymentRequestAssembler;
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway;
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
+import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiLaunchOnlinePaymentRequestAssembler;
+import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher;
 import com.thebund1st.tiantong.wechatpay.payment.WeChatPayLaunchOnlinePaymentRequestAssemblerDispatcher;
 import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
-import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulatorDispatcher;
-import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
-import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyPaymentResultCommandAssembler;
+import com.thebund1st.tiantong.wechatpay.qrcode.WeChatPayNativeLaunchOnlinePaymentRequestAssembler;
+import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyOnlinePaymentResultCommandAssembler;
+import com.thebund1st.tiantong.wechatpay.webhooks.WeChatPayNotifyOnlinePaymentResultResponseBodyAssembler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -92,9 +93,14 @@ public class WeChatPayConfiguration {
     }
 
     @Bean
-    public WeChatPayNotifyPaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler(
+    public WeChatPayNotifyOnlinePaymentResultCommandAssembler weChatPayNotifyPaymentResultCommandAssembler(
             WxPayService wxPayService) {
-        return new WeChatPayNotifyPaymentResultCommandAssembler(wxPayService);
+        return new WeChatPayNotifyOnlinePaymentResultCommandAssembler(wxPayService);
+    }
+
+    @Bean
+    public WeChatPayNotifyOnlinePaymentResultResponseBodyAssembler weChatPayNotifyOnlinePaymentResultResponseBodyAssembler() {
+        return new WeChatPayNotifyOnlinePaymentResultResponseBodyAssembler();
     }
 
 }

@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.application
 
 import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand
-import com.thebund1st.tiantong.core.CloseOnlinePaymentGateway
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway
 import com.thebund1st.tiantong.core.OnlinePaymentRepository
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway
 import com.thebund1st.tiantong.time.Clock
@@ -17,7 +17,7 @@ class SyncOnlinePaymentResultCommandHandlerTest extends Specification {
 
     private OnlinePaymentRepository onlinePaymentRepository = Mock()
     private OnlinePaymentResultGateway onlinePaymentResultGateway = Mock()
-    private CloseOnlinePaymentGateway closeOnlinePaymentGateway = Mock()
+    private ProviderSpecificCloseOnlinePaymentGateway closeOnlinePaymentGateway = Mock()
     private NotifyOnlinePaymentResultCommandHandler notifyPaymentResultCommandHandler = Mock()
     private Clock clock = Mock()
     private SyncOnlinePaymentResultCommandHandler subject =

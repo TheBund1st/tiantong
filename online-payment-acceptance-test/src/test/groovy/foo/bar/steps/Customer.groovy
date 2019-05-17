@@ -2,7 +2,7 @@ package foo.bar.steps
 
 import com.thebund1st.tiantong.commands.CreateOnlinePaymentCommand
 import com.thebund1st.tiantong.core.OnlinePayment
-import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway
+import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentGateway
 import foo.bar.DomainEventPublisherStub
 import io.restassured.response.ValidatableResponse
 
@@ -14,7 +14,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE
 
 class Customer {
     DomainEventPublisherStub domainEventPublisherStub
-    DummyPayOnlinePaymentProviderGateway dummyPayOnlinePaymentProviderGateway
+    DummyPayOnlinePaymentGateway dummyPayOnlinePaymentProviderGateway
     ValidatableResponse currentResponse
     CreateOnlinePaymentCommand currentRequestOnlinePaymentCommand
     String currentOnlinePaymentId

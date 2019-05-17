@@ -2,9 +2,8 @@ package com.thebund1st.tiantong.boot.provider
 
 
 import com.thebund1st.tiantong.boot.AbstractAutoConfigurationTest
-import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway
-import com.thebund1st.tiantong.provider.CreateOnlinePaymentProviderGatewayDispatcher
+import com.thebund1st.tiantong.provider.ProviderSpecificCreateOnlinePaymentGatewayDispatcher
 import com.thebund1st.tiantong.wechatpay.WeChatPayOnlinePaymentGateway
 
 import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayJsApi
@@ -19,8 +18,8 @@ class ProviderConfigurationTest extends AbstractAutoConfigurationTest {
 
         then:
         contextRunner.run { it ->
-            CreateOnlinePaymentProviderGatewayDispatcher dispatcher =
-                    (CreateOnlinePaymentProviderGatewayDispatcher) it.getBean(ProviderSpecificCreateOnlinePaymentGateway)
+            ProviderSpecificCreateOnlinePaymentGatewayDispatcher dispatcher =
+                    (ProviderSpecificCreateOnlinePaymentGatewayDispatcher) it.getBean(ProviderSpecificCreateOnlinePaymentGateway)
 
             WeChatPayOnlinePaymentGateway weChatPayOnlinePaymentGateway =
                     (WeChatPayOnlinePaymentGateway) it.getBean(WeChatPayOnlinePaymentGateway)

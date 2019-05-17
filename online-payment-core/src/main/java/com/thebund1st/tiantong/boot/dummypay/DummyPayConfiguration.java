@@ -2,7 +2,7 @@ package com.thebund1st.tiantong.boot.dummypay;
 
 import com.thebund1st.tiantong.boot.dummypay.webhooks.DummyPayWebhookConfiguration;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
-import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentGateway;
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultCommandAssembler;
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultResponseBodyAssembler;
 import com.thebund1st.tiantong.time.Clock;
@@ -26,8 +26,8 @@ public class DummyPayConfiguration {
     private OnlinePaymentResultNotificationIdentifierGenerator onlinePaymentResultNotificationIdentifierGenerator;
 
     @Bean
-    public DummyPayOnlinePaymentProviderGateway dummyOnlinePaymentProviderGateway() {
-        return new DummyPayOnlinePaymentProviderGateway(clock, onlinePaymentResultNotificationIdentifierGenerator);
+    public DummyPayOnlinePaymentGateway dummyOnlinePaymentProviderGateway() {
+        return new DummyPayOnlinePaymentGateway(clock, onlinePaymentResultNotificationIdentifierGenerator);
     }
 
     @Bean

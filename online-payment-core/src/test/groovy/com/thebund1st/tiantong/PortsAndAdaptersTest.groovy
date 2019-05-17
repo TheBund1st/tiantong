@@ -1,5 +1,7 @@
 package com.thebund1st.tiantong
 
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest
 import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer
@@ -45,6 +47,16 @@ class PortsAndAdaptersTest extends Specification {
         "${ProviderSpecificLaunchOnlinePaymentRequest.simpleName} implementations should be named with universal suffix" | classes()
                 .that().implement(ProviderSpecificLaunchOnlinePaymentRequest)
                 .should().haveSimpleNameEndingWith("LaunchOnlinePaymentRequest")
+        "${ProviderSpecificCreateOnlinePaymentGateway.simpleName} implementations should be named with universal suffix" | classes()
+                .that().implement(ProviderSpecificCreateOnlinePaymentGateway)
+                .should().haveSimpleNameEndingWith("CreateOnlinePaymentGateway")
+                .orShould().haveSimpleName(ProviderSpecificCreateOnlinePaymentGateway.simpleName + "Dispatcher")
+                .orShould().haveSimpleNameEndingWith("OnlinePaymentGateway")
+        "${ProviderSpecificCloseOnlinePaymentGateway.simpleName} implementations should be named with universal suffix" | classes()
+                .that().implement(ProviderSpecificCloseOnlinePaymentGateway)
+                .should().haveSimpleNameEndingWith("CloseOnlinePaymentGateway")
+                .orShould().haveSimpleName(ProviderSpecificCloseOnlinePaymentGateway.simpleName + "Dispatcher")
+                .orShould().haveSimpleNameEndingWith("OnlinePaymentGateway")
     }
 
     @Unroll("#rule")

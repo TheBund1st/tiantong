@@ -1,6 +1,6 @@
 package foo.bar
 
-import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway
+import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentGateway
 import foo.bar.steps.Customer
 import io.restassured.RestAssured
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +22,7 @@ class OnlinePaymentAcceptanceTest extends Specification {
     private DomainEventPublisherStub domainEventPublisherStub
 
     @Autowired
-    private DummyPayOnlinePaymentProviderGateway dummyPayOnlinePaymentProviderGateway
+    private DummyPayOnlinePaymentGateway dummyPayOnlinePaymentProviderGateway
 
     private Customer customer
 

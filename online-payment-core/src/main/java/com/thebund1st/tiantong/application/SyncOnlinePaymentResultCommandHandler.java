@@ -3,7 +3,7 @@ package com.thebund1st.tiantong.application;
 import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJob;
 import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJobHandler;
 import com.thebund1st.tiantong.commands.SyncOnlinePaymentResultCommand;
-import com.thebund1st.tiantong.core.CloseOnlinePaymentGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
@@ -24,7 +24,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
 
     private final NotifyOnlinePaymentResultCommandHandler notifyOnlinePaymentResultCommandHandler;
 
-    private final CloseOnlinePaymentGateway closeOnlinePaymentGateway;
+    private final ProviderSpecificCloseOnlinePaymentGateway providerSpecificCloseOnlinePaymentGateway;
 
     private final Clock clock;
 
@@ -35,7 +35,7 @@ public class SyncOnlinePaymentResultCommandHandler implements OnlinePaymentResul
             Optional<OnlinePaymentResultNotification> resultMaybe = onlinePaymentResultGateway.pull(onlinePayment);
             resultMaybe.ifPresent(notifyOnlinePaymentResultCommandHandler::handle);
             if (OnlinePayment.shouldCloseSpecification(clock.now()).test(onlinePayment)) {
-                closeOnlinePaymentGateway.close(onlinePayment);
+                providerSpecificCloseOnlinePaymentGateway.close(onlinePayment);
             }
             return resultMaybe;
         } else {

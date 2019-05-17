@@ -10,17 +10,17 @@ import spock.lang.Specification
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.dummypay.DummyPayMethods.dummyPay
 
-class CreateOnlinePaymentProviderGatewayDispatcherTest extends Specification {
+class ProviderSpecificCreateOnlinePaymentGatewayDispatcherTest extends Specification {
 
     @SuppressWarnings("GroovyAssignabilityCheck")
-    private MethodBasedOnlinePaymentProviderGateway dummyGateway = Mock(name: 'dummy')
+    private MethodBasedCreateOnlinePaymentGateway dummyGateway = Mock(name: 'dummy')
     @SuppressWarnings("GroovyAssignabilityCheck")
-    private MethodBasedOnlinePaymentProviderGateway anotherDummyGateway = Mock(name: 'anotherDummy')
-    private CreateOnlinePaymentProviderGatewayDispatcher subject
+    private MethodBasedCreateOnlinePaymentGateway anotherDummyGateway = Mock(name: 'anotherDummy')
+    private ProviderSpecificCreateOnlinePaymentGatewayDispatcher subject
 
     def setup() {
         def delegates = [dummyGateway, anotherDummyGateway]
-        subject = new CreateOnlinePaymentProviderGatewayDispatcher(delegates)
+        subject = new ProviderSpecificCreateOnlinePaymentGatewayDispatcher(delegates)
 
         dummyGateway.supports(dummyPay()) >> true
         anotherDummyGateway.supports(OnlinePayment.Method.of("ANOTHER_DUMMY")) >> true

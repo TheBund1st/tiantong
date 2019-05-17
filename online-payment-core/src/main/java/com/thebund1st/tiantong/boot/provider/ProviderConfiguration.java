@@ -1,13 +1,13 @@
 package com.thebund1st.tiantong.boot.provider;
 
-import com.thebund1st.tiantong.core.CloseOnlinePaymentGateway;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultGateway;
-import com.thebund1st.tiantong.provider.CloseOnlinePaymentGatewayDispatcher;
+import com.thebund1st.tiantong.provider.ProviderSpecificCloseOnlinePaymentGatewayDispatcher;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
-import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.provider.MethodBasedCreateOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
-import com.thebund1st.tiantong.provider.CreateOnlinePaymentProviderGatewayDispatcher;
+import com.thebund1st.tiantong.provider.ProviderSpecificCreateOnlinePaymentGatewayDispatcher;
 import com.thebund1st.tiantong.provider.OnlinePaymentResultGatewayDispatcher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProviderConfiguration {
 
-    private final List<MethodBasedOnlinePaymentProviderGateway> delegates;
+    private final List<MethodBasedCreateOnlinePaymentGateway> delegates;
     @Autowired
     private List<MethodBasedOnlinePaymentResultGateway> paymentResultGatewayGroup;
     @Autowired
@@ -30,7 +30,7 @@ public class ProviderConfiguration {
     @Primary
     @Bean
     public ProviderSpecificCreateOnlinePaymentGateway onlinePaymentProviderGatewayDispatcher() {
-        return new CreateOnlinePaymentProviderGatewayDispatcher(delegates);
+        return new ProviderSpecificCreateOnlinePaymentGatewayDispatcher(delegates);
     }
 
     @Primary
@@ -41,7 +41,7 @@ public class ProviderConfiguration {
 
     @Primary
     @Bean
-    public CloseOnlinePaymentGateway closeOnlinePaymentGateway() {
-        return new CloseOnlinePaymentGatewayDispatcher(closeOnlinePaymentGatewayGroup);
+    public ProviderSpecificCloseOnlinePaymentGateway closeOnlinePaymentGateway() {
+        return new ProviderSpecificCloseOnlinePaymentGatewayDispatcher(closeOnlinePaymentGatewayGroup);
     }
 }

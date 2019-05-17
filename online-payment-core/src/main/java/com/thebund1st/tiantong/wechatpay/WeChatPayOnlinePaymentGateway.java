@@ -15,7 +15,7 @@ import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentR
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
-import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentProviderGateway;
+import com.thebund1st.tiantong.provider.MethodBasedCreateOnlinePaymentGateway;
 import com.thebund1st.tiantong.provider.MethodBasedOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.payment.WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
@@ -34,7 +34,7 @@ import static java.util.Arrays.asList;
 
 @RequiredArgsConstructor
 public class WeChatPayOnlinePaymentGateway implements
-        MethodBasedOnlinePaymentProviderGateway,
+        MethodBasedCreateOnlinePaymentGateway,
         MethodBasedOnlinePaymentResultGateway,
         OnlineRefundProviderGateway,
         MethodBasedCloseOnlinePaymentGateway {

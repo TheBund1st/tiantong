@@ -14,11 +14,11 @@ import java.util.List;
  * Dispatching create online payment request based on {@link com.thebund1st.tiantong.core.OnlinePayment.Method}.
  */
 @RequiredArgsConstructor
-public class CreateOnlinePaymentProviderGatewayDispatcher
+public class ProviderSpecificCreateOnlinePaymentGatewayDispatcher
         implements ProviderSpecificCreateOnlinePaymentGateway,
-        MethodMatcherFunction<MethodBasedOnlinePaymentProviderGateway, ProviderSpecificLaunchOnlinePaymentRequest> {
+        MethodMatcherFunction<MethodBasedCreateOnlinePaymentGateway, ProviderSpecificLaunchOnlinePaymentRequest> {
 
-    private final List<MethodBasedOnlinePaymentProviderGateway> gatewayGroup;
+    private final List<MethodBasedCreateOnlinePaymentGateway> gatewayGroup;
 
     @Override
     public ProviderSpecificLaunchOnlinePaymentRequest create(OnlinePayment onlinePayment,

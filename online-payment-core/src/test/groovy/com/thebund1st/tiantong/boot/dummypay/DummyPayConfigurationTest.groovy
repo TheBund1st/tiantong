@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.boot.dummypay
 
 import com.thebund1st.tiantong.boot.AbstractAutoConfigurationTest
-import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentProviderGateway
+import com.thebund1st.tiantong.dummypay.DummyPayOnlinePaymentGateway
 import com.thebund1st.tiantong.dummypay.webhooks.DummyPayNotifyOnlinePaymentResultCommandAssembler
 
 class DummyPayConfigurationTest extends AbstractAutoConfigurationTest {
@@ -13,7 +13,7 @@ class DummyPayConfigurationTest extends AbstractAutoConfigurationTest {
 
         then:
         then.run { it ->
-            assert it.getBeanNamesForType(DummyPayOnlinePaymentProviderGateway).length == 0
+            assert it.getBeanNamesForType(DummyPayOnlinePaymentGateway).length == 0
             assert it.getBeanNamesForType(DummyPayProperties).length == 0
             assert it.getBeanNamesForType(DummyPayNotifyOnlinePaymentResultCommandAssembler).length == 0
         }
@@ -27,7 +27,7 @@ class DummyPayConfigurationTest extends AbstractAutoConfigurationTest {
 
         then:
         then.run { it ->
-            assert it.getBeanNamesForType(DummyPayOnlinePaymentProviderGateway).length == 1
+            assert it.getBeanNamesForType(DummyPayOnlinePaymentGateway).length == 1
             assert it.getBeanNamesForType(DummyPayProperties).length == 1
             assert it.getBeanNamesForType(DummyPayNotifyOnlinePaymentResultCommandAssembler).length == 1
         }

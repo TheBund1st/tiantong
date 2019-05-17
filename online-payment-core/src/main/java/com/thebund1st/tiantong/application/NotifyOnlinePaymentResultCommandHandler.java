@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.application;
 
-import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
+import com.thebund1st.tiantong.commands.NotifyOnlinePaymentResultCommand;
 import com.thebund1st.tiantong.core.DomainEventPublisher;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
@@ -30,7 +30,7 @@ public class NotifyOnlinePaymentResultCommandHandler {
     private final DomainEventPublisher domainEventPublisher;
     private final Clock clock;
 
-    public void handle(NotifyPaymentResultCommand command) {
+    public void handle(NotifyOnlinePaymentResultCommand command) {
         LocalDateTime now = clock.now();
         OnlinePaymentResultNotification notification = toResponse(command, now);
         doHandle(notification);
@@ -52,7 +52,7 @@ public class NotifyOnlinePaymentResultCommandHandler {
         }
     }
 
-    private OnlinePaymentResultNotification toResponse(NotifyPaymentResultCommand command, LocalDateTime now) {
+    private OnlinePaymentResultNotification toResponse(NotifyOnlinePaymentResultCommand command, LocalDateTime now) {
         OnlinePaymentResultNotification response = new OnlinePaymentResultNotification();
         response.setId(onlinePaymentResultNotificationIdentifierGenerator.nextIdentifier());
         response.setOnlinePaymentId(command.getOnlinePaymentId());

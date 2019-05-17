@@ -1,8 +1,8 @@
 package com.thebund1st.tiantong.web.webhooks;
 
-import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
+import com.thebund1st.tiantong.commands.NotifyOnlinePaymentResultCommand;
 
 public interface NotifyOnlinePaymentResultCommandAssembler {
 
-    NotifyPaymentResultCommand from(String rawNotification);
+    NotifyOnlinePaymentResultCommand from(String rawNotification);
 }

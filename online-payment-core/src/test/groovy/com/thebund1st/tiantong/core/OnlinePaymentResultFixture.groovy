@@ -1,7 +1,6 @@
 package com.thebund1st.tiantong.core
 
-import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand
-import com.thebund1st.tiantong.core.OnlinePayment
+
 import com.thebund1st.tiantong.utils.Randoms
 
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment

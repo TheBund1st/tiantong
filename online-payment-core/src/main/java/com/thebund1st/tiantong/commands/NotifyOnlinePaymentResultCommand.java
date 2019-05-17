@@ -6,15 +6,15 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class NotifyPaymentResultCommand {
+public class NotifyOnlinePaymentResultCommand {
     private OnlinePayment.Identifier onlinePaymentId;
     //FIXME introduce monetary amount
     private double amount;
     private String text;
     private boolean success;
 
-    public NotifyPaymentResultCommand(OnlinePayment.Identifier onlinePaymentId,
-                                      double amount, boolean success, String text) {
+    public NotifyOnlinePaymentResultCommand(OnlinePayment.Identifier onlinePaymentId,
+                                            double amount, boolean success, String text) {
         this.onlinePaymentId = onlinePaymentId;
         this.amount = amount;
         this.text = text;

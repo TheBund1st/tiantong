@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.web.webhooks;
 
 import com.thebund1st.tiantong.application.NotifyOnlinePaymentResultCommandHandler;
-import com.thebund1st.tiantong.commands.NotifyPaymentResultCommand;
+import com.thebund1st.tiantong.commands.NotifyOnlinePaymentResultCommand;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -30,7 +30,7 @@ public class NotifyOnlinePaymentResultWebhookEndpoint extends OncePerRequestFilt
         try {
             String requestBody = IOUtils.toString(request.getInputStream(), Charset.forName("UTF-8"));
             log.info(requestBody);
-            NotifyPaymentResultCommand command = notifyOnlinePaymentResultCommandAssembler.from(requestBody);
+            NotifyOnlinePaymentResultCommand command = notifyOnlinePaymentResultCommandAssembler.from(requestBody);
             handler.handle(command);
             response.getWriter().write(notifyOnlinePaymentResultResponseBodyAssembler.toResponseBody());
         } catch (Exception err) {

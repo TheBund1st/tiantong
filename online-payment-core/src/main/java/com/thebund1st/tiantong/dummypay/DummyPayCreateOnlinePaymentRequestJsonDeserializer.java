@@ -3,7 +3,7 @@ package com.thebund1st.tiantong.dummypay;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.json.deserializers.MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer;
 import lombok.SneakyThrows;
@@ -23,7 +23,7 @@ public class DummyPayCreateOnlinePaymentRequestJsonDeserializer
     }
 
     @Override
-    public boolean supports(OnlinePayment.Method method) {
+    public boolean supports(Method method) {
         return dummyPay().equals(method);
     }
 

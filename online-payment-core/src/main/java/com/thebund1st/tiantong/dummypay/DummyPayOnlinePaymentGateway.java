@@ -3,6 +3,7 @@ package com.thebund1st.tiantong.dummypay;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.provider.MethodBasedCloseOnlinePaymentGateway;
@@ -40,7 +41,7 @@ public class DummyPayOnlinePaymentGateway implements
     }
 
     @Override
-    public boolean supports(OnlinePayment.Method method) {
+    public boolean supports(Method method) {
         return dummyPay().equals(method);
     }
 

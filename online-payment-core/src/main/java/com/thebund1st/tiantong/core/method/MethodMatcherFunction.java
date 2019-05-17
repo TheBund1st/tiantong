@@ -1,4 +1,4 @@
-package com.thebund1st.tiantong.core;
+package com.thebund1st.tiantong.core.method;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +10,7 @@ public interface MethodMatcherFunction<MethodMatcherFunction extends MethodMatch
 
     default BiFunction<Function<MethodMatcherFunction, R>, Supplier<RuntimeException>, R> dispatch(
             List<MethodMatcherFunction> methodAwareGroup,
-            Supplier<OnlinePayment.Method> methodSupplier) {
+            Supplier<Method> methodSupplier) {
         Optional<MethodMatcherFunction> MethodMatcherFunction = methodAwareGroup.stream()
                 .filter(methodAware -> methodAware.supports(methodSupplier.get()))
                 .findFirst();
@@ -25,7 +25,7 @@ public interface MethodMatcherFunction<MethodMatcherFunction extends MethodMatch
 
     default BiFunction<Function<MethodMatcherFunction, R>, Supplier<R>, R> dispatchOrElse(
             List<MethodMatcherFunction> methodAwareGroup,
-            Supplier<OnlinePayment.Method> methodSupplier) {
+            Supplier<Method> methodSupplier) {
         Optional<MethodMatcherFunction> MethodMatcherFunction = methodAwareGroup.stream()
                 .filter(methodAware -> methodAware.supports(methodSupplier.get()))
                 .findFirst();

@@ -4,6 +4,7 @@ import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
 import com.github.binarywang.wxpay.service.WxPayService;
 import com.github.binarywang.wxpay.util.SignUtils;
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.time.Clock;
 import com.thebund1st.tiantong.wechatpay.payment.MethodBasedWeChatPayLaunchOnlinePaymentRequestAssembler;
 import com.thebund1st.tiantong.wechatpay.NonceGenerator;
@@ -21,7 +22,7 @@ public class WeChatPayJsApiLaunchOnlinePaymentRequestAssembler
     private final WxPayService wxPayService;
 
     @Override
-    public boolean supports(OnlinePayment.Method method) {
+    public boolean supports(Method method) {
         return weChatPayJsApi().equals(method);
     }
 

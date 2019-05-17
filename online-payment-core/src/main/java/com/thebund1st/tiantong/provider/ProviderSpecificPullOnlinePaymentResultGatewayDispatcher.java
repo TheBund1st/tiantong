@@ -1,6 +1,6 @@
 package com.thebund1st.tiantong.provider;
 
-import com.thebund1st.tiantong.core.MethodMatcherFunction;
+import com.thebund1st.tiantong.core.method.MethodMatcherFunction;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificPullOnlinePaymentResultGateway;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;

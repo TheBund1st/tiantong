@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.commands
 
 import com.thebund1st.tiantong.core.OnlinePayment
+import com.thebund1st.tiantong.core.method.Method
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.dummypay.DummyPayCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
@@ -18,7 +19,7 @@ class RequestOnlinePaymentCommandFixture {
         this
     }
 
-    def by(OnlinePayment.Method method) {
+    def by(Method method) {
         target.setMethod(method.value)
         this
     }

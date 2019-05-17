@@ -1,7 +1,8 @@
 package com.thebund1st.tiantong.provider;
 
-import com.thebund1st.tiantong.core.MethodMatcherFunction;
+import com.thebund1st.tiantong.core.method.MethodMatcherFunction;
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.exceptions.NoSuchOnlinePaymentProviderGatewayException;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentGateway;
@@ -11,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 /**
- * Dispatching create online payment request based on {@link com.thebund1st.tiantong.core.OnlinePayment.Method}.
+ * Dispatching create online payment request based on {@link Method}.
  */
 @RequiredArgsConstructor
 public class ProviderSpecificCreateOnlinePaymentGatewayDispatcher

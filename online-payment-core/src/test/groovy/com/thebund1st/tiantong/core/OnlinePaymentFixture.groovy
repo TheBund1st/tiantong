@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.core
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.thebund1st.tiantong.core.method.Method
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
 import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequest
@@ -36,13 +37,13 @@ class OnlinePaymentFixture {
         this
     }
 
-    def by(OnlinePayment.Method method) {
+    def by(Method method) {
         target.setMethod(method)
         this
     }
 
     def byMethod(String method) {
-        by(OnlinePayment.Method.of(method))
+        by(Method.of(method))
     }
 
     def correlatedWith(OnlinePayment.Correlation correlation) {

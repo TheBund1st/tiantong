@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.wechatpay.payment;
 
 import com.github.binarywang.wxpay.bean.result.WxPayUnifiedOrderResult;
-import com.thebund1st.tiantong.core.MethodMatcherFunction;
+import com.thebund1st.tiantong.core.method.MethodMatcherFunction;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.exceptions.NoSuchOnlinePaymentProviderGatewayException;

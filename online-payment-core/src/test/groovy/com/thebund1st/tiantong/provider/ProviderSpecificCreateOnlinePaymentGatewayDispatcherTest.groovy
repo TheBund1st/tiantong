@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.provider
 
+import com.thebund1st.tiantong.core.method.Method
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest
-import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.exceptions.NoSuchOnlinePaymentProviderGatewayException
 import com.thebund1st.tiantong.dummypay.DummyPayCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.dummypay.DummyPayLaunchOnlinePaymentRequest
@@ -23,7 +23,7 @@ class ProviderSpecificCreateOnlinePaymentGatewayDispatcherTest extends Specifica
         subject = new ProviderSpecificCreateOnlinePaymentGatewayDispatcher(delegates)
 
         dummyGateway.supports(dummyPay()) >> true
-        anotherDummyGateway.supports(OnlinePayment.Method.of("ANOTHER_DUMMY")) >> true
+        anotherDummyGateway.supports(Method.of("ANOTHER_DUMMY")) >> true
     }
 
     def "it should dispatch online payment to corresponding provider gateway"() {

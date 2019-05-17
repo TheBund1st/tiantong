@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.jdbc;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
 import com.thebund1st.tiantong.core.refund.OnlineRefundRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,7 @@ public class JdbcOnlineRefundRepository implements OnlineRefundRepository {
                     or.setCorrelation(OnlinePayment.Correlation.of(rs.getString("CORRELATION_KEY"),
                             rs.getString("CORRELATION_VALUE")));
                     or.setStatus(OnlineRefund.Status.of(rs.getInt("STATUS")));
-                    or.setMethod(OnlinePayment.Method.of(rs.getString("METHOD")));
+                    or.setMethod(Method.of(rs.getString("METHOD")));
                     or.setCreatedAt(toDateTime(rs, "CREATED_AT"));
                     or.setLastModifiedAt(toDateTime(rs, "LAST_MODIFIED_AT"));
                     return or;

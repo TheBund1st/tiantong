@@ -1,6 +1,7 @@
 package com.thebund1st.tiantong.core.refund;
 
 import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +25,7 @@ public class OnlineRefund {
     private OnlinePayment.Identifier onlinePaymentId;
     private double onlinePaymentAmount;
     private OnlinePayment.Correlation correlation;
-    private OnlinePayment.Method method;
+    private Method method;
     private Status status = PENDING;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;

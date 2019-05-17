@@ -1,21 +1,21 @@
 package com.thebund1st.tiantong.wechatpay;
 
-import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 
 public final class WeChatPayMethods {
 
-    private static final OnlinePayment.Method jsApi =
-            OnlinePayment.Method.of("WECHAT_PAY_JSAPI");
+    private static final Method jsApi =
+            Method.of("WECHAT_PAY_JSAPI");
 
-    private static final OnlinePayment.Method _native =
-            OnlinePayment.Method.of("WECHAT_PAY_NATIVE");
+    private static final Method _native =
+            Method.of("WECHAT_PAY_NATIVE");
 
 
-    public static OnlinePayment.Method weChatPayJsApi() {
+    public static Method weChatPayJsApi() {
         return jsApi;
     }
 
-    public static OnlinePayment.Method weChatPayNative() {
+    public static Method weChatPayNative() {
         return _native;
     }
 

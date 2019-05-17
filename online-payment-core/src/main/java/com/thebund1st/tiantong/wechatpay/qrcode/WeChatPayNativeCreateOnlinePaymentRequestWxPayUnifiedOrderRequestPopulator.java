@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.wechatpay.qrcode;
 
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.wechatpay.payment.MethodBasedWeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulator;
 
 import static com.thebund1st.tiantong.wechatpay.WeChatPayMethods.weChatPayNative;
@@ -17,7 +17,7 @@ public class WeChatPayNativeCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPo
     }
 
     @Override
-    public boolean supports(OnlinePayment.Method method) {
+    public boolean supports(Method method) {
         return weChatPayNative().equals(method);
     }
 }

@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.core;
 
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent;
@@ -160,21 +161,6 @@ public class OnlinePayment {
                 }
             }
             return UNKNOWN;
-        }
-    }
-
-    @Getter
-    @ToString
-    @EqualsAndHashCode
-    public static class Method {
-        private String value;
-
-        private Method(String value) {
-            this.value = value;
-        }
-
-        public static Method of(String value) {
-            return new Method(value);
         }
     }
 

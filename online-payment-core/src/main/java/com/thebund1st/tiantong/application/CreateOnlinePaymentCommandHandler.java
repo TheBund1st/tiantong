@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.commands.CreateOnlinePaymentCommand;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.time.Clock;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -29,7 +30,7 @@ public class CreateOnlinePaymentCommandHandler {
     public OnlinePayment handle(@Valid CreateOnlinePaymentCommand command) {
         OnlinePayment op = new OnlinePayment(onlinePaymentIdentifierGenerator.nextIdentifier(), clock.now());
         op.setAmount(command.getAmount());
-        op.setMethod(OnlinePayment.Method.of(command.getMethod()));
+        op.setMethod(Method.of(command.getMethod()));
         op.setCorrelation(command.getCorrelation());
         op.setSubject(command.getSubject());
         op.setBody(command.getBody());

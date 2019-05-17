@@ -11,6 +11,7 @@ import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotification;
 import com.thebund1st.tiantong.core.OnlinePaymentResultNotificationIdentifierGenerator;
 import com.thebund1st.tiantong.core.OnlineRefundProviderGateway;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificLaunchOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.refund.OnlineRefund;
@@ -81,7 +82,7 @@ public class WeChatPayOnlinePaymentGateway implements
         return BigDecimal.valueOf(amount * 100).intValue();
     }
 
-    private List<OnlinePayment.Method> matchedMethods() {
+    private List<Method> matchedMethods() {
         return asList(
                 weChatPayNative(),
                 weChatPayJsApi()
@@ -148,7 +149,7 @@ public class WeChatPayOnlinePaymentGateway implements
     }
 
     @Override
-    public boolean supports(OnlinePayment.Method method) {
+    public boolean supports(Method method) {
         return matchedMethods().contains(method);
     }
 }

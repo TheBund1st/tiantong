@@ -1,9 +1,9 @@
 package com.thebund1st.tiantong.wechatpay.payment;
 
 import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
-import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
-import com.thebund1st.tiantong.core.MethodMatcherConsumer;
+import com.thebund1st.tiantong.core.method.MethodMatcherConsumer;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class WeChatPayCreateOnlinePaymentRequestWxPayUnifiedOrderRequestPopulato
     public void populate(WxPayUnifiedOrderRequest request,
                          P providerSpecificOnlinePaymentRequest) {
         dispatch(delegateGroup,
-                () -> OnlinePayment.Method.of("WECHAT_PAY_" + request.getTradeType()),
+                () -> Method.of("WECHAT_PAY_" + request.getTradeType()),
                 p -> p.populate(request, providerSpecificOnlinePaymentRequest));
     }
 }

@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchro
 import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchronizationJobStore;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.json.deserializers.ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher;
 import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +72,7 @@ public class JdbcOnlinePaymentRepository implements
                     op.setCorrelation(OnlinePayment.Correlation.of(rs.getString("CORRELATION_KEY"),
                             rs.getString("CORRELATION_VALUE")));
                     op.setStatus(OnlinePayment.Status.of(rs.getInt("STATUS")));
-                    op.setMethod(OnlinePayment.Method.of(rs.getString("METHOD")));
+                    op.setMethod(Method.of(rs.getString("METHOD")));
                     op.setSubject(rs.getString("SUBJECT"));
                     op.setBody(rs.getString("BODY"));
                     op.setProviderSpecificInfo(rs.getString("PROVIDER_SPECIFIC_INFO"));

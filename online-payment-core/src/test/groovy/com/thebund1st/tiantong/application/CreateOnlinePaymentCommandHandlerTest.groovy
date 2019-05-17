@@ -4,6 +4,7 @@ package com.thebund1st.tiantong.application
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.OnlinePaymentIdentifierGenerator
 import com.thebund1st.tiantong.core.OnlinePaymentRepository
+import com.thebund1st.tiantong.core.method.Method
 import com.thebund1st.tiantong.time.Clock
 import spock.lang.Specification
 
@@ -48,7 +49,7 @@ class CreateOnlinePaymentCommandHandlerTest extends Specification {
         assert actual.createdAt == now
         assert actual.lastModifiedAt == now
         assert actual.status == PENDING
-        assert actual.method == OnlinePayment.Method.of(command.method)
+        assert actual.method == Method.of(command.method)
         assert actual.correlation == command.correlation
         assert actual.subject == command.subject
         assert actual.body == command.body

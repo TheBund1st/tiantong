@@ -1,7 +1,7 @@
 package com.thebund1st.tiantong.provider;
 
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCloseOnlinePaymentGateway;
-import com.thebund1st.tiantong.core.MethodMatcherConsumer;
+import com.thebund1st.tiantong.core.method.MethodMatcherConsumer;
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.exceptions.NoSuchOnlinePaymentProviderGatewayException;
 import lombok.RequiredArgsConstructor;

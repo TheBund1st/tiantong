@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.thebund1st.tiantong.commands.CreateOnlinePaymentCommand;
+import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
-import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
-import com.thebund1st.tiantong.core.MethodMatcherFunction;
+import com.thebund1st.tiantong.core.method.MethodMatcherFunction;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatche
     private ProviderSpecificCreateOnlinePaymentRequest deDeserialize(String method,
                                                                      Function<MethodBasedProviderSpecificCreateOnlinePaymentRequestJsonDeserializer, ProviderSpecificCreateOnlinePaymentRequest> function) {
         return dispatchOrElse(delegateGroup,
-                () -> OnlinePayment.Method.of(method))
+                () -> Method.of(method))
                 .apply(function, FlattenedProviderSpecificCreateOnlinePaymentRequest::new);
     }
 }

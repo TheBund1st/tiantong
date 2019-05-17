@@ -1,13 +1,13 @@
 package com.thebund1st.tiantong.dummypay;
 
-import com.thebund1st.tiantong.core.OnlinePayment;
+import com.thebund1st.tiantong.core.method.Method;
 
 public final class DummyPayMethods {
 
-    private static final OnlinePayment.Method dummyPay =
-            OnlinePayment.Method.of("DUMMY_PAY");
+    private static final Method dummyPay =
+            Method.of("DUMMY_PAY");
 
-    public static OnlinePayment.Method dummyPay() {
+    public static Method dummyPay() {
         return dummyPay;
     }
 

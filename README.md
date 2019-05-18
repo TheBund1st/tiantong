@@ -4,12 +4,9 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)    
 Online Payment Component for Spring Boot Projects
 
-## Quick Start
+## About this project
 
-
-## Why
-
-TBD
+You can find more details in this [wiki](https://github.com/TheBund1st/tiantong/wiki)
 
 ## Contributing
 

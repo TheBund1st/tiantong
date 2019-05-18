@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.commands
 
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.method.Method
+import com.thebund1st.tiantong.core.payable.Payable
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.dummypay.DummyPayCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
@@ -41,6 +42,11 @@ class RequestOnlinePaymentCommandFixture {
         this
     }
 
+    def with(Payable payable) {
+        target.setPayable(payable)
+        this
+    }
+
     def withSubject(String value) {
         target.setSubject(value)
         this
@@ -75,6 +81,7 @@ class RequestOnlinePaymentCommandFixture {
                 .amountIs(100.00)
                 .byWeChatPayNative()
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
+                .with(Payable.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
                 .withSubject("Subject")
                 .withBody("Body")
     }

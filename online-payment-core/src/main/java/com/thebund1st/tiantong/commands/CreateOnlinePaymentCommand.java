@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.commands;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.thebund1st.tiantong.core.OnlinePayment.Correlation;
+import com.thebund1st.tiantong.core.payable.Payable;
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.json.deserializers.ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher;
@@ -26,7 +27,7 @@ public class CreateOnlinePaymentCommand {
     //FIXME introduce Method
     private String method;
 
-    private Correlation correlation;
+    private Payable payable;
 
     private String subject;
 
@@ -39,6 +40,9 @@ public class CreateOnlinePaymentCommand {
     private ProviderSpecificCreateOnlinePaymentRequest providerSpecificRequest = new FlattenedProviderSpecificCreateOnlinePaymentRequest();
 
     /***The following fields are deprecated and will be removed in future versions***/
+    @Deprecated
+    private Correlation correlation;
+
     @Deprecated
     private String openId;
     @Deprecated

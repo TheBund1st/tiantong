@@ -17,6 +17,7 @@ class OnlinePaymentSucceededEventFixture {
         target.setOnlinePaymentVersion(op.getVersion())
         target.setAmount(op.getAmount())
         target.setCorrelation(op.getCorrelation())
+        target.setPayable(op.getPayable())
         target.setWhen(op.getLastModifiedAt())
         this
     }

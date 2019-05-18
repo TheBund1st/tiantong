@@ -30,7 +30,7 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert actual.id == op.id
         assert actual.version == op.version
         assert actual.amount == op.amount
-        assert actual.correlation == op.correlation
+        assert actual.payable == op.payable
         assert actual.method == op.method
         assert actual.status == op.status
         assert actual.createdAt == op.createdAt

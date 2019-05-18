@@ -26,9 +26,9 @@ class Customer {
                 {
                     "amount": "${command.getAmount()}",
                     "method": "${command.getMethod()}",
-                    "correlation": {
-                        "key":"${command.getCorrelation().getKey()}",
-                        "value": "${command.getCorrelation().getValue()}"
+                    "payable": {
+                        "context":"${command.getPayable().getContext()}",
+                        "objectId": "${command.getPayable().getObjectId()}"
                     },
                     "providerSpecificRequest": {
                         "dummy": "dummy"

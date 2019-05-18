@@ -67,6 +67,7 @@ class NotifyOnlinePaymentResultCommandHandlerTest extends Specification {
             it.onlinePaymentId == op.id
             it.onlinePaymentVersion == op.version
             it.correlation == op.correlation
+            it.payable == op.payable
             it.amount == op.amount
             it.when == now
         } as OnlinePaymentSucceededEvent)
@@ -141,6 +142,7 @@ class NotifyOnlinePaymentResultCommandHandlerTest extends Specification {
             it.onlinePaymentId == op.id
             it.onlinePaymentVersion == op.version
             it.correlation == op.correlation
+            it.payable == op.payable
             it.when == now
         } as OnlinePaymentClosedEvent)
     }

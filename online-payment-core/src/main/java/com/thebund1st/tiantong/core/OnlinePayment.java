@@ -3,8 +3,9 @@ package com.thebund1st.tiantong.core;
 import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationException;
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
 import com.thebund1st.tiantong.core.method.Method;
-import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payable.Payable;
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
+import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,7 +34,9 @@ public class OnlinePayment {
     //FIXME: introduce monetary amount
     private double amount;
     private Status status = PENDING;
+    @Deprecated
     private Correlation correlation;
+    private Payable payable;
     private Method method;
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
@@ -108,6 +111,7 @@ public class OnlinePayment {
         event.setOnlinePaymentId(getId());
         event.setOnlinePaymentVersion(getVersion());
         event.setCorrelation(correlation);
+        event.setPayable(getPayable());
         event.setWhen(now);
         return event;
     }
@@ -168,6 +172,7 @@ public class OnlinePayment {
     @ToString
     @EqualsAndHashCode
     @NoArgsConstructor(access = PRIVATE)
+    @Deprecated
     public static class Correlation {
         private String key;
         private String value;

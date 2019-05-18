@@ -26,6 +26,7 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
         and:
         def onlinePayment = anOnlinePayment()
                 .correlatedWith(command.getCorrelation())
+                .with(command.getPayable())
                 .amountIs(command.getAmount())
                 .byMethod(command.getMethod())
                 .with(command.getProviderSpecificRequest())
@@ -47,6 +48,10 @@ class OnlinePaymentRestControllerTest extends AbstractWebMvcTest {
                                 "correlation": {
                                     "key":"${command.getCorrelation().getKey()}",
                                     "value": "${command.getCorrelation().getValue()}"
+                                },
+                                "payable": {
+                                    "context":"${command.getPayable().getContext()}",
+                                    "objectId": "${command.getPayable().getObjectId()}"
                                 },
                                 "providerSpecificRequest": {
                                     "dummy": "dummy"

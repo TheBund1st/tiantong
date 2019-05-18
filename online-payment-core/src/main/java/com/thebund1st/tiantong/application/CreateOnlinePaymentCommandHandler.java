@@ -32,6 +32,7 @@ public class CreateOnlinePaymentCommandHandler {
         op.setAmount(command.getAmount());
         op.setMethod(Method.of(command.getMethod()));
         op.setCorrelation(command.getCorrelation());
+        op.setPayable(command.getPayable());
         op.setSubject(command.getSubject());
         op.setBody(command.getBody());
         op.setProviderSpecificInfo(command.getProviderSpecificInfo());

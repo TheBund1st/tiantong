@@ -2,6 +2,7 @@ package com.thebund1st.tiantong.core
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.core.method.Method
+import com.thebund1st.tiantong.core.payable.Payable
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
 import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequest
@@ -48,6 +49,11 @@ class OnlinePaymentFixture {
 
     def correlatedWith(OnlinePayment.Correlation correlation) {
         target.setCorrelation(correlation)
+        this
+    }
+
+    def with(Payable payable) {
+        target.setPayable(payable)
         this
     }
 
@@ -116,6 +122,7 @@ class OnlinePaymentFixture {
                 .amountIs(100.00)
                 .by(weChatPayJsApi())
                 .correlatedWith(OnlinePayment.Correlation.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
+                .with(Payable.of("E-COMMERCE-ORDERS", Randoms.randomStr()))
                 .subjectIs("This is a test product")
                 .bodyIs("This is a test product details")
                 .withOpenId(Randoms.randomStr())

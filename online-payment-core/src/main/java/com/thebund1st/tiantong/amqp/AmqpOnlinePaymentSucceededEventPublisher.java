@@ -17,7 +17,7 @@ public class AmqpOnlinePaymentSucceededEventPublisher implements AmqpDomainEvent
     public void publish(Object event) {
         OnlinePaymentSucceededEvent paymentSucceededEvent = (OnlinePaymentSucceededEvent) event;
         rabbitTemplate.convertAndSend(exchange,
-                paymentSucceededEvent.getCorrelation().getKey(), event);
+                paymentSucceededEvent.getPayable().getContext(), event);
     }
 
     @Override

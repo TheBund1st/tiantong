@@ -51,6 +51,7 @@ class CreateOnlinePaymentCommandHandlerTest extends Specification {
         assert actual.status == PENDING
         assert actual.method == Method.of(command.method)
         assert actual.correlation == command.correlation
+        assert actual.payable == command.payable
         assert actual.subject == command.subject
         assert actual.body == command.body
         assert actual.providerSpecificInfo == command.providerSpecificInfo

@@ -5,6 +5,7 @@ import com.thebund1st.tiantong.application.scheduling.OnlinePaymentResultSynchro
 import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.method.Method;
+import com.thebund1st.tiantong.core.payable.Payable;
 import com.thebund1st.tiantong.json.deserializers.ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher;
 import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +43,8 @@ public class JdbcOnlinePaymentRepository implements
                 model.getId().getValue(),
                 model.getVersion(),
                 model.getAmount(),
-                model.getCorrelation().getKey(),
-                model.getCorrelation().getValue(),
+                model.getPayable().getContext(),
+                model.getPayable().getObjectId(),
                 model.getStatus().getValue(),
                 model.getMethod().getValue(),
                 model.getSubject(),
@@ -70,6 +71,8 @@ public class JdbcOnlinePaymentRepository implements
                     op.setVersion(rs.getInt("VERSION"));
                     op.setAmount(rs.getDouble("AMOUNT"));
                     op.setCorrelation(OnlinePayment.Correlation.of(rs.getString("CORRELATION_KEY"),
+                            rs.getString("CORRELATION_VALUE")));
+                    op.setPayable(Payable.of(rs.getString("CORRELATION_KEY"),
                             rs.getString("CORRELATION_VALUE")));
                     op.setStatus(OnlinePayment.Status.of(rs.getInt("STATUS")));
                     op.setMethod(Method.of(rs.getString("METHOD")));

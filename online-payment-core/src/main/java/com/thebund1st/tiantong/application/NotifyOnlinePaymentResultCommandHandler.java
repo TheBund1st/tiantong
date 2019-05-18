@@ -70,6 +70,7 @@ public class NotifyOnlinePaymentResultCommandHandler {
         event.setOnlinePaymentId(onlinePayment.getId());
         event.setOnlinePaymentVersion(onlinePayment.getVersion());
         event.setCorrelation(onlinePayment.getCorrelation());
+        event.setPayable(onlinePayment.getPayable());
         event.setAmount(onlinePayment.getAmount());
         return event;
     }

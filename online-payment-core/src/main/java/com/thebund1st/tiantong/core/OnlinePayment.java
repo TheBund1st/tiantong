@@ -4,6 +4,7 @@ import com.thebund1st.tiantong.core.exceptions.FakeOnlinePaymentNotificationExce
 import com.thebund1st.tiantong.core.exceptions.OnlinePaymentAlreadyClosedException;
 import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payable.Payable;
+import com.thebund1st.tiantong.core.payee.Payee;
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.events.OnlinePaymentClosedEvent;
@@ -36,6 +37,10 @@ public class OnlinePayment {
     private Status status = PENDING;
     @Deprecated
     private Correlation correlation;
+    /**
+     * Explicit specifying payee should overwrite default payee.
+     */
+    private Payee payee;
     private Payable payable;
     private Method method;
     private LocalDateTime createdAt;

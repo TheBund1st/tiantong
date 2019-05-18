@@ -3,6 +3,7 @@ package com.thebund1st.tiantong.commands;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.thebund1st.tiantong.core.OnlinePayment.Correlation;
 import com.thebund1st.tiantong.core.payable.Payable;
+import com.thebund1st.tiantong.core.payee.Payee;
 import com.thebund1st.tiantong.core.payment.FlattenedProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest;
 import com.thebund1st.tiantong.json.deserializers.ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher;
@@ -15,6 +16,8 @@ import lombok.ToString;
 import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
+
+import static com.thebund1st.tiantong.core.payee.Payee.unspecified;
 
 @Getter
 @Setter
@@ -33,6 +36,10 @@ public class CreateOnlinePaymentCommand {
 
     private String body;
 
+    /**
+     * Explicit specifying payee should overwrite default payee.
+     */
+    private Payee payee = unspecified();
 
     @Valid
     @NotNull

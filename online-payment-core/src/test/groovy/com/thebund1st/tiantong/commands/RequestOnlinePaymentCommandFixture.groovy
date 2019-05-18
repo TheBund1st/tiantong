@@ -3,6 +3,8 @@ package com.thebund1st.tiantong.commands
 import com.thebund1st.tiantong.core.OnlinePayment
 import com.thebund1st.tiantong.core.method.Method
 import com.thebund1st.tiantong.core.payable.Payable
+import com.thebund1st.tiantong.core.payee.Payee
+import com.thebund1st.tiantong.core.payee.PayeeFixture
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.dummypay.DummyPayCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
@@ -45,6 +47,15 @@ class RequestOnlinePaymentCommandFixture {
     def with(Payable payable) {
         target.setPayable(payable)
         this
+    }
+
+    def with(Payee payee) {
+        target.setPayee(payee)
+        this
+    }
+
+    def with(PayeeFixture payee) {
+        with(payee.build())
     }
 
     def withSubject(String value) {

@@ -6,6 +6,7 @@ import com.thebund1st.tiantong.core.OnlinePayment;
 import com.thebund1st.tiantong.core.OnlinePaymentRepository;
 import com.thebund1st.tiantong.core.method.Method;
 import com.thebund1st.tiantong.core.payable.Payable;
+import com.thebund1st.tiantong.core.payee.Payee;
 import com.thebund1st.tiantong.json.deserializers.ProviderSpecificCreateOnlinePaymentRequestJsonDeserializerDispatcher;
 import com.thebund1st.tiantong.json.serializers.ProviderSpecificOnlinePaymentRequestJsonSerializer;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,8 @@ public class JdbcOnlinePaymentRepository implements
         OnlinePaymentResultSynchronizationJobStore {
 
     private static final String OP_COLUMNS = "ID, VERSION, AMOUNT, CORRELATION_KEY, CORRELATION_VALUE, STATUS, " +
-            "METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, CREATED_AT, LAST_MODIFIED_AT, EXPIRES_AT";
+            "PAYEE_CONTEXT, PAYEE_OBJ_ID, METHOD, SUBJECT, BODY, PROVIDER_SPECIFIC_INFO, " +
+            "CREATED_AT, LAST_MODIFIED_AT, EXPIRES_AT";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -46,6 +48,8 @@ public class JdbcOnlinePaymentRepository implements
                 model.getPayable().getContext(),
                 model.getPayable().getObjectId(),
                 model.getStatus().getValue(),
+                model.getPayee().getContext(),
+                model.getPayee().getObjectId(),
                 model.getMethod().getValue(),
                 model.getSubject(),
                 model.getBody(),
@@ -58,7 +62,8 @@ public class JdbcOnlinePaymentRepository implements
     }
 
     protected String insertOnlinePaymentSql() {
-        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", OP_COLUMNS);
+        return String.format("INSERT INTO ONLINE_PAYMENT(%s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                OP_COLUMNS);
     }
 
     @Override
@@ -74,6 +79,8 @@ public class JdbcOnlinePaymentRepository implements
                             rs.getString("CORRELATION_VALUE")));
                     op.setPayable(Payable.of(rs.getString("CORRELATION_KEY"),
                             rs.getString("CORRELATION_VALUE")));
+                    op.setPayee(Payee.of(rs.getString("PAYEE_CONTEXT"),
+                            rs.getString("PAYEE_OBJ_ID")));
                     op.setStatus(OnlinePayment.Status.of(rs.getInt("STATUS")));
                     op.setMethod(Method.of(rs.getString("METHOD")));
                     op.setSubject(rs.getString("SUBJECT"));

@@ -8,6 +8,12 @@ import lombok.ToString;
 
 import static lombok.AccessLevel.PRIVATE;
 
+/**
+ * The object that requires payment.
+ *
+ * @see <a href="https://github.com/TheBund1st/tiantong/wiki/%E5%BE%85%E6%94%AF%E4%BB%98%E7%89%A9">wiki</a>
+ * @since {{ RELEASE }}
+ */
 @Getter
 @ToString
 @EqualsAndHashCode

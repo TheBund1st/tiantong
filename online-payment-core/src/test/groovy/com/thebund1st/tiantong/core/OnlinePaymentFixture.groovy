@@ -3,6 +3,8 @@ package com.thebund1st.tiantong.core
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.thebund1st.tiantong.core.method.Method
 import com.thebund1st.tiantong.core.payable.Payable
+import com.thebund1st.tiantong.core.payee.Payee
+import com.thebund1st.tiantong.core.payee.PayeeFixture
 import com.thebund1st.tiantong.core.payment.ProviderSpecificCreateOnlinePaymentRequest
 import com.thebund1st.tiantong.utils.Randoms
 import com.thebund1st.tiantong.wechatpay.jsapi.WeChatPayJsApiCreateOnlinePaymentRequest
@@ -55,6 +57,15 @@ class OnlinePaymentFixture {
     def with(Payable payable) {
         target.setPayable(payable)
         this
+    }
+
+    def with(Payee payee) {
+        target.setPayee(payee)
+        this
+    }
+
+    def with(PayeeFixture payee) {
+        with(payee.build())
     }
 
     def succeeded() {
@@ -126,6 +137,7 @@ class OnlinePaymentFixture {
                 .subjectIs("This is a test product")
                 .bodyIs("This is a test product details")
                 .withOpenId(Randoms.randomStr())
+                .with(Payee.unspecified())
                 .with(new WeChatPayJsApiCreateOnlinePaymentRequest(openId: Randoms.randomStr()))
                 .expires(Duration.ofMinutes(30))
     }

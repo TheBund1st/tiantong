@@ -10,6 +10,7 @@ import java.time.LocalDateTime
 import static com.github.hippoom.tdb.GenericTestDataListBuilder.listOfSize
 import static com.thebund1st.tiantong.core.OnlinePaymentFixture.anOnlinePayment
 import static com.thebund1st.tiantong.core.OnlinePaymentResultNotification.Code.SUCCESS
+import static com.thebund1st.tiantong.core.payee.PayeeFixture.aStore
 
 class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
 
@@ -31,6 +32,7 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert actual.version == op.version
         assert actual.amount == op.amount
         assert actual.payable == op.payable
+        assert actual.payee == op.payee
         assert actual.method == op.method
         assert actual.status == op.status
         assert actual.createdAt == op.createdAt
@@ -39,6 +41,19 @@ class JdbcOnlinePaymentRepositoryTest extends AbstractJdbcTest {
         assert actual.subject == op.subject
         assert actual.body == op.body
         assert actual.providerSpecificOnlinePaymentRequest == op.providerSpecificOnlinePaymentRequest
+    }
+
+    def "it should save op with non-empty payee"() {
+        given:
+        def op = anOnlinePayment().with(aStore()).build()
+
+        when:
+        subject.save(op)
+
+        then:
+        def actual = subject.mustFindBy(op.id)
+        assert actual != null
+        assert actual.payee == op.payee
     }
 
     def "it should update op"() {

@@ -60,7 +60,7 @@ public class WeChatPayOnlinePaymentGateway implements
     }
 
     @SneakyThrows
-    public WxPayUnifiedOrderResult requestPayment(OnlinePayment op,
+    private WxPayUnifiedOrderResult requestPayment(OnlinePayment op,
                                                   ProviderSpecificCreateOnlinePaymentRequest providerSpecificRequest) {
         WxPayUnifiedOrderRequest req = new WxPayUnifiedOrderRequest();
         req.setAppid(wxPayService.getConfig().getAppId());
